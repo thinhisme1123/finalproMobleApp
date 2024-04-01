@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "129965456965",
+    "project_id": "finalproject-abbcb",
+    "storage_bucket": "finalproject-abbcb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:129965456965:android:8c9e74ddc77e538404ad2c",
+        "android_client_info": {
+          "package_name": "com.example.finalprpject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQ_ES0BeDaaW0EqFD78HpUj4zmWoLflFo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

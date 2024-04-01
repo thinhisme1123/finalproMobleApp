@@ -1,8 +1,11 @@
+import 'package:finalproject/homepage/home_page.dart';
+import 'package:finalproject/user_auth/firebase_auth_account.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart' hide Logos;
 import 'package:finalproject/screens/signin_screen.dart';
 import 'package:finalproject/theme/theme.dart';
 import 'package:finalproject/widgets/custom_scaffold.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -12,7 +15,25 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+
   final _formSignupKey = GlobalKey<FormState>();
+  final FirebaseAuthService _auth = FirebaseAuthService();
+
+  TextEditingController _usernameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+
+  
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+
+
   bool agreePersonalData = true;
   @override
   Widget build(BuildContext context) {
@@ -57,6 +78,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       // full name
                       TextFormField(
+                        controller: _usernameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter Full name';
@@ -88,6 +110,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       // email
                       TextFormField(
+                        controller: _emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter Email';
@@ -119,6 +142,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       // password
                       TextFormField(
+                        controller: _passwordController,
                         obscureText: true,
                         obscuringCharacter: '*',
                         validator: (value) {
@@ -188,11 +212,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             if (_formSignupKey.currentState!.validate() &&
                                 agreePersonalData) {
                               // hanldle save the data to DB
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Processing Data'),
-                                ),
-                              );
+                              signUp();
                             } else if (!agreePersonalData) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -295,4 +315,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
+  void signUp() async {
+    String username = _usernameController.text;
+    String email = _emailController.text;
+    String password = _passwordController.text;
+
+    User? user = await _auth.signUp(email, password);
+
+    if(user !=null) {
+      print("User is successfully created");
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomePage()),
+      );
+    }
+    else { 
+      print("Some error occurred");
+    }
+
+  }
 }
+
+
