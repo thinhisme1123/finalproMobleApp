@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "700180130860",
+    "project_id": "finalmobilecrossplatform",
+    "storage_bucket": "finalmobilecrossplatform.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:700180130860:android:bcba00ad279016f6b0f589",
+        "android_client_info": {
+          "package_name": "com.example.finalprpject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDuf5jRtDOIIVwReVbGnoKUEycS1eyKMjo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
