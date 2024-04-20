@@ -3,6 +3,7 @@ import 'package:icons_plus/icons_plus.dart' hide Logos;
 import 'package:finalproject/screens/signin_screen.dart';
 import 'package:finalproject/theme/theme.dart';
 import 'package:finalproject/widgets/custom_scaffold.dart';
+import 'package:finalproject/auth/auth_service.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -14,6 +15,10 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formSignupKey = GlobalKey<FormState>();
   bool agreePersonalData = true;
+  final _auth = AuthSevice();
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -44,7 +49,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       // get started text
-                      Text(
+                      const Text(
                         'Get Started',
                         style: TextStyle(
                           fontSize: 30.0,
@@ -55,39 +60,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 40.0,
                       ),
-                      // full name
-                      // TextFormField(
-                      //   validator: (value) {
-                      //     if (value == null || value.isEmpty) {
-                      //       return 'Please enter Full name';
-                      //     }
-                      //     return null;
-                      //   },
-                      //   decoration: InputDecoration(
-                      //     label: const Text('Full Name'),
-                      //     hintText: 'Enter Full Name',
-                      //     hintStyle: const TextStyle(
-                      //       color: Colors.black26,
-                      //     ),
-                      //     border: OutlineInputBorder(
-                      //       borderSide: const BorderSide(
-                      //         color: Colors.black12, // Default border color
-                      //       ),
-                      //       borderRadius: BorderRadius.circular(10),
-                      //     ),
-                      //     enabledBorder: OutlineInputBorder(
-                      //       borderSide: const BorderSide(
-                      //         color: Colors.black12, // Default border color
-                      //       ),
-                      //       borderRadius: BorderRadius.circular(10),
-                      //     ),
-                      //   ),
-                      // ),
                       const SizedBox(
                         height: 25.0,
                       ),
                       // email
                       TextFormField(
+                        controller: _email,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter Email';
@@ -119,6 +97,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       // password
                       TextFormField(
+                        controller: _password,
                         obscureText: true,
                         obscuringCharacter: '*',
                         validator: (value) {
@@ -193,6 +172,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   content: Text('Processing Data'),
                                 ),
                               );
+                              _signup();
                             } else if (!agreePersonalData) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -244,7 +224,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Icon(BoxIcons.bxl_facebook,color: Colors.blue,),
+                          Icon(
+                            BoxIcons.bxl_facebook,
+                            color: Colors.blue,
+                          ),
                           Icon(BoxIcons.bxl_twitter),
                           Icon(BoxIcons.bxl_google),
                           Icon(BoxIcons.bxl_apple),
@@ -294,5 +277,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ],
       ),
     );
+  }
+
+  _signup() async {
+    final user =
+        await _auth.createUserWithEmailAndPassword(_email.text, _password.text);
+    if (user != null) {
+      print("signin successful");
+    } else {
+      
+    }
   }
 }

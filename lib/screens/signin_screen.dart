@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:finalproject/screens/signup_screen.dart';
 import 'package:finalproject/widgets/custom_scaffold.dart';
+import 'package:finalproject/auth/auth_service.dart';
 
 import '../theme/theme.dart';
 
@@ -15,6 +16,10 @@ class SignInScreen extends StatefulWidget {
 class _SignInScreenState extends State<SignInScreen> {
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
+  final _auth = AuthSevice();
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -43,7 +48,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'Welcome back',
                         style: TextStyle(
                           fontSize: 30.0,
@@ -55,6 +60,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         height: 40.0,
                       ),
                       TextFormField(
+                        controller: _email,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter Email';
@@ -85,6 +91,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         height: 25.0,
                       ),
                       TextFormField(
+                        controller: _password,
                         obscureText: true,
                         obscuringCharacter: '*',
                         validator: (value) {
@@ -164,6 +171,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   content: Text('Processing Data'),
                                 ),
                               );
+                              _signin();
                             } else if (!rememberPassword) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -210,7 +218,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           Icon(BoxIcons.bxl_facebook),
@@ -264,7 +272,17 @@ class _SignInScreenState extends State<SignInScreen> {
       ),
     );
   }
+
+  _signin() async {
+    final user =
+        await _auth.loginUserWithEmailAndPassword(_email.text, _password.text);
+
+    if (user != null) {
+      print("User Logged In");
+    } else {
+      print("error");
+    }
+  }
 }
 
-class Logos {
-}
+class Logos {}
