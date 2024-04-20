@@ -1,3 +1,4 @@
+import 'package:finalproject/screens/forget_passsword_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:finalproject/screens/signup_screen.dart';
@@ -146,6 +147,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             ],
                           ),
                           GestureDetector(
+                            onTap: () => const ForgetPasswordScreen(),
                             child: Text(
                               'Forget password?',
                               style: TextStyle(
