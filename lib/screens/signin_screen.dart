@@ -152,7 +152,9 @@ class _SignInScreenState extends State<SignInScreen> {
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => ForgetPasswordScreen()),
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ForgetPasswordScreen()),
                               );
                             },
                             child: Text(
@@ -193,7 +195,6 @@ class _SignInScreenState extends State<SignInScreen> {
                             //     context,
                             //     MaterialPageRoute(builder: (context) => ProfileScreen()),
                             //   );
-                            
                           },
                           child: const Text('Sign in'),
                         ),
@@ -291,7 +292,6 @@ class _SignInScreenState extends State<SignInScreen> {
   _signin() async {
     final user =
         await _auth.loginUserWithEmailAndPassword(_email.text, _password.text);
-
     if (user != null) {
       print("User Logged In");
     } else {

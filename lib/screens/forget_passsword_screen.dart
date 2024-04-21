@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:finalproject/auth/auth_service.dart';
 
 class ForgetPasswordScreen extends StatefulWidget {
   const ForgetPasswordScreen({super.key});
@@ -10,6 +11,8 @@ class ForgetPasswordScreen extends StatefulWidget {
 class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+
+  final _auth = AuthSevice();
 
   @override
   void dispose() {
@@ -59,6 +62,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     // Perform forget password logic here
                     // e.g., send reset password email to the entered email address
                     // ...
+                    sendPasswordResetEmail(email: _emailController.text);
                   }
                 },
                 child: const Text('Reset Password'),
@@ -68,5 +72,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         ),
       ),
     );
+  }
+
+  sendPasswordResetEmail({required String email}) async {
+    _auth.sendPasswordResetEmail(email: email);
   }
 }
