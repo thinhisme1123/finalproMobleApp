@@ -147,7 +147,14 @@ class _SignInScreenState extends State<SignInScreen> {
                             ],
                           ),
                           GestureDetector(
-                            onTap: () => const ForgetPasswordScreen(),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (e) => const ForgetPasswordScreen(),
+                                ),
+                              );
+                            },
                             child: Text(
                               'Forget password?',
                               style: TextStyle(
@@ -278,13 +285,13 @@ class _SignInScreenState extends State<SignInScreen> {
   _signin() async {
     final user =
         await _auth.loginUserWithEmailAndPassword(_email.text, _password.text);
-
     if (user != null) {
       print("User Logged In");
     } else {
       print("error");
     }
   }
+
 }
 
 class Logos {}
