@@ -10,7 +10,7 @@ class AuthSevice {
           email: email, password: password);
       return cred.user;
     } catch (e) {
-      print("create error");
+      print("Can not create user!");
     }
     return null;
   }

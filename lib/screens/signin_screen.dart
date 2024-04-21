@@ -1,9 +1,11 @@
 import 'package:finalproject/screens/forget_passsword_screen.dart';
+import 'package:finalproject/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:finalproject/screens/signup_screen.dart';
 import 'package:finalproject/widgets/custom_scaffold.dart';
 import 'package:finalproject/auth/auth_service.dart';
+import 'package:get/get.dart';
 
 import '../theme/theme.dart';
 
@@ -151,8 +153,8 @@ class _SignInScreenState extends State<SignInScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (e) => const ForgetPasswordScreen(),
-                                ),
+                                    builder: (context) =>
+                                        ForgetPasswordScreen()),
                               );
                             },
                             child: Text(
@@ -181,6 +183,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 ),
                               );
                               _signin();
+                              Get.toNamed('/profile');
                             } else if (!rememberPassword) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -188,8 +191,12 @@ class _SignInScreenState extends State<SignInScreen> {
                                         'Please agree to the processing of personal data')),
                               );
                             }
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(builder: (context) => ProfileScreen()),
+                            //   );
                           },
-                          child: const Text('Sign up'),
+                          child: const Text('Sign in'),
                         ),
                       ),
                       const SizedBox(
@@ -291,7 +298,6 @@ class _SignInScreenState extends State<SignInScreen> {
       print("error");
     }
   }
-
 }
 
 class Logos {}
