@@ -34,7 +34,7 @@ class WelcomeScreen extends StatelessWidget {
                             )),
                         TextSpan(
                             text:
-                                '\nEnter personal details to your employee account',
+                                '\nBest place for you to learn vocabulary!',
                             style: TextStyle(
                               fontSize: 20,
                               color: Colors.white

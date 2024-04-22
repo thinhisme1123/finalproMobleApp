@@ -1,11 +1,13 @@
 import 'package:finalproject/screens/forget_passsword_screen.dart';
 import 'package:finalproject/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:finalproject/screens/signup_screen.dart';
 import 'package:finalproject/widgets/custom_scaffold.dart';
 import 'package:finalproject/auth/auth_service.dart';
 import 'package:get/get.dart';
+import 'package:finalproject/utils/Toast.dart' as toast;
 
 import '../theme/theme.dart';
 
@@ -173,15 +175,10 @@ class _SignInScreenState extends State<SignInScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (_formSignInKey.currentState!.validate() &&
                                 rememberPassword) {
                               // hanlde compare data to DB to pass login or not
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Processing Data'),
-                                ),
-                              );
                               _signin();
                               Get.toNamed('/profile');
                             } else if (!rememberPassword) {
@@ -195,6 +192,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             //     context,
                             //     MaterialPageRoute(builder: (context) => ProfileScreen()),
                             //   );
+                            // Get.toNamed('/home-mode-screen');
                           },
                           child: const Text('Sign in'),
                         ),
@@ -289,10 +287,63 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
+  late FToast fToast;
+
+  @override
+  void initState() {
+    super.initState();
+    fToast = FToast();
+    // if you want to use context from globally instead of content we need to pass navigatorKey.currentContext!
+    fToast.init(context);
+  }
+
+  showToast(String message,
+      {required ToastGravity gravity,
+      Color? backgroundColor,
+      Color? textColor,
+      double? fontSize,
+      IconData? icon}) {
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25.0),
+        color: backgroundColor ?? Colors.greenAccent,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) Icon(icon, color: textColor),
+          if (icon != null) const SizedBox(width: 12.0),
+          Text(
+            message,
+            style: TextStyle(
+              color: textColor ?? Colors.black,
+              fontSize: fontSize,
+            ),
+          ),
+        ],
+      ),
+    );
+
+    fToast.showToast(
+      child: toast,
+      gravity: ToastGravity.BOTTOM,
+      toastDuration: Duration(seconds: 2),
+    );
+  }
+
   _signin() async {
     final user =
         await _auth.loginUserWithEmailAndPassword(_email.text, _password.text);
     if (user != null) {
+      showToast(
+        'Login successfully',
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+        icon: Icons.check_circle,
+      );
       print("User Logged In");
     } else {
       print("error");

@@ -170,8 +170,9 @@ class ProfileScreen extends StatelessWidget {
                      ),
                      confirm: Expanded(
                        child: ElevatedButton(
-                         onPressed: () =>
-                            AuthSevice().signout(),
+                         onPressed: () {
+                            AuthSevice().signout();
+                         },
                          style: ElevatedButton.styleFrom(
                              backgroundColor: Colors.redAccent,
                              side: BorderSide.none),
