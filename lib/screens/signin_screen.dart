@@ -176,23 +176,19 @@ class _SignInScreenState extends State<SignInScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            if (_formSignInKey.currentState!.validate() &&
-                                rememberPassword) {
-                              // hanlde compare data to DB to pass login or not
-                              _signin();
-                              Get.toNamed('/home-screen');
-                            } else if (!rememberPassword) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Please agree to the processing of personal data')),
-                              );
-                            }
-                            // Navigator.push(
-                            //     context,
-                            //     MaterialPageRoute(builder: (context) => ProfileScreen()),
+                            // if (_formSignInKey.currentState!.validate() &&
+                            //     rememberPassword) {
+                            //   // hanlde compare data to DB to pass login or not
+                            //   _signin();
+                            //   Get.toNamed('/home-screen');
+                            // } else if (!rememberPassword) {
+                            //   ScaffoldMessenger.of(context).showSnackBar(
+                            //     const SnackBar(
+                            //         content: Text(
+                            //             'Please agree to the processing of personal data')),
                             //   );
-                            // Get.toNamed('/home-mode-screen');
+                            // }
+                            Get.toNamed('/home-screen');
                           },
                           child: const Text('Sign in'),
                         ),

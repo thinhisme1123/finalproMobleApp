@@ -70,15 +70,13 @@ class ProfileScreen extends StatelessWidget {
    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
    return Scaffold(
      appBar: AppBar(
-       leading: IconButton(
-           onPressed: () => Get.back(),
-           icon: const Icon(LineAwesomeIcons.angle_left)),
-       title: Text(tProfile, style: Theme.of(context).textTheme.headline4),
-       actions: [
-         IconButton(
-             onPressed: () {},
-             icon: Icon(isDark ? LineAwesomeIcons.sun : LineAwesomeIcons.moon))
-       ],
+        automaticallyImplyLeading: false,
+        title: Text(tProfile, style: Theme.of(context).textTheme.headline4),
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: Icon(isDark ? LineAwesomeIcons.sun : LineAwesomeIcons.moon))
+        ],
      ),
      body: SingleChildScrollView(
        child: Container(
@@ -142,8 +140,8 @@ class ProfileScreen extends StatelessWidget {
                  icon: LineAwesomeIcons.cog,
                  onPress: () {}),
              ProfileMenuWidget(
-                 title: "Billing Details",
-                 icon: LineAwesomeIcons.wallet,
+                 title: "Achievement",
+                 icon: LineAwesomeIcons.award,
                  onPress: () {}),
              ProfileMenuWidget(
                  title: "User Management",
