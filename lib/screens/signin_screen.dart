@@ -180,7 +180,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 rememberPassword) {
                               // hanlde compare data to DB to pass login or not
                               _signin();
-                              Get.toNamed('/profile');
+                              Get.toNamed('/home-screen');
                             } else if (!rememberPassword) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(

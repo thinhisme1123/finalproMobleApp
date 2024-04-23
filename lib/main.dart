@@ -1,4 +1,5 @@
 import 'package:finalproject/home/home_modes_screen.dart';
+import 'package:finalproject/home/home_screen.dart';
 import 'package:finalproject/leaning-modes/flashcard-mode/flashcard_screen.dart';
 import 'package:finalproject/screens/update.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
           getPages: [
             GetPage(name: '/welcome', page: () => const WelcomeScreen()),
             GetPage(name: '/profile', page: () => const ProfileScreen()),
+            GetPage(name: '/home-screen', page: () => HomeScreen()),
             GetPage(name: '/home-mode-screen', page: () => HomeScreenModes()),
           ],
           initialBinding: BindingsBuilder(() {}),
