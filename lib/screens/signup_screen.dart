@@ -1,3 +1,4 @@
+import 'package:finalproject/model/User.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart' hide Logos;
 import 'package:finalproject/screens/signin_screen.dart';
@@ -35,9 +36,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             ),
           ),
           Expanded(
-            flex: 7,
+            flex: 12,
             child: Container(
-              padding: const EdgeInsets.fromLTRB(25.0, 50.0, 25.0, 20.0),
+              padding: const EdgeInsets.fromLTRB(25.0, 50.0, 25.0, 0),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -62,7 +63,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       const SizedBox(
-                        height: 40.0,
+                        height: 20.0,
                       ),
                       const SizedBox(
                         height: 25.0,
@@ -287,7 +288,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (e) => const SignInScreen(),
@@ -356,6 +357,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   _signup() async {
     final errorMessage = await _auth.createUserWithEmailAndPassword(_email.text, _password.text);
     if (errorMessage == null) {
+      User user = User();
+      await user.createUserDetail(_email.text, "Default");
       setState(() {
         _email.text = '';
         _password.text = '';
@@ -368,6 +371,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
         textColor: Colors.white,
         fontSize: 16.0,
         icon: Icons.check_circle,
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (e) => const SignInScreen(),
+        ),
       );
     } else {
       toast.Toast.showToast(

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finalproject/utils/Toast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -25,7 +26,7 @@ class AuthSevice {
       return null; 
     } on FirebaseAuthException catch (e) {
       if (e.code == 'email-already-in-use') {
-        return 'The email address is already in use by another account.';
+        return 'The Email already in use.';
       }
       return e.message;
     } catch (e) {
@@ -33,7 +34,20 @@ class AuthSevice {
       return 'An unknown error occurred.';
     }
   }
-
+  Future<String?> createUserDetail(String email, String password) async {
+    try {
+      await FirebaseFirestore.instance.collection("User").add({
+        "Email": email,
+        "Password": password
+      });
+      print("Sucessfully");
+      return null;
+    } catch (e) {
+      // Xử lý lỗi và trả về thông báo lỗi
+      print("Error in creating user details: $e");
+      return 'Failed to add user details: $e';
+    }
+  }
   Future<User?> loginUserWithEmailAndPassword(
       String email, String password) async {
     try {

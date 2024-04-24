@@ -9,6 +9,7 @@ import 'package:finalproject/auth/auth_service.dart';
 import 'package:get/get.dart';
 import 'package:finalproject/utils/Toast.dart' as toast;
 
+import '../model/User.dart';
 import '../theme/theme.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -180,7 +181,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             //     rememberPassword) {
                             //   // hanlde compare data to DB to pass login or not
                             //   _signin();
-                            //   Get.toNamed('/home-screen');
+                            //   //Get.toNamed('/home-screen');
                             // } else if (!rememberPassword) {
                             //   ScaffoldMessenger.of(context).showSnackBar(
                             //     const SnackBar(
@@ -252,7 +253,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
+                              Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                   builder: (e) => const SignUpScreen(),
@@ -328,23 +329,43 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  _signin() async {
-    final user =
-        await _auth.loginUserWithEmailAndPassword(_email.text, _password.text);
-    if (user != null) {
-      showToast(
-        'Login successfully',
-        gravity: ToastGravity.BOTTOM,
-        backgroundColor: Colors.green,
-        textColor: Colors.white,
-        fontSize: 16.0,
-        icon: Icons.check_circle,
-      );
-      print("User Logged In");
-    } else {
-      print("error");
-    }
-  }
+  // _signin() async {
+  //   final user =
+  //       await _auth.loginUserWithEmailAndPassword(_email.text, _password.text);
+  //   if (user != null) {
+  //     showToast(
+  //       'Login successfully',
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.green,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //       icon: Icons.check_circle,
+  //     );
+  //     print("User Logged In");
+  //   } else {
+  //     print("error");
+  //   }
+  // }
+  // _signin() async {
+  //   final userCredential = await _auth.loginUserWithEmailAndPassword(_email.text, _password.text);
+  //   if (userCredential != null) {
+  //     String id = await User().getID(userCredential);
+  //     print("User ID: $id");
+  //     showToast(
+  //       'Login successfully',
+  //       gravity: ToastGravity.BOTTOM,
+  //       backgroundColor: Colors.green,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0,
+  //       icon: Icons.check_circle,
+  //     );
+  //     print("User Logged In");
+  //   } else {
+  //     print("error");
+  //   }
+  // }
+
+
 }
 
 class Logos {}
