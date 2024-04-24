@@ -5,12 +5,13 @@ import 'package:get/get.dart';
 import 'package:finalproject/auth/auth_service.dart';
 
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Constants
 const String tProfile = 'Profile';
 const String tProfileImage = 'assets/images/profile.jpg';
-const String tProfileHeading = 'John Doe';
-const String tProfileSubHeading = 'john.doe@example.com';
+late String tProfileHeading = 'John Doe';
+late String tProfileSubHeading = 'john.doe@example.com';
 const String tEditProfile = 'Edit Profile';
 const double tDefaultSize = 16.0;
 const Color tPrimaryColor = Colors.blue;
@@ -18,7 +19,7 @@ const Color tDarkColor = Colors.black;
 
 
 // Widgets
-class ProfileMenuWidget extends StatelessWidget {
+class ProfileMenuWidget extends StatefulWidget {
  final String title;
  final IconData icon;
  final Color? textColor;
@@ -34,10 +35,15 @@ class ProfileMenuWidget extends StatelessWidget {
    required this.onPress,
  }) : super(key: key);
 
+  @override
+  State<ProfileMenuWidget> createState() => _ProfileMenuWidgetState();
+}
+
+class _ProfileMenuWidgetState extends State<ProfileMenuWidget> {
  @override
  Widget build(BuildContext context) {
    return ListTile(
-     onTap: onPress,
+     onTap: widget.onPress,
      leading: Container(
        width: 35,
        height: 35,
@@ -46,12 +52,12 @@ class ProfileMenuWidget extends StatelessWidget {
          color: tPrimaryColor.withOpacity(0.1),
        ),
        child: Icon(
-         icon,
+         widget.icon,
          color: tPrimaryColor,
        ),
      ),
-     title: Text(title, style: TextStyle(color: textColor)),
-     trailing: endIcon
+     title: Text(widget.title, style: TextStyle(color: widget.textColor)),
+     trailing: widget.endIcon
          ? Icon(
              LineAwesomeIcons.angle_right,
              size: 20,
@@ -62,9 +68,34 @@ class ProfileMenuWidget extends StatelessWidget {
  }
 }
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
  const ProfileScreen({Key? key}) : super(key: key);
 
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+ late SharedPreferences _prefs;
+
+ String userID ="";
+ String email = "";
+
+ void _initSharedPreferences() async {
+   _prefs = await SharedPreferences.getInstance();
+   setState(() {
+     userID = _prefs.getString('userID') ?? '';
+     print("id $userID");
+     email = _prefs.getString("Email") ?? "";
+     tProfileSubHeading = email;
+     print("email $email");
+   });
+ }
+ void initState() {
+   // TODO: implement initState
+   super.initState();
+   _initSharedPreferences();
+ }
  @override
  Widget build(BuildContext context) {
    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
@@ -121,7 +152,7 @@ class ProfileScreen extends StatelessWidget {
                width: 200,
                child: ElevatedButton(
                  onPressed: () {
-                  Get.to(() => const UpdateScreen(fullname: tProfileHeading, email: tProfileSubHeading,));
+                  Get.to(() =>  UpdateScreen(fullname: tProfileHeading, email: tProfileSubHeading,));
                  },
                  style: ElevatedButton.styleFrom(
                      backgroundColor: tPrimaryColor,

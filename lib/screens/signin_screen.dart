@@ -7,6 +7,8 @@ import 'package:finalproject/screens/signup_screen.dart';
 import 'package:finalproject/widgets/custom_scaffold.dart';
 import 'package:finalproject/auth/auth_service.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:finalproject/utils/Toast.dart' as toast;
 
 import '../model/User.dart';
@@ -23,9 +25,30 @@ class _SignInScreenState extends State<SignInScreen> {
   final _formSignInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
   final _auth = AuthSevice();
+  User user = User();
   final _email = TextEditingController();
   final _password = TextEditingController();
+  late SharedPreferences _prefs;
 
+  void _initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+  void _saveData(String key, String? text) async {
+    if (text != null) {
+      await _prefs.setString(key, text);
+    } else {
+      // Xử lý khi text là null, ví dụ:
+      print('$key is null');
+    }
+  }
+  @override
+  void initState() {
+    super.initState();
+    _initSharedPreferences();
+    fToast = FToast();
+    // if you want to use context from globally instead of content we need to pass navigatorKey.currentContext!
+    fToast.init(context);
+  }
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -189,6 +212,9 @@ class _SignInScreenState extends State<SignInScreen> {
                             //             'Please agree to the processing of personal data')),
                             //   );
                             // }
+                            String? userId = await user.getUserIdByEmail(_email.text);
+                            _saveData("userID",userId);
+                            _saveData("Email",_email.text);
                             Get.toNamed('/home-screen');
                           },
                           child: const Text('Sign in'),
@@ -286,14 +312,6 @@ class _SignInScreenState extends State<SignInScreen> {
 
   late FToast fToast;
 
-  @override
-  void initState() {
-    super.initState();
-    fToast = FToast();
-    // if you want to use context from globally instead of content we need to pass navigatorKey.currentContext!
-    fToast.init(context);
-  }
-
   showToast(String message,
       {required ToastGravity gravity,
       Color? backgroundColor,
@@ -328,7 +346,6 @@ class _SignInScreenState extends State<SignInScreen> {
       toastDuration: Duration(seconds: 2),
     );
   }
-
   // _signin() async {
   //   final user =
   //       await _auth.loginUserWithEmailAndPassword(_email.text, _password.text);

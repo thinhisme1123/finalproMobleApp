@@ -7,6 +7,9 @@ import 'package:finalproject/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../model/User.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -16,13 +19,29 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   int _previousIndex = 0;
-
+  late SharedPreferences _prefs;
+  String userID ="";
+  String email = "";
+  void _initSharedPreferences() async {
+    _prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userID = _prefs.getString('userID') ?? '';
+      print("id $userID");
+      email = _prefs.getString("Email") ?? "";
+      print("email $email");
+    });
+  }
   static List<Widget> _widgetOptions = <Widget>[
     LibraryScreen(),
     BottomSheetScreen(), 
     ProfileScreen(), 
   ];
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _initSharedPreferences();
+  }
   // void _onItemTapped(int index) {
   //   setState(() {
   //     _selectedIndex = index;
@@ -122,9 +141,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,7 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.folder),
             label: 'Library',

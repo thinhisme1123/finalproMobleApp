@@ -2,15 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:finalproject/utils/Toast.dart' as toast;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class User {
 
   String email = "";
   String dob = "";
-
+  String id ="";
   User();
 
-  User.n(this.email, this.dob);
+  User.n(this.email, this.dob, this.id);
 
   Future<String?> createUserDetail(String email, String dob) async {
     try {
@@ -29,4 +30,65 @@ class User {
     String userId = userCredential.user!.uid;
     return userId;
   }
+  Future<String?> getUserIdByEmail(String email) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
+          .collection("User")
+          .where("Email", isEqualTo: email)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        print("No user found with email $email");
+        return null;
+      }
+
+      String userId = querySnapshot.docs.first.id;
+      print("User ID for email $email: $userId");
+      return userId;
+    } catch (e) {
+      print("Error getting user ID: $e");
+      return null;
+    }
+  }
+  Future<String?> getNameByEmail(String email) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
+          .collection("User")
+          .where("Email", isEqualTo: email)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        print("No user found with email $email");
+        return null;
+      }
+
+      String userEmail = querySnapshot.docs.first.get("Name");
+      print("DOB for user with email $email: $userEmail");
+      return userEmail;
+    } catch (e) {
+      print("Error getting DOB: $e");
+      return null;
+    }
+  }
+  Future<String?> getDBOByEmail(String email) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
+          .collection("User")
+          .where("Email", isEqualTo: email)
+          .get();
+
+      if (querySnapshot.docs.isEmpty) {
+        print("No user found with email $email");
+        return null;
+      }
+
+      String userEmail = querySnapshot.docs.first.get("DOB");
+      print("DOB for user with email $email: $userEmail");
+      return userEmail;
+    } catch (e) {
+      print("Error getting DOB: $e");
+      return null;
+    }
+  }
+
 }
