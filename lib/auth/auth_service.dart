@@ -83,6 +83,7 @@ class AuthSevice {
   Future<void> signout() async {
     try {
       await _auth.signOut();
+      print("Successfully");
     } catch (e) {
       print("signout error");
     }

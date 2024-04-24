@@ -1,7 +1,3 @@
-import 'package:finalproject/home/home_modes_screen.dart';
-import 'package:finalproject/home/home_screen.dart';
-import 'package:finalproject/leaning-modes/flashcard-mode/flashcard_screen.dart';
-import 'package:finalproject/screens/update.dart';
 import 'package:flutter/material.dart';
 import 'package:finalproject/screens/welcome_screen.dart';
 import 'package:finalproject/theme/theme.dart';
@@ -9,43 +5,89 @@ import 'package:get/get.dart';
 import 'package:finalproject/screens/profile_screen.dart';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'firebase_options.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:finalproject/utils/Toast.dart' as toast;
 
+import 'home/home_modes_screen.dart';
+import 'home/home_screen.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.web, 
+    options: DefaultFirebaseOptions.web,
   );
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  late SharedPreferences _prefs;
+  bool _isLoggedIn = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    checkLoginStatus();
+  }
+
+  Future<void> checkLoginStatus() async {
+    _prefs = await SharedPreferences.getInstance();
+    String? myKey = _prefs.getString('Login');
+    if (myKey == "Yes") {
+      setState(() {
+        _isLoggedIn = true;
+      });
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Builder(
-      builder: (context) {
-        toast.Toast.initializeToast(context);
-        return GetMaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Learning Vocabulary Application',
-          theme: lightMode,
-          initialRoute: '/welcome',
-          getPages: [
-            GetPage(name: '/welcome', page: () => const WelcomeScreen()),
-            GetPage(name: '/profile', page: () => const ProfileScreen()),
-            GetPage(name: '/home-screen', page: () => HomeScreen()),
-            GetPage(name: '/home-mode-screen', page: () => HomeScreenModes()),
-          ],
-          initialBinding: BindingsBuilder(() {}),
-        );
-      },
+    return MaterialApp( // Thêm MaterialApp widget
+      title: 'Learning Vocabulary Application',
+      theme: lightMode,
+      home: Directionality( // Thêm Directionality widget
+        textDirection: TextDirection.ltr, // Hoặc bạn có thể sử dụng TextDirection.rtl tùy thuộc vào ngôn ngữ
+        child: Builder(
+          builder: (context) {
+            toast.Toast.initializeToast(context);
+            if (_isLoading) {
+              return Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            } else {
+              return GetMaterialApp(
+                debugShowCheckedModeBanner: false,
+                title: 'Learning Vocabulary Application',
+                theme: lightMode,
+                initialRoute: _isLoggedIn ? '/home-screen' : "/welcome",
+                getPages: [
+                  GetPage(name: '/welcome', page: () => const WelcomeScreen()),
+                  GetPage(name: '/profile', page: () => const ProfileScreen()),
+                  GetPage(name: '/home-screen', page: () => HomeScreen()),
+                  GetPage(name: '/home-mode-screen', page: () => HomeScreenModes()),
+                ],
+                initialBinding: BindingsBuilder(() {}),
+              );
+            }
+          },
+        ),
+      ),
     );
   }
 }

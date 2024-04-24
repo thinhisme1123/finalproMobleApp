@@ -215,6 +215,8 @@ class _SignInScreenState extends State<SignInScreen> {
                             String? userId = await user.getUserIdByEmail(_email.text);
                             _saveData("userID",userId);
                             _saveData("Email",_email.text);
+                            //Lưu đăng nhập
+                            _saveData("Login", "Yes");
                             Get.toNamed('/home-screen');
                           },
                           child: const Text('Sign in'),
