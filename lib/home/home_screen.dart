@@ -130,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 icon: Icons.folder,
                 text: 'Folder',
                 onTap: () {
-                  print('create folder');
+                  Get.toNamed('/create-folder');
                 },
                 backgroundColor: Color.fromARGB(255, 199, 191, 191)
               ),
