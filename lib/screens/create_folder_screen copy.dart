@@ -1,4 +1,8 @@
+import 'package:finalproject/model/Folder.dart';
+import 'package:finalproject/screens/folder_detail.dart';
+import 'package:finalproject/screens/folder_detail_afterCreate.dart';
 import 'package:finalproject/screens/form_add_vocab.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class CreateFolderScreen extends StatefulWidget {
@@ -9,16 +13,35 @@ class CreateFolderScreen extends StatefulWidget {
 class _CreateFolderScreenState extends State<CreateFolderScreen> {
   final _formKey = GlobalKey<FormState>();
   String _title = "";
+  String _description = "";
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
 
-  void _handleSave() {
+  void _handleSave() async {
     if (_formKey.currentState!.validate()) {
-      // Save the topic data (title, englishWord, vietnameseMeaning)
-      // You can implement logic to store this data in your app's storage
-      // (e.g., database, shared preferences)
-      print("Topic created: $_title");
-      Navigator.pop(context); // Close the screen after saving
+      _formKey.currentState!.save();
+
+      try {
+        // Create a new folder document in the "Folder" collection
+        await FirebaseFirestore.instance.collection("Folder").add({
+          "Title": _title,
+          "Desc": _description,
+        });
+
+        print("Folder title: $_title");
+        print("Folder desc: $_description");
+
+        Folder newFolder = Folder.n(_title, _description);
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => FolderDetailAfterCreate(folder: newFolder)),
+        );
+      } catch (e) {
+        print("Error creating folder: $e");
+        // Handle the error here, e.g., show a snackbar or dialog
+      }
     }
   }
 
@@ -26,11 +49,14 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Topic'),
+        title: Text('Create Folder'),
         actions: [
           TextButton(
             onPressed: _handleSave,
-            child: Text('Save', style: TextStyle(fontSize: 20,color: Colors.black),),
+            child: Text(
+              'Save',
+              style: TextStyle(fontSize: 20, color: Colors.black),
+            ),
           ),
         ],
       ),
@@ -41,7 +67,6 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
           child: Column(
             children: <Widget>[
               TextFormField(
-
                 decoration: InputDecoration(
                   labelText: 'Folder Title',
                 ),
@@ -62,11 +87,11 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
                 ),
                 validator: (value) {
                   if (value!.isEmpty) {
-                    return 'Please enter a title for your topic.';
+                    return 'Please enter a description for your Folder.';
                   }
                   return null;
                 },
-                onSaved: (value) => setState(() => _title = value!),
+                onSaved: (value) => setState(() => _description = value!),
               ),
             ],
           ),

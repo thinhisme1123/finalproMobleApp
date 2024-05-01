@@ -60,8 +60,8 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp( // Thêm MaterialApp widget
       title: 'Learning Vocabulary Application',
       theme: lightMode,
-      home: Directionality( // Thêm Directionality widget
-        textDirection: TextDirection.ltr, // Hoặc bạn có thể sử dụng TextDirection.rtl tùy thuộc vào ngôn ngữ
+      home: Directionality( 
+        textDirection: TextDirection.ltr, 
         child: Builder(
           builder: (context) {
             toast.Toast.initializeToast(context);

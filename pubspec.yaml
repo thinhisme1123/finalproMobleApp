@@ -44,6 +44,7 @@ dependencies:
   fluttertoast: ^8.2.5
   google_ml_kit: ^0.17.0
   cloud_firestore: ^4.17.1
+  flutter_slidable: ^3.1.0
 
 dev_dependencies:
   flutter_test:

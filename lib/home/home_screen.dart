@@ -148,9 +148,9 @@ class _HomeScreenState extends State<HomeScreen> {
         child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
+        items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.folder),
+            icon:  Icon(Icons.folder),
             label: 'Library',
           ),
           BottomNavigationBarItem(
