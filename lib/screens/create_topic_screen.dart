@@ -12,6 +12,11 @@ class _CreateTopicState extends State<CreateTopic> {
   List<String> _englishWords = []; // List to store English words
   List<String> _vietnameseMeanings = [];
 
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _englishWord = TextEditingController();
+  TextEditingController _vietnameWord = TextEditingController();
+
+
   void _handleSave() {
     if (_formKey.currentState!.validate()) {
       // Save the topic data (title, englishWord, vietnameseMeaning)
@@ -52,6 +57,7 @@ class _CreateTopicState extends State<CreateTopic> {
           child: Column(
             children: <Widget>[
               TextFormField(
+                controller: _titleController,
                 decoration: InputDecoration(
                   labelText: 'Topic Title',
                 ),
@@ -90,6 +96,7 @@ class _CreateTopicState extends State<CreateTopic> {
                                   decoration: InputDecoration(
                                     labelText: 'English Word',
                                   ),
+                                  
                                   validator: (value) {
                                     if (value!.isEmpty) {
                                       return 'Please enter an English word.';

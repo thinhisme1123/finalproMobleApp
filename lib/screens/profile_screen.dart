@@ -200,7 +200,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                      confirm: Expanded(
                        child: ElevatedButton(
                          onPressed: () {
-                            AuthSevice().signout();
+                            _signout();
+                            Navigator.pop(context);
                          },
                          style: ElevatedButton.styleFrom(
                              backgroundColor: Colors.redAccent,
@@ -218,5 +219,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
        ),
      ),
    );
+ }
+
+ _signout() async {
+     await AuthSevice().signout();
+     Get.toNamed('/welcome');
  }
 }

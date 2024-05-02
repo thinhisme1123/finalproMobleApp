@@ -76,7 +76,7 @@ class _MyAppState extends State<MyApp> {
                 debugShowCheckedModeBanner: false,
                 title: 'Learning Vocabulary Application',
                 theme: lightMode,
-                initialRoute: _isLoggedIn ? "/home-screen" :"/welcome",
+                initialRoute:_isLoggedIn ? "/home-screen" : "/welcome",
                 getPages: [
                   GetPage(name: '/welcome', page: () => const WelcomeScreen()),
                   GetPage(name: '/profile', page: () => const ProfileScreen()),

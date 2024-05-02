@@ -5,6 +5,9 @@ import 'package:flip_card/flip_card.dart';
 
 
 class FlashCardScreen extends StatefulWidget {
+  
+
+
   @override
   State<StatefulWidget> createState() => _FlashCardScreenState();
 }
