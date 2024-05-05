@@ -33,6 +33,7 @@ class _SignInScreenState extends State<SignInScreen> {
   void _initSharedPreferences() async {
     _prefs = await SharedPreferences.getInstance();
   }
+
   void _saveData(String key, String? text) async {
     if (text != null) {
       await _prefs.setString(key, text);
@@ -41,6 +42,7 @@ class _SignInScreenState extends State<SignInScreen> {
       print('$key is null');
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +51,7 @@ class _SignInScreenState extends State<SignInScreen> {
     // if you want to use context from globally instead of content we need to pass navigatorKey.currentContext!
     fToast.init(context);
   }
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -212,9 +215,10 @@ class _SignInScreenState extends State<SignInScreen> {
                             //             'Please agree to the processing of personal data')),
                             //   );
                             // }
-                            String? userId = await user.getUserIdByEmail(_email.text);
-                            _saveData("userID",userId);
-                            _saveData("Email",_email.text);
+                            String? userId =
+                                await user.getUserIdByEmail(_email.text);
+                            _saveData("userID", userId);
+                            _saveData("Email", _email.text);
                             //Lưu đăng nhập
                             _saveData("Login", "Yes");
                             Get.toNamed('/home-screen');
@@ -260,10 +264,14 @@ class _SignInScreenState extends State<SignInScreen> {
                       const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Icon(BoxIcons.bxl_facebook),
-                          Icon(BoxIcons.bxl_twitter),
-                          Icon(BoxIcons.bxl_google),
-                          Icon(BoxIcons.bxl_apple),
+                          Icon(BoxIcons.bxl_facebook,
+                              color: const Color(0xFF3B5998)), // Facebook blue
+                          Icon(BoxIcons.bxl_twitter,
+                              color: const Color(0xFF1DA1F2)), // Twitter blue
+                          Icon(BoxIcons.bxl_google,
+                              color: const Color(0xFFDB4437)), // Google red
+                          Icon(BoxIcons.bxl_apple,
+                              color: const Color(0xFF8E8E93)), // Apple grey
                         ],
                       ),
                       const SizedBox(
@@ -383,8 +391,6 @@ class _SignInScreenState extends State<SignInScreen> {
   //     print("error");
   //   }
   // }
-
-
 }
 
 class Logos {}

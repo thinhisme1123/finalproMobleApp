@@ -39,6 +39,7 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
                   width: 250,
                   height: 250,
                   child: FlipCard(
+                      key: ValueKey(_flashcards[_currentIndex]),
                       front: FlashcardView(
                         text: _flashcards[_currentIndex].question,
                       ),
@@ -52,6 +53,9 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
                     onPressed: showPreviousCard,
                     icon: Icon(Icons.chevron_left),
                     label: Text('Prev'),
+                  ),
+                  Text(
+                    '${_currentIndex + 1}/${_flashcards.length}'
                   ),
                   OutlinedButton.icon(
                     onPressed: showNextCard,

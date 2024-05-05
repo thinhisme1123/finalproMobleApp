@@ -264,13 +264,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Icon(
-                            BoxIcons.bxl_facebook,
-                            color: Colors.blue,
-                          ),
-                          Icon(BoxIcons.bxl_twitter),
-                          Icon(BoxIcons.bxl_google),
-                          Icon(BoxIcons.bxl_apple),
+                          Icon(BoxIcons.bxl_facebook,
+                              color: const Color(0xFF3B5998)), // Facebook blue
+                          Icon(BoxIcons.bxl_twitter,
+                              color: const Color(0xFF1DA1F2)), // Twitter blue
+                          Icon(BoxIcons.bxl_google,
+                              color: const Color(0xFFDB4437)), // Google red
+                          Icon(BoxIcons.bxl_apple,
+                              color: const Color(0xFF8E8E93)), 
                         ],
                       ),
                       const SizedBox(
