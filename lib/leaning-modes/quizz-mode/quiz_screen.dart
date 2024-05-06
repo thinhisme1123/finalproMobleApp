@@ -83,35 +83,40 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   Widget _answerButton(Answer answer) {
-  bool isSelected = answer == selectedAnswer;
+    bool isSelected = answer == selectedAnswer;
 
-  return Container(
-    width: double.infinity,
-    margin: const EdgeInsets.symmetric(vertical: 8),
-    height: 48,
-    child: ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        shape: const StadiumBorder(), backgroundColor: isSelected ? Colors.orangeAccent : Colors.white,
-      ),
-      onPressed: () {
-        if (selectedAnswer == null) {
-          if (answer.isCorrect) {
-            score++;
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      height: 55,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: const StadiumBorder(),
+          backgroundColor: isSelected ? Colors.orangeAccent : Colors.white,
+        ),
+        onPressed: () {
+          if (selectedAnswer == null || selectedAnswer != answer) {
+            if (answer.isCorrect) {
+              score++;
+            }
+            setState(() {
+              selectedAnswer = answer;
+            });
+          } else {
+            setState(() {
+              selectedAnswer = null;
+            });
           }
-          setState(() {
-            selectedAnswer = answer;
-          });
-        }
-      },
-      child: Text(
-        answer.answerText,
-        style: TextStyle(
-          color: isSelected ? Colors.white : Colors.black,
+        },
+        child: Text(
+          answer.answerText,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.black,
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
 
 
@@ -124,7 +129,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
     return Container(
       width: MediaQuery.of(context).size.width * 0.5,
-      height: 48,
+      height: 55,
       child: ElevatedButton(
         child: Text(isLastQuestion ? "Submit" : "Next"),
         style: ElevatedButton.styleFrom(
