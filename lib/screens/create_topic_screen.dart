@@ -1,5 +1,7 @@
+import 'package:finalproject/model/Topic.dart';
 import 'package:finalproject/screens/form_add_vocab.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CreateTopic extends StatefulWidget {
   @override
@@ -9,39 +11,102 @@ class CreateTopic extends StatefulWidget {
 class _CreateTopicState extends State<CreateTopic> {
   final _formKey = GlobalKey<FormState>();
   String _title = "";
-  List<String> _englishWords = []; // List to store English words
-  List<String> _vietnameseMeanings = [];
+  List<Map<String, String>> _vocabularyList = [];
+  List<TextEditingController> _englishControllers = [];
+  List<TextEditingController> _vietnameseControllers = [];
 
   TextEditingController _titleController = TextEditingController();
-  TextEditingController _englishWord = TextEditingController();
-  TextEditingController _vietnameWord = TextEditingController();
 
+  String getDate() {
+    DateTime now = DateTime.now();
+    return '${now.day}:${now.month}:${now.year}';
+  }
 
-  void _handleSave() {
+  @override
+  void initState() {
+    super.initState();
+    _addTerm(); // Add an initial term
+  }
+
+  void _handleSave() async {
     if (_formKey.currentState!.validate()) {
-      // Save the topic data (title, englishWord, vietnameseMeaning)
-      // You can implement logic to store this data in your app's storage
-      // (e.g., database, shared preferences)
-      print("Topic created: $_title ($_englishWords - $_vietnameseMeanings)");
-      Navigator.pop(context); // Close the screen after saving
+      _formKey.currentState!.save();
+
+      try {
+        // Create a new topic
+        String? errorMessage = await Topic().createTopic(_title, getDate());
+
+        if (errorMessage == null) {
+          // Fetch the newly created topic from Firestore
+          List<Topic> topics = await Topic().getTopics();
+          Topic newTopic = topics.last; // Assuming the last topic is the one just created
+
+          //title và danh sách các từ vựng
+          print("Topic created: ${newTopic.title}");
+          // //in từ tiếng anh
+          // print("Engling words:");
+          // for (var vocabMap in _vocabularyList) {
+          //   String? englishWord = vocabMap["english"];
+          //   print(englishWord);
+          // }
+          // //in từ tiếng việt
+          // print("Vietname words:");
+          // for (var vocabMap in _vocabularyList) {
+          //   String? englishWord = vocabMap["vietnamese"];
+          //   print(englishWord);
+          // }
+
+
+          //chuyển qua home screen mode và đổ dữ liệu vào để bắt đầu học topic này
+          // Navigate to the next screen or perform additional actions
+          // For example:
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => TopicDetailScreen(topic: newTopic),
+          //   ),
+          // );
+          Get.back();
+        } else {
+          print(errorMessage);
+          // Handle the error here, e.g., show a snackbar or dialog
+        }
+      } catch (e) {
+        print("Error creating topic: $e");
+        Get.back();
+        // Handle the error here, e.g., show a snackbar or dialog
+      }
     }
   }
 
   void _addTerm() {
     setState(() {
-      _englishWords.add("");
-      _vietnameseMeanings.add("");
+      _vocabularyList.add({"english": "", "vietnamese": ""});
+      _englishControllers.add(TextEditingController());
+      _vietnameseControllers.add(TextEditingController());
     });
   }
 
   void _removeTerm(int index) {
-    if (_englishWords.length > 1) {
-      // Prevent removing the last term
+    if (_vocabularyList.length > 1) {
       setState(() {
-        _englishWords.removeAt(index);
-        _vietnameseMeanings.removeAt(index);
+        _vocabularyList.removeAt(index);
+        _englishControllers.removeAt(index);
+        _vietnameseControllers.removeAt(index);
       });
     }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    for (var controller in _englishControllers) {
+      controller.dispose();
+    }
+    for (var controller in _vietnameseControllers) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   @override
@@ -67,7 +132,7 @@ class _CreateTopicState extends State<CreateTopic> {
                   }
                   return null;
                 },
-                onSaved: (value) => setState(() => _title = value!),
+                onSaved: (value) => _title = value!,
               ),
               SizedBox(
                 height: 20,
@@ -75,11 +140,10 @@ class _CreateTopicState extends State<CreateTopic> {
               SizedBox(height: 10.0),
               ListView.builder(
                 shrinkWrap: true,
-                itemCount: _englishWords.length,
+                itemCount: _vocabularyList.length,
                 itemBuilder: (context, index) {
                   return Dismissible(
-                    // Wrap each term in Dismissible
-                    key: Key(UniqueKey().toString()), // Dismiss on swipe right
+                    key: Key(UniqueKey().toString()),
                     onDismissed: (direction) => _removeTerm(index),
                     child: Column(
                       children: [
@@ -93,21 +157,21 @@ class _CreateTopicState extends State<CreateTopic> {
                             child: Column(
                               children: [
                                 TextFormField(
+                                  controller: _englishControllers[index],
                                   decoration: InputDecoration(
                                     labelText: 'English Word',
                                   ),
-                                  
                                   validator: (value) {
                                     if (value!.isEmpty) {
                                       return 'Please enter an English word.';
                                     }
                                     return null;
                                   },
-                                  onSaved: (value) => setState(
-                                      () => _englishWords[index] = value!),
+                                  onSaved: (value) => _vocabularyList[index]["english"] = value!,
                                 ),
                                 SizedBox(height: 10.0),
                                 TextFormField(
+                                  controller: _vietnameseControllers[index],
                                   decoration: InputDecoration(
                                     labelText: 'Vietnamese Meaning',
                                   ),
@@ -117,14 +181,13 @@ class _CreateTopicState extends State<CreateTopic> {
                                     }
                                     return null;
                                   },
-                                  onSaved: (value) => setState(() =>
-                                      _vietnameseMeanings[index] = value!),
+                                  onSaved: (value) => _vocabularyList[index]["vietnamese"] = value!,
                                 ),
                               ],
                             ),
                           ),
                         ),
-                        SizedBox(height: 10.0), // Add spacing between terms
+                        SizedBox(height: 10.0),
                       ],
                     ),
                   );

@@ -14,7 +14,7 @@ class Folder {
       await FirebaseFirestore.instance
           .collection("Folder")
           .add({"Title": title, "Desc": description});
-      print("Sucessfully");
+      print("Create Folder Sucessfully");
       return null;
     } catch (e) {
       print("Error in creating user details: $e");
