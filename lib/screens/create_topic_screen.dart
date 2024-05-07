@@ -1,7 +1,10 @@
+import 'package:finalproject/Helper/SharedPreferencesHelper.dart';
 import 'package:finalproject/model/Topic.dart';
 import 'package:finalproject/screens/form_add_vocab.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../model/Word.dart';
 
 class CreateTopic extends StatefulWidget {
   @override
@@ -11,6 +14,11 @@ class CreateTopic extends StatefulWidget {
 class _CreateTopicState extends State<CreateTopic> {
   final _formKey = GlobalKey<FormState>();
   String _title = "";
+  bool active = true;
+  late String userID;
+  late String email;
+  final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
+
   List<Map<String, String>> _vocabularyList = [];
   List<TextEditingController> _englishControllers = [];
   List<TextEditingController> _vietnameseControllers = [];
@@ -21,10 +29,18 @@ class _CreateTopicState extends State<CreateTopic> {
     DateTime now = DateTime.now();
     return '${now.day}:${now.month}:${now.year}';
   }
-
+  void _initSharedPreferences() async {
+    setState(() async {
+      userID = await sharedPreferencesHelper.getUserID() ?? '';
+      print("id $userID");
+      email = await sharedPreferencesHelper.getEmail() ?? "";
+      print("email $email");
+    });
+  }
   @override
   void initState() {
     super.initState();
+    _initSharedPreferences();
     _addTerm(); // Add an initial term
   }
 
@@ -34,47 +50,27 @@ class _CreateTopicState extends State<CreateTopic> {
 
       try {
         // Create a new topic
-        String? errorMessage = await Topic().createTopic(_title, getDate());
-
-        if (errorMessage == null) {
-          // Fetch the newly created topic from Firestore
-          List<Topic> topics = await Topic().getTopics();
-          Topic newTopic = topics.last; // Assuming the last topic is the one just created
-
-          //title và danh sách các từ vựng
-          print("Topic created: ${newTopic.title}");
-          // //in từ tiếng anh
-          // print("Engling words:");
-          // for (var vocabMap in _vocabularyList) {
-          //   String? englishWord = vocabMap["english"];
-          //   print(englishWord);
-          // }
-          // //in từ tiếng việt
-          // print("Vietname words:");
-          // for (var vocabMap in _vocabularyList) {
-          //   String? englishWord = vocabMap["vietnamese"];
-          //   print(englishWord);
-          // }
-
-
-          //chuyển qua home screen mode và đổ dữ liệu vào để bắt đầu học topic này
-          // Navigate to the next screen or perform additional actions
-          // For example:
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => TopicDetailScreen(topic: newTopic),
-          //   ),
-          // );
+        // String? errorMessage = await Topic().createTopic("", getDate(), _title, folderId: "folderID");
+        String? topicId = await Topic().createTopic(userID, getDate(), _title, active, folderId: "folderID");
+        if (topicId != null) {
+          // Create words associated with the newly created topic
+          print("Topic ID $topicId");
+          for (var vocabMap in _vocabularyList) {
+            String engWord = vocabMap["english"]!;
+            String vietWord = vocabMap["vietnamese"]!;
+            Word word =  Word.n(topicId,engWord, vietWord);
+            try{
+              await word.createWord();
+            } catch(e){
+              print("Error creating word $engWord: $e");
+              Get.back();
+            }
+          }
           Get.back();
-        } else {
-          print(errorMessage);
-          // Handle the error here, e.g., show a snackbar or dialog
         }
       } catch (e) {
         print("Error creating topic: $e");
         Get.back();
-        // Handle the error here, e.g., show a snackbar or dialog
       }
     }
   }

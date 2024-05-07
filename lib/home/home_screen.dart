@@ -9,6 +9,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Helper/SharedPreferencesHelper.dart';
 import '../model/User.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -19,15 +20,18 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   int _previousIndex = 0;
-  late SharedPreferences _prefs;
+
+  final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
   String userID ="";
   String email = "";
+
   void _initSharedPreferences() async {
-    _prefs = await SharedPreferences.getInstance();
-    setState(() {
-      userID = _prefs.getString('userID') ?? '';
+    await sharedPreferencesHelper.init();
+    setState(() async {
+      userID = await sharedPreferencesHelper.getUserID() ?? '';
       print("id $userID");
-      email = _prefs.getString("Email") ?? "";
+      email = await sharedPreferencesHelper.getEmail() ?? "";
+      tProfileSubHeading = email;
       print("email $email");
     });
   }

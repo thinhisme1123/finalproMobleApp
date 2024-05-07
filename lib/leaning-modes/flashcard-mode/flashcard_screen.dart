@@ -1,39 +1,44 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import '../../model/Word.dart';
 import 'flashcard.dart';
 import 'flashcard_view.dart';
 import 'package:flip_card/flip_card.dart';
 
 
 class FlashCardScreen extends StatefulWidget {
-  
-
 
   @override
   State<StatefulWidget> createState() => _FlashCardScreenState();
 }
 
 class _FlashCardScreenState extends State<FlashCardScreen> {
-  // store the values to here
-  List<Flashcard> _flashcards = [
-    Flashcard(
-        question: "What programming language does Flutter use?",
-        answer: "Dart"),
-    Flashcard(question: "Who you gonna call?", answer: "Ghostbusters!"),
-    Flashcard(
-        question: "Who teaches you how to write sexy code?",
-        answer: "Ya boi Kilo Loco!")
-  ];
   PageController _pageViewController = PageController();
-
+  late List<Flashcard> _flashcards;
   int _currentIndex = 0;
+  bool _isLoading = true;
 
   @override
   void initState() {
-    _pageViewController = PageController(initialPage: _currentIndex);
     super.initState();
+    _pageViewController = PageController(initialPage: _currentIndex);
+    _loadWords();
   }
+
+  Future<void> _loadWords() async {
+    List<Word> words = await Word().getWords();
+    _flashcards = words.map((word) {
+      return Flashcard(
+        question: word.engWord,
+        answer: word.vietWord,
+      );
+    }).toList();
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
   @override
   void dispose() {
     _pageViewController.dispose();
@@ -46,7 +51,9 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
       home: Scaffold(
         backgroundColor: const Color(0xFF51C5F5),
         body: Center(
-          child: Column(
+          child:_isLoading
+            ? CircularProgressIndicator()
+            : Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
@@ -131,5 +138,6 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
         );
       }
     });
+  }
 }
-}
+ 

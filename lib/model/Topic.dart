@@ -2,29 +2,30 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Topic {
   String title = '';
-  String userId = '';
+  String userID = '';
   String date = '';
-  // List<Map<String, String>> vocabularyList = [];
   String? folderId; // Optional folderId to associate the topic with a folder
+  bool active = true;
 
   Topic();
+  Topic.n(this.date, this.userID, this.title, this.active, {this.folderId});
 
-  Topic.n(this.title, {this.folderId});
-
-  Future<String?> createTopic(String title, String date,{String? folderId}) async {
+  Future<String?> createTopic(String userId, String date, String title, bool active, {String? folderId}) async {
     try {
       Map<String, dynamic> data = {
-        "title": title,
-        "date": date,
-        if (folderId != null) "folderId": folderId,
+        "Title": title,
+        "Date": date,
+        "UserID": userId,
+        "Active": true,
+        "FolderID": folderId ?? "",
       };
 
-      await FirebaseFirestore.instance.collection("Topic").add(data);
-      print("Topic created successfully");
-      return null;
+      DocumentReference docRef = await FirebaseFirestore.instance.collection("Topic").add(data);
+      print("Topic created successfully with ID: ${docRef.id}");
+      return docRef.id;
     } catch (e) {
       print("Error creating topic: $e");
-      return 'Failed to create topic: $e';
+      return null;
     }
   }
   
@@ -40,6 +41,7 @@ class Topic {
       print("Error updating topic: $e");
     }
   }
+
 
   Future<List<Topic>> getTopics({String? folderId}) async {
     List<Topic> topicList = [];
@@ -60,7 +62,7 @@ class Topic {
           List<Map<String, String>> vocabularyList = List<Map<String, String>>.from(data['vocabularyList'] ?? []);
           String? folderId = data['folderId'];
 
-          Topic topic = Topic.n(title, folderId: folderId);
+          Topic topic = Topic.n(date, userID ,title, active, folderId: folderId);
           topicList.add(topic);
         }
       }
