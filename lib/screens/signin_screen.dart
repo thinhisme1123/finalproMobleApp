@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:finalproject/utils/Toast.dart' as toast;
 
+import '../Helper/SharedPreferencesHelper.dart';
 import '../model/User.dart';
 import '../theme/theme.dart';
 
@@ -28,25 +29,28 @@ class _SignInScreenState extends State<SignInScreen> {
   User user = User();
   final _email = TextEditingController();
   final _password = TextEditingController();
-  late SharedPreferences _prefs;
 
-  void _initSharedPreferences() async {
-    _prefs = await SharedPreferences.getInstance();
-  }
+  final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
 
-  void _saveData(String key, String? text) async {
-    if (text != null) {
-      await _prefs.setString(key, text);
-    } else {
-      // Xử lý khi text là null, ví dụ:
-      print('$key is null');
-    }
-  }
+  // late SharedPreferences _prefs;
+
+  // void _initSharedPreferences() async {
+  //   _prefs = await SharedPreferences.getInstance();
+  // }
+
+  // void _saveData(String key, String? text) async {
+  //   if (text != null) {
+  //     await _prefs.setString(key, text);
+  //   } else {
+  //     // Xử lý khi text là null, ví dụ:
+  //     print('$key is null');
+  //   }
+  // }
 
   @override
   void initState() {
     super.initState();
-    _initSharedPreferences();
+    // _initSharedPreferences();
     fToast = FToast();
     // if you want to use context from globally instead of content we need to pass navigatorKey.currentContext!
     fToast.init(context);
@@ -215,12 +219,11 @@ class _SignInScreenState extends State<SignInScreen> {
                             //             'Please agree to the processing of personal data')),
                             //   );
                             // }
-                            String? userId =
-                                await user.getUserIdByEmail(_email.text);
-                            _saveData("userID", userId);
-                            _saveData("Email", _email.text);
-                            //Lưu đăng nhập
-                            _saveData("Login", "Yes");
+
+                            String? userId = await user.getUserIdByEmail(_email.text);
+                            sharedPreferencesHelper.saveUserID(userId);
+                            sharedPreferencesHelper.saveEmail(_email.text);
+                            sharedPreferencesHelper.saveLoginState(true);
                             Get.toNamed('/home-screen');
                           },
                           child: const Text('Sign in'),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../flashcard-mode/flashcard.dart';
 import 'question_model.dart';
 
 class QuizScreen extends StatefulWidget {
@@ -8,7 +9,19 @@ class QuizScreen extends StatefulWidget {
 
 class _QuizScreenState extends State<QuizScreen> {
   //define the datas
-  List<Question> questionList = getQuestions();
+  // List<Question> questionList = getQuestions();
+  late List<Question> questionList;
+  void initState() {
+    super.initState();
+    List<Flashcard> flashcards = [
+      Flashcard(question: "What programming language does Flutter use?", answer: "Dart"),
+      Flashcard(question: "Who you gonna call?", answer: "Ghostbusters!"),
+      Flashcard(question: "Who teaches you how to write sexy code?", answer: "Ya boi Kilo Loco!"),
+      Flashcard(question: "Who is Mai Van Manh", answer: "Teacher")
+
+    ];
+    questionList = generateQuiz(flashcards);
+  }
   int currentQuestionIndex = 0;
   int score = 0;
   Answer? selectedAnswer;

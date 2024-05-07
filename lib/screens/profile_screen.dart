@@ -7,6 +7,8 @@ import 'package:finalproject/auth/auth_service.dart';
 import 'package:line_awesome_flutter/line_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../Helper/SharedPreferencesHelper.dart';
+
 // Constants
 const String tProfile = 'Profile';
 const String tProfileImage = 'assets/images/profile.jpg';
@@ -76,29 +78,33 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
- late SharedPreferences _prefs;
+ final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
+
+ late Future<void> _loadingData;
 
  String userID ="";
  String email = "";
 
- void _initSharedPreferences() async {
-   _prefs = await SharedPreferences.getInstance();
-   setState(() {
-     userID = _prefs.getString('userID') ?? '';
+ Future<void> _initSharedPreferences() async {
+   await sharedPreferencesHelper.init();
+   setState(() async {
+     userID = await sharedPreferencesHelper.getUserID() ?? '';
      print("id $userID");
-     email = _prefs.getString("Email") ?? "";
+     email = await sharedPreferencesHelper.getEmail() ?? "";
      tProfileSubHeading = email;
      print("email $email");
    });
  }
+
  void initState() {
    // TODO: implement initState
    super.initState();
-   _initSharedPreferences();
+   _loadingData = _initSharedPreferences();
  }
  @override
  Widget build(BuildContext context) {
    var isDark = MediaQuery.of(context).platformBrightness == Brightness.dark;
+
    return Scaffold(
      appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -191,6 +197,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                  endIcon: false,
                  onPress: () {
                    Get.defaultDialog(
+                     barrierDismissible: true,
                      title: "LOGOUT",
                      titleStyle: const TextStyle(fontSize: 20),
                      content: const Padding(
@@ -201,7 +208,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                        child: ElevatedButton(
                          onPressed: () {
                             _signout();
-                            Navigator.pop(context);
+                            Get.back();
+                           // Navigator.pop(context);
                          },
                          style: ElevatedButton.styleFrom(
                              backgroundColor: Colors.redAccent,
@@ -223,6 +231,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
  _signout() async {
      await AuthSevice().signout();
+     final SharedPreferences prefs = await SharedPreferences.getInstance();
+     await prefs.clear();
      Get.toNamed('/welcome');
  }
 }
