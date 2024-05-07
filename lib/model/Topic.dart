@@ -27,6 +27,19 @@ class Topic {
       return 'Failed to create topic: $e';
     }
   }
+  
+  Future<void> updateTopic(String topicId, String newTitle, List<Map<String, String>> newVocabularyList) async {
+    try {
+      await FirebaseFirestore.instance.collection("topics").doc(topicId).update({
+        "title": newTitle,
+        "vocabularyList": newVocabularyList,
+      });
+
+      print("Topic updated successfully");
+    } catch (e) {
+      print("Error updating topic: $e");
+    }
+  }
 
   Future<List<Topic>> getTopics({String? folderId}) async {
     List<Topic> topicList = [];
