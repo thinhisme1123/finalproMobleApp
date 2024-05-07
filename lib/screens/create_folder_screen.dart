@@ -22,25 +22,23 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
       _formKey.currentState!.save();
 
       try {
-        // Create a new folder document in the "Folder" collection
-        await FirebaseFirestore.instance.collection("Folder").add({
-          "Title": _title,
-          "Desc": _description,
-        });
+        String? errorMessage = await Folder().createFolder(_title,_description);
 
-        print("Folder title: $_title");
-        print("Folder desc: $_description");
+        if (errorMessage == null) {
+          List<Folder> folders = await Folder().getFolders();
+          Folder newFolder = folders.last; 
 
-        Folder newFolder = Folder.n(_title, _description);
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => FolderDetailAfterCreate(folder: newFolder)),
-        );
+          print("Folder created: ${newFolder}");
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => FolderDetailAfterCreate(folder: newFolder)),
+          );
+        } else {
+          print(errorMessage);
+        }
       } catch (e) {
         print("Error creating folder: $e");
-        // Handle the error here, e.g., show a snackbar or dialog
       }
     }
   }

@@ -1,4 +1,4 @@
-import 'package:finalproject/screens/create_folder_screen%20copy.dart';
+import 'package:finalproject/screens/create_folder_screen.dart';
 import 'package:finalproject/screens/create_topic_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:finalproject/screens/welcome_screen.dart';
@@ -80,7 +80,7 @@ class _MyAppState extends State<MyApp> {
                 getPages: [
                   GetPage(name: '/welcome', page: () => const WelcomeScreen()),
                   GetPage(name: '/profile', page: () => const ProfileScreen()),
-                  GetPage(name: '/home-screen', page: () => HomeScreenModes()),
+                  GetPage(name: '/home-screen', page: () => HomeScreen()),
                   GetPage(name: '/home-mode-screen', page: () => HomeScreenModes()),
                   GetPage(name: '/create-topic', page: () => CreateTopic()),
                   GetPage(name: '/create-folder', page: () => CreateFolderScreen()),

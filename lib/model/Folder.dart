@@ -9,6 +9,8 @@ class Folder {
 
   Folder.n(this.title, this.description);
 
+ 
+
   Future<String?> createFolder(String title, String description) async {
     try {
       await FirebaseFirestore.instance
@@ -44,6 +46,19 @@ class Folder {
     } catch (e) {
       print('Error getting folders: $e');
       return [];
+    }
+  }
+
+  Future<void> updateFolder(String folderId, String newTitle, String newDescription) async {
+    try {
+      await FirebaseFirestore.instance.collection("folders").doc(folderId).update({
+        "title": newTitle,
+        "description": newDescription,
+      });
+
+      print("Folder updated successfully");
+    } catch (e) {
+      print("Error updating folder: $e");
     }
   }
 

@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finalproject/screens/edit_folder_screen.dart';
 import 'package:finalproject/screens/folder_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:finalproject/model/Folder.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:get/get.dart';
 
 class LibraryScreen extends StatefulWidget {
   @override
@@ -24,6 +26,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
       _folders = folders;
     });
   }
+
 
   void _addFolder(Folder folder) {
     setState(() {
@@ -76,15 +79,27 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                 }),
                                 children: [
                                   SlidableAction(
-                                    onPressed: (context) {
+                                    onPressed: (context) async {
                                       // Handle folder deletion
-                                      Folder().deleteFolder(folder.title);
+                                      await Folder().deleteFolder(folder.title);
+                                      _fetchFolders();
                                       print('Folder ${folder.title} deleted');
                                     },
                                     backgroundColor: Colors.red,
                                     foregroundColor: Colors.white,
                                     icon: Icons.delete,
                                     label: 'Delete',
+                                  ),
+                                  SlidableAction(
+                                    onPressed: (context) {
+                                      // Handle folder edit
+                                      
+                                      Get.to(EditFolderScreen(title: folder.title, desc: folder.description));
+                                    },
+                                    backgroundColor: Colors.green,
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.update,
+                                    label: 'Edit',
                                   ),
                                 ],
                               ),
