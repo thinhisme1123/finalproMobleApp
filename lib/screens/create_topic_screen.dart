@@ -1,6 +1,7 @@
 import 'package:finalproject/Helper/SharedPreferencesHelper.dart';
 import 'package:finalproject/model/Topic.dart';
 import 'package:finalproject/screens/form_add_vocab.dart';
+import 'package:finalproject/screens/library_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,6 +18,8 @@ class _CreateTopicState extends State<CreateTopic> {
   bool active = true;
   late String userID;
   late String email;
+  List<Topic> _topics= [];
+
   final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
 
   List<Map<String, String>> _vocabularyList = [];
@@ -43,11 +46,15 @@ class _CreateTopicState extends State<CreateTopic> {
     _initSharedPreferences();
     _addTerm(); // Add an initial term
   }
-
+  Future<void> _fetchTopics() async {
+    List<Topic> topics = await Topic().getTopics();
+    setState(() {
+      _topics = topics;
+    });
+  }
   void _handleSave() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
       try {
         // Create a new topic
         // String? errorMessage = await Topic().createTopic("", getDate(), _title, folderId: "folderID");
@@ -66,7 +73,8 @@ class _CreateTopicState extends State<CreateTopic> {
               Get.back();
             }
           }
-          Get.back();
+          await _fetchTopics();
+          Get.off(LibraryScreen());
         }
       } catch (e) {
         print("Error creating topic: $e");

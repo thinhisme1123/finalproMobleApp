@@ -16,7 +16,14 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
   String _description = "";
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
+  List<Folder> _folders = [];
 
+  Future<void> _fetchFolders() async {
+    List<Folder> folders = await Folder().getFolders();
+    setState(() {
+      _folders = folders;
+    });
+  }
   void _handleSave() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();

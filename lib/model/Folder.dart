@@ -4,10 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 class Folder {
   String title = '';
   String description = '';
-
+  String folderId ="";
   Folder();
 
-  Folder.n(this.title, this.description);
+  Folder.n(this.title, this.description, this.folderId);
 
  
 
@@ -35,10 +35,11 @@ class Folder {
         Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
 
         if (data != null) {
+          String id = document.id;
           String title = data['Title'] ?? '';
           String description = data['Desc'] ?? '';
 
-          Folder folder = Folder.n(title, description);
+          Folder folder = Folder.n(title, description, id);
           folderList.add(folder);
         }
       }

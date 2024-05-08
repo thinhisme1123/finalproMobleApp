@@ -17,7 +17,7 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>{
   int _selectedIndex = 0;
   int _previousIndex = 0;
 
@@ -25,16 +25,32 @@ class _HomeScreenState extends State<HomeScreen> {
   String userID ="";
   String email = "";
 
+  // void _initSharedPreferences() async {
+  //   await sharedPreferencesHelper.init();
+  //   setState(() async {
+  //     userID = await sharedPreferencesHelper.getUserID() ?? '';
+  //     print("id $userID");
+  //     email = await sharedPreferencesHelper.getEmail() ?? "";
+  //     tProfileSubHeading = email;
+  //     print("email $email");
+  //   });
+  // }
+
   void _initSharedPreferences() async {
     await sharedPreferencesHelper.init();
-    setState(() async {
-      userID = await sharedPreferencesHelper.getUserID() ?? '';
+    String newUserID = await sharedPreferencesHelper.getUserID() ?? '';
+    String newEmail = await sharedPreferencesHelper.getEmail() ?? "";
+    userID = await sharedPreferencesHelper.getUserID() ?? '';
+    email = await sharedPreferencesHelper.getEmail() ?? "";
+    tProfileSubHeading = email;
+    setState(() {
+      userID = newUserID;
+      email = newEmail;
       print("id $userID");
-      email = await sharedPreferencesHelper.getEmail() ?? "";
-      tProfileSubHeading = email;
       print("email $email");
     });
   }
+
   static List<Widget> _widgetOptions = <Widget>[
     LibraryScreen(),
     BottomSheetScreen(), 

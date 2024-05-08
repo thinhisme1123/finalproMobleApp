@@ -6,9 +6,9 @@ class Topic {
   String date = '';
   String? folderId; // Optional folderId to associate the topic with a folder
   bool active = true;
-
+  String topicID = "";
   Topic();
-  Topic.n(this.date, this.userID, this.title, this.active, {this.folderId});
+  Topic.n(this.date, this.userID, this.title, this.active,this.topicID, {this.folderId});
 
   Future<String?> createTopic(String userId, String date, String title, bool active, {String? folderId}) async {
     try {
@@ -42,27 +42,25 @@ class Topic {
     }
   }
 
-
-  Future<List<Topic>> getTopics({String? folderId}) async {
+  Future<List<Topic>> getTopics() async {
     List<Topic> topicList = [];
 
     try {
-      Query query = FirebaseFirestore.instance.collection('Topic');
-      if (folderId != null) {
-        query = query.where('folderId', isEqualTo: folderId);
-      }
-
-      QuerySnapshot querySnapshot = await query.get();
+      QuerySnapshot querySnapshot =
+      await FirebaseFirestore.instance.collection('Topic').get();
 
       for (var document in querySnapshot.docs) {
         Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
 
         if (data != null) {
-          String title = data['title'] ?? '';
-          List<Map<String, String>> vocabularyList = List<Map<String, String>>.from(data['vocabularyList'] ?? []);
-          String? folderId = data['folderId'];
+          String id = document.id;
+          String title = data['Title'] ?? '';
+          String folderId = data['FolderID'] ?? '';
+          bool active = data['Active'] ?? false;
+          String date = data['Date'] ?? '';
+          String userId = data['userID'] ?? '';
 
-          Topic topic = Topic.n(date, userID ,title, active, folderId: folderId);
+          Topic topic = Topic.n(date, userId, title, active,id,folderId: folderId);
           topicList.add(topic);
         }
       }
@@ -72,6 +70,35 @@ class Topic {
       return [];
     }
   }
+  // Future<List<Topic>> getTopicsByFolderID({String? folderId}) async {
+  //   List<Topic> topicList = [];
+  //
+  //   try {
+  //     Query query = FirebaseFirestore.instance.collection('Topic');
+  //     if (folderId != null) {
+  //       query = query.where('folderId', isEqualTo: folderId);
+  //     }
+  //
+  //     QuerySnapshot querySnapshot = await query.get();
+  //
+  //     for (var document in querySnapshot.docs) {
+  //       Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
+  //
+  //       if (data != null) {
+  //         String title = data['title'] ?? '';
+  //         List<Map<String, String>> vocabularyList = List<Map<String, String>>.from(data['vocabularyList'] ?? []);
+  //         String? folderId = data['folderId'];
+  //
+  //         Topic topic = Topic.n(date, userID ,title, active, folderId: folderId);
+  //         topicList.add(topic);
+  //       }
+  //     }
+  //     return topicList;
+  //   } catch (e) {
+  //     print('Error getting topics: $e');
+  //     return [];
+  //   }
+  // }
 
   Future<void> deleteTopic(String topicTitle) async {
     try {
