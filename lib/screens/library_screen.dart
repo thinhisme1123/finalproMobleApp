@@ -124,6 +124,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                               //           FolderDetailScreen(
                               //               folder: topic)),
                               // );
+                              print(index);
                             },
                           ),
                         ),

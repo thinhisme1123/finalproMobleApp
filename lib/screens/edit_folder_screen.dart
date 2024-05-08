@@ -41,7 +41,7 @@ class _EditFolderScreenState extends State<EditFolderScreen> {
       try {
         Folder folder = Folder();
         await folder.updateFolder(id,_titleController.text, _descriptionController.text);
-        Get.off(HomeScreen());
+        Get.off(() => HomeScreen());
       } catch (e) {
         print("Error creating folder: $e");
       }

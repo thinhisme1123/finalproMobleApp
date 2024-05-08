@@ -201,31 +201,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                  textColor: Colors.red,
                  endIcon: false,
                  onPress: () {
-                   Get.defaultDialog(
-                     barrierDismissible: true,
-                     title: "LOGOUT",
-                     titleStyle: const TextStyle(fontSize: 20),
-                     content: const Padding(
-                       padding: EdgeInsets.symmetric(vertical: 15.0),
-                       child: Text("Are you sure, you want to Logout?"),
-                     ),
-                     confirm: Expanded(
-                       child: ElevatedButton(
-                         onPressed: () {
-                            _signout();
-                            Get.back();
-                           // Navigator.pop(context);
-                         },
-                         style: ElevatedButton.styleFrom(
-                             backgroundColor: Colors.redAccent,
-                             side: BorderSide.none),
-                         child: const Text("Yes"),
-                       ),
-                     ),
-                     cancel: OutlinedButton(
-                         onPressed: () => Get.back(),
-                         child: const Text("No")),
-                   );
+                   _showLogoutDialog();
                  }),
            ],
          ),
@@ -238,6 +214,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
      await AuthSevice().signout();
      final SharedPreferences prefs = await SharedPreferences.getInstance();
      await prefs.clear();
-     Get.toNamed('/welcome');
  }
+ void _showLogoutDialog() {
+  Get.dialog(
+    AlertDialog(
+      title: const Text("Logout"),
+      content: const Text("Are you sure you want to log out?"),
+      actions: [
+        TextButton(
+          onPressed: () => Get.back(),
+          child: const Text("Cancel"),
+        ),
+        TextButton(
+          onPressed: () {
+            _signout();
+            Get.offAllNamed('/welcome');
+            Navigator.of(context, rootNavigator: true).pop('dialog');
+          },
+          child: const Text("Logout"),
+        ),
+      ],
+    ),
+    barrierDismissible: true,
+  );
+}
 }
