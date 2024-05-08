@@ -171,8 +171,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                   SlidableAction(
                                     onPressed: (context) {
                                       // Handle folder edit
-                                      
-                                      Get.to(EditFolderScreen(title: folder.title, desc: folder.description));
+                                      Get.to(EditFolderScreen(title: folder.title, desc: folder.description, id: folder.folderId));
                                     },
                                     backgroundColor: Colors.green,
                                     foregroundColor: Colors.white,

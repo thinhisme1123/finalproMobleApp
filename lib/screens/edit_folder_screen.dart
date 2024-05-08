@@ -3,13 +3,15 @@ import 'package:finalproject/screens/folder_detail.dart';
 import 'package:finalproject/screens/folder_detail_afterCreate.dart';
 import 'package:finalproject/screens/form_add_vocab.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finalproject/screens/library_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class EditFolderScreen extends StatefulWidget {
   final String title;
   final String desc;
-
-  const EditFolderScreen({Key? key, required this.title, required this.desc})
+  final String id;
+  const EditFolderScreen({Key? key, required this.title, required this.desc, required this.id})
       : super(key: key);
 
   @override
@@ -20,12 +22,14 @@ class _EditFolderScreenState extends State<EditFolderScreen> {
   final _formKey = GlobalKey<FormState>();
   String _title = "";
   String _description = "";
-
+  String id = "";
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   @override
   void initState() {
     super.initState();
+    id = widget.id;
+    print("folder id : $id");
     _titleController.text = widget.title;
     _descriptionController.text = widget.desc;
   }
@@ -33,12 +37,10 @@ class _EditFolderScreenState extends State<EditFolderScreen> {
   void _handleSave() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-
       try {
-
-        // Folder folder = Folder();
-        // await folder.updateFolder(newTitle, newDescription, folderId);
-
+        Folder folder = Folder();
+        await folder.updateFolder(id,_titleController.text, _descriptionController.text);
+        Get.off(LibraryScreen());
       } catch (e) {
         print("Error creating folder: $e");
       }

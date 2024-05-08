@@ -52,9 +52,9 @@ class Folder {
 
   Future<void> updateFolder(String folderId, String newTitle, String newDescription) async {
     try {
-      await FirebaseFirestore.instance.collection("folders").doc(folderId).update({
-        "title": newTitle,
-        "description": newDescription,
+      await FirebaseFirestore.instance.collection("Folder").doc(folderId).update({
+        "Title": newTitle,
+        "Desc": newDescription,
       });
 
       print("Folder updated successfully");
