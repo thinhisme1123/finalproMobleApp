@@ -8,9 +8,9 @@ class Folder {
   String userId ="";
   Folder();
 
-  Folder.n(this.title, this.description, this.userId);
+  Folder.n(this.title, this.description, this.userId, this.folderId);
 
- 
+
 
   Future<String?> createFolder(String title, String description, String userId) async {
     try {
@@ -39,11 +39,12 @@ class Folder {
         Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
 
         if (data != null) {
-          String id = document.id;
+          String userId = data["userID"] ?? "";
+          String folderId = document.id;
           String title = data['Title'] ?? '';
           String description = data['Desc'] ?? '';
 
-          Folder folder = Folder.n(title, description, id);
+          Folder folder = Folder.n(title, description, userId, folderId);
           folderList.add(folder);
         }
       }
@@ -63,12 +64,12 @@ class Folder {
         if (data != null) {
           String title = data['Title'] ?? '';
           String description = data['Desc'] ?? '';
-
-          Folder folder = Folder.n(title, description, folderId);
+          String userID = data["userID"] ?? "";
+          Folder folder = Folder.n(title, description, userID , folderId);
           return folder;
         }
       }
-      return null; // Trả về null nếu không tìm thấy thư mục với ID tương ứng
+      return null;
     } catch (e) {
       print('Error getting folder by ID: $e');
       return null;
