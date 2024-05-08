@@ -5,19 +5,23 @@ class Folder {
   String title = '';
   String description = '';
   String folderId ="";
+  String userId ="";
   Folder();
 
-  Folder.n(this.title, this.description, this.folderId);
+  Folder.n(this.title, this.description, this.userId);
 
  
 
-  Future<String?> createFolder(String title, String description) async {
+  Future<String?> createFolder(String title, String description, String userId) async {
     try {
-      await FirebaseFirestore.instance
-          .collection("Folder")
-          .add({"Title": title, "Desc": description});
-      print("Create Folder Sucessfully");
-      return null;
+      Map<String, dynamic> data = {
+        "Title": title,
+        "Desc": description,
+        "UserID": userId,
+      };
+      DocumentReference docRef = await FirebaseFirestore.instance.collection("Folder").add(data);
+      print("Folder created successfully with ID: ${docRef.id}");
+      return docRef.id;
     } catch (e) {
       print("Error in creating user details: $e");
       return 'Failed to add user details: $e';
@@ -47,6 +51,27 @@ class Folder {
     } catch (e) {
       print('Error getting folders: $e');
       return [];
+    }
+  }
+  Future<Folder?> getFolderByID(String folderId) async {
+    try {
+      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance.collection('Folder').doc(folderId).get();
+
+      if (docSnapshot.exists) {
+        Map<String, dynamic>? data = docSnapshot.data() as Map<String, dynamic>?;
+
+        if (data != null) {
+          String title = data['Title'] ?? '';
+          String description = data['Desc'] ?? '';
+
+          Folder folder = Folder.n(title, description, folderId);
+          return folder;
+        }
+      }
+      return null; // Trả về null nếu không tìm thấy thư mục với ID tương ứng
+    } catch (e) {
+      print('Error getting folder by ID: $e');
+      return null;
     }
   }
 

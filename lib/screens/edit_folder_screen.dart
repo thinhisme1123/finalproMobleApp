@@ -1,3 +1,4 @@
+import 'package:finalproject/home/home_screen.dart';
 import 'package:finalproject/model/Folder.dart';
 import 'package:finalproject/screens/folder_detail.dart';
 import 'package:finalproject/screens/folder_detail_afterCreate.dart';
@@ -40,7 +41,7 @@ class _EditFolderScreenState extends State<EditFolderScreen> {
       try {
         Folder folder = Folder();
         await folder.updateFolder(id,_titleController.text, _descriptionController.text);
-        Get.off(LibraryScreen());
+        Get.off(HomeScreen());
       } catch (e) {
         print("Error creating folder: $e");
       }

@@ -5,6 +5,8 @@ import 'package:finalproject/screens/form_add_vocab.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../Helper/SharedPreferencesHelper.dart';
+
 class CreateFolderScreen extends StatefulWidget {
   @override
   _CreateFolderScreenState createState() => _CreateFolderScreenState();
@@ -14,35 +16,51 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
   final _formKey = GlobalKey<FormState>();
   String _title = "";
   String _description = "";
+  late String userID;
+  late String email;
   TextEditingController _titleController = TextEditingController();
   TextEditingController _descriptionController = TextEditingController();
   List<Folder> _folders = [];
 
-  Future<void> _fetchFolders() async {
-    List<Folder> folders = await Folder().getFolders();
-    setState(() {
-      _folders = folders;
+  final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
+
+  void _initSharedPreferences() async {
+    setState(() async {
+      userID = await sharedPreferencesHelper.getUserID() ?? '';
+      print("id $userID");
+      email = await sharedPreferencesHelper.getEmail() ?? "";
+      print("email $email");
     });
   }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _initSharedPreferences();
+  }
+
   void _handleSave() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
       try {
-        String? errorMessage = await Folder().createFolder(_title,_description);
+        String? folderId = await Folder().createFolder(
+            _title, _description, userID);
 
-        if (errorMessage == null) {
-          List<Folder> folders = await Folder().getFolders();
-          Folder newFolder = folders.last; 
-
-          print("Folder created: ${newFolder}");
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => FolderDetailAfterCreate(folder: newFolder)),
-          );
+        if (folderId != null) {
+          Folder? folder = await Folder().getFolderByID(folderId);
+          if (folder != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FolderDetailAfterCreate(folder: folder),
+              ),
+            );
+          } else {
+            print("Error: Folder not found with ID $folderId");
+          }
         } else {
-          print(errorMessage);
+          print("Error: Failed to create folder");
         }
       } catch (e) {
         print("Error creating folder: $e");

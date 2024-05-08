@@ -8,10 +8,10 @@ class Word {
   Word();
   Word.n(this.topicID, this.engWord, this.vietWord);
 
-  Future<String?> createWord() async {
+  Future<String?> createWord(String topicId, String engWord, String vietWord) async {
     try {
       await FirebaseFirestore.instance.collection('Word').add({
-        'TopicId': topicID,
+        'TopicId': topicId,
         'EngWord': engWord,
         'VietWord': vietWord,
       });

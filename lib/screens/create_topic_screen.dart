@@ -1,4 +1,5 @@
 import 'package:finalproject/Helper/SharedPreferencesHelper.dart';
+import 'package:finalproject/home/home_screen.dart';
 import 'package:finalproject/model/Topic.dart';
 import 'package:finalproject/screens/form_add_vocab.dart';
 import 'package:finalproject/screens/library_screen.dart';
@@ -65,16 +66,16 @@ class _CreateTopicState extends State<CreateTopic> {
           for (var vocabMap in _vocabularyList) {
             String engWord = vocabMap["english"]!;
             String vietWord = vocabMap["vietnamese"]!;
-            Word word =  Word.n(topicId,engWord, vietWord);
+            // Word word =  Word.n(topicId,engWord, vietWord);
             try{
-              await word.createWord();
+              await Word().createWord(topicId, engWord, vietWord);
             } catch(e){
               print("Error creating word $engWord: $e");
               Get.back();
             }
           }
           await _fetchTopics();
-          Get.off(LibraryScreen());
+          Get.off(HomeScreen());
         }
       } catch (e) {
         print("Error creating topic: $e");
