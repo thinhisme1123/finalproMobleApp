@@ -86,15 +86,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
  String email = "";
 
  Future<void> _initSharedPreferences() async {
-   await sharedPreferencesHelper.init();
-   setState(() async {
-     userID = await sharedPreferencesHelper.getUserID() ?? '';
-     print("id $userID");
-     email = await sharedPreferencesHelper.getEmail() ?? "";
-     tProfileSubHeading = email;
-     print("email $email");
-   });
- }
+  await sharedPreferencesHelper.init();
+  // Perform asynchronous work first
+  String tempUserID = await sharedPreferencesHelper.getUserID() ?? '';
+  String tempEmail = await sharedPreferencesHelper.getEmail() ?? "";
+
+  // Update the state synchronously inside setState()
+  setState(() {
+    userID = tempUserID;
+    print("id $userID");
+    email = tempEmail;
+    tProfileSubHeading = email;
+    print("email $email");
+  });
+}
 
  void initState() {
    // TODO: implement initState

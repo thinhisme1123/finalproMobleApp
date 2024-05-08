@@ -4,6 +4,7 @@ import 'package:finalproject/screens/folder_detail_afterCreate.dart';
 import 'package:finalproject/screens/form_add_vocab.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../Helper/SharedPreferencesHelper.dart';
 
@@ -25,10 +26,15 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
   final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
 
   void _initSharedPreferences() async {
-    setState(() async {
-      userID = await sharedPreferencesHelper.getUserID() ?? '';
+    // Perform asynchronous work outside of setState
+    String tempUserID = await sharedPreferencesHelper.getUserID() ?? '';
+    String tempEmail = await sharedPreferencesHelper.getEmail() ?? "";
+
+    // Update the state synchronously inside setState
+    setState(() {
+      userID = tempUserID;
       print("id $userID");
-      email = await sharedPreferencesHelper.getEmail() ?? "";
+      email = tempEmail;
       print("email $email");
     });
   }
@@ -50,12 +56,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
         if (folderId != null) {
           Folder? folder = await Folder().getFolderByID(folderId);
           if (folder != null) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => FolderDetailAfterCreate(folder: folder),
-              ),
-            );
+            Get.to(FolderDetailAfterCreate(folder: folder));
           } else {
             print("Error: Folder not found with ID $folderId");
           }
