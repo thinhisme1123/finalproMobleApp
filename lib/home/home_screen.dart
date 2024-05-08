@@ -4,6 +4,7 @@ import 'package:finalproject/leaning-modes/quizz-mode/quiz_screen.dart';
 import 'package:finalproject/leaning-modes/type-mode/type_mode.dart';
 import 'package:finalproject/screens/library_screen.dart';
 import 'package:finalproject/screens/profile_screen.dart';
+import 'package:finalproject/screens/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -52,6 +53,7 @@ class _HomeScreenState extends State<HomeScreen>{
   }
 
   static List<Widget> _widgetOptions = <Widget>[
+    SearchPage(),
     LibraryScreen(),
     BottomSheetScreen(), 
     ProfileScreen(), 
@@ -79,21 +81,24 @@ class _HomeScreenState extends State<HomeScreen>{
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
-      _previousIndex = _selectedIndex;
-      
       // Call different functions based on the selected index
       switch (index) {
         case 0:
+          _onSearchTapped();
+        case 1:
           _onLibraryTapped();
           break;
-        case 1:
+        case 2:
           _onAddCircleTapped();
           break;
-        case 2:
+        case 3:
           _onProfileTapped();
           break;
       }
     });
+  }
+  void _onSearchTapped() {
+    print("search tapped");
   }
 
   void _onLibraryTapped() {
@@ -103,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen>{
 
   void _onAddCircleTapped() {
     // Handle Add Circle tab tap
-    _selectedIndex = 0;
+    _selectedIndex = 1;
     _showBottomSheetItems(context, _selectedIndex);
     print('Add Circle tab tapped');
   }
@@ -170,6 +175,10 @@ class _HomeScreenState extends State<HomeScreen>{
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
+            icon:  Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
             icon:  Icon(Icons.folder),
             label: 'Library',
           ),
@@ -184,6 +193,7 @@ class _HomeScreenState extends State<HomeScreen>{
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),
     );

@@ -78,7 +78,7 @@ class _MyAppState extends State<MyApp> {
                 title: 'Learning Vocabulary Application',
                 theme: lightMode,
                 // initialRoute: _isLoggedIn ? "/home-screen" :"/welcome",
-                 initialRoute: _isLoggedIn ? "/home-screen" :"/welcome",
+                initialRoute: _isLoggedIn ? "/home-screen" :"/welcome",
                 getPages: [
                   // GetPage(name: '/flashcard', page: () => FlashCardScreen()),
                   GetPage(name: '/quizz', page: () => QuizScreen()),

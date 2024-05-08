@@ -1,4 +1,6 @@
+import 'package:finalproject/screens/achievment_topic_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../flashcard-mode/flashcard.dart';
 import 'question_model.dart';
 
@@ -11,17 +13,23 @@ class _QuizScreenState extends State<QuizScreen> {
   //define the datas
   // List<Question> questionList = getQuestions();
   late List<Question> questionList;
+  int questionLength = 0;
   void initState() {
     super.initState();
     List<Flashcard> flashcards = [
-      Flashcard(question: "What programming language does Flutter use?", answer: "Dart"),
+      Flashcard(
+          question: "What programming language does Flutter use?",
+          answer: "Dart"),
       Flashcard(question: "Who you gonna call?", answer: "Ghostbusters!"),
-      Flashcard(question: "Who teaches you how to write sexy code?", answer: "Ya boi Kilo Loco!"),
+      Flashcard(
+          question: "Who teaches you how to write sexy code?",
+          answer: "Ya boi Kilo Loco!"),
       Flashcard(question: "Who is Mai Van Manh", answer: "Teacher")
-
     ];
     questionList = generateQuiz(flashcards);
+    questionLength = flashcards.length;
   }
+
   int currentQuestionIndex = 0;
   int score = 0;
   Answer? selectedAnswer;
@@ -131,9 +139,6 @@ class _QuizScreenState extends State<QuizScreen> {
     );
   }
 
-
-
-
   _nextButton() {
     bool isLastQuestion = false;
     if (currentQuestionIndex == questionList.length - 1) {
@@ -146,7 +151,9 @@ class _QuizScreenState extends State<QuizScreen> {
       child: ElevatedButton(
         child: Text(isLastQuestion ? "Submit" : "Next"),
         style: ElevatedButton.styleFrom(
-          foregroundColor: Colors.white, backgroundColor: Colors.blueAccent, shape: const StadiumBorder(),
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.blueAccent,
+          shape: const StadiumBorder(),
         ),
         onPressed: () {
           if (isLastQuestion) {
@@ -176,19 +183,34 @@ class _QuizScreenState extends State<QuizScreen> {
 
     return AlertDialog(
       title: Text(
-        title + " | Score is $score",
+        title + " | Score is $score/$questionLength",
         style: TextStyle(color: isPassed ? Colors.green : Colors.redAccent),
       ),
-      content: ElevatedButton(
-        child: const Text("Restart"),
-        onPressed: () {
-          Navigator.pop(context);
-          setState(() {
-            currentQuestionIndex = 0;
-            score = 0;
-            selectedAnswer = null;
-          });
-        },
+      content: SingleChildScrollView(
+        child: Column(
+          children: [
+            ElevatedButton(
+              child: const Text("View Achievement"),
+              onPressed: () {
+                // Move to achievement page
+                Get.to(AchievementTopicScreen());
+                Navigator.of(context, rootNavigator: true).pop('dialog');
+              },
+            ),
+            SizedBox(height: 10), // Add some vertical spacing
+            ElevatedButton(
+              child: const Text("Restart"),
+              onPressed: () {
+                setState(() {
+                  currentQuestionIndex = 0;
+                  score = 0;
+                  selectedAnswer = null;
+                });
+                Navigator.of(context, rootNavigator: true).pop('dialog');
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
