@@ -99,21 +99,43 @@ class Topic {
   //     return [];
   //   }
   // }
-
-  Future<void> deleteTopic(String topicTitle) async {
-    try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('topics')
-          .where('title', isEqualTo: topicTitle)
-          .get();
-
-      for (var doc in querySnapshot.docs) {
-        await doc.reference.delete();
-      }
-
-      print('Topic $topicTitle deleted successfully');
-    } catch (e) {
-      print('Error deleting topic: $e');
-    }
+  // Future<Topic?> getFolderByID(String folderId) async {
+  //   try {
+  //     DocumentSnapshot docSnapshot = await FirebaseFirestore.instance.collection('Topic').doc(folderId).get();
+  //
+  //     if (docSnapshot.exists) {
+  //       Map<String, dynamic>? data = docSnapshot.data() as Map<String, dynamic>?;
+  //
+  //       if (data != null) {
+  //         String id = document.id;
+  //         String title = data['Title'] ?? '';
+  //         String folderId = data['FolderID'] ?? '';
+  //         bool active = data['Active'] ?? false;
+  //         String date = data['Date'] ?? '';
+  //         String userId = data['userID'] ?? '';
+  //         Topic topic = Topic.n(title, description, userID , folderId);
+  //         return topic;
+  //       }
+  //     }
+  //     return null;
+  //   } catch (e) {
+  //     print('Error getting folder by ID: $e');
+  //     return null;
+  //   }
+  // }
+  Future<void> deleteTopicByID(String topicID) async {
+    // try {
+    //   QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+    //       .collection('Topic')
+    //       .where('title', isEqualTo: topicID)
+    //       .get();
+    //   for (var doc in querySnapshot.docs) {
+    //     await doc.reference.delete();
+    //   }
+    //
+    //   print('Topic $topicTitle deleted successfully');
+    // } catch (e) {
+    //   print('Error deleting topic: $e');
+    // }
   }
 }

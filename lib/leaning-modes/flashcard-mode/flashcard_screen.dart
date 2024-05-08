@@ -8,8 +8,9 @@ import 'package:flip_card/flip_card.dart';
 
 
 class FlashCardScreen extends StatefulWidget {
-
-  @override
+  final String topicID;
+  const FlashCardScreen({Key? key, required this.topicID})
+      : super(key: key);  @override
   State<StatefulWidget> createState() => _FlashCardScreenState();
 }
 
@@ -27,7 +28,7 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
   }
 
   Future<void> _loadWords() async {
-    List<Word> words = await Word().getWords();
+    List<Word> words = await Word().getWordsByTopicID(widget.topicID);
     _flashcards = words.map((word) {
       return Flashcard(
         question: word.engWord,

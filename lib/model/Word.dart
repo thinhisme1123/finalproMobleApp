@@ -23,12 +23,11 @@ class Word {
     }
   }
 
-  Future<List<Word>> getWords() async {
+  Future<List<Word>> getWordsByTopicID(String topicID) async {
     List<Word> wordList = [];
 
     try {
-      QuerySnapshot querySnapshot =
-      await FirebaseFirestore.instance.collection('Word').get();
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('Word').where("TopicId", isEqualTo: topicID).get();
 
       for (var document in querySnapshot.docs) {
         Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
@@ -37,7 +36,6 @@ class Word {
           String topicID = data["TopicId"] ?? "";
           String engWord = data['EngWord'] ?? '';
           String vietWord = data['VietWord'] ?? '';
-
           Word word = Word.n(topicID, engWord, vietWord);
           wordList.add(word);
         }

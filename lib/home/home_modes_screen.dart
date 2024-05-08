@@ -5,19 +5,32 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeScreenModes extends StatefulWidget {
+  final String title;
+  final String userID ;
+  final String date;
+  final String? folderId;
+  final bool active;
+  final String topicID;
+
+  const HomeScreenModes({Key? key, required this.title, required this.date, required this.topicID, required this.active, required this.userID, required this.folderId})
+      : super(key: key);
   @override
   _HomeScreenModesState createState() => _HomeScreenModesState();
 }
 
 class _HomeScreenModesState extends State<HomeScreenModes> {
   int _selectedIndex = 0;
-
-  static List<Widget> _widgetOptions = <Widget>[
-    FlashCardScreen(),
-    QuizScreen(), 
-    TypeMode(), 
-  ];
-
+  late String topicID;
+  static List<Widget> _widgetOptions = <Widget>[];
+  void initState() {
+    super.initState();
+    _widgetOptions = [
+      FlashCardScreen(topicID: widget.topicID),
+      QuizScreen(),
+      TypeMode(),
+    ];
+  }
+  @override
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;

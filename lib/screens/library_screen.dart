@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finalproject/home/home_modes_screen.dart';
 import 'package:finalproject/screens/edit_folder_screen.dart';
 import 'package:finalproject/screens/folder_detail.dart';
 import 'package:flutter/material.dart';
@@ -97,8 +98,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             SlidableAction(
                               onPressed: (context) {
                                 // Handle folder edit
-
-                                // Get.to(EditFolderScreen(title: folder.title, desc: folder.description));
+                                // Get.to(HomeScreenModes(title: topic.title, date: topic.date, topicID: topic.topicID, active: topic.active,userID: topic.userID, folderId: topic.folderId));
                               },
                               backgroundColor: Colors.green,
                               foregroundColor: Colors.white,
@@ -117,14 +117,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             title: Text(topic.title),
                             subtitle: Text(topic.topicID),
                             onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //       builder: (context) =>
-                              //           FolderDetailScreen(
-                              //               folder: topic)),
-                              // );
                               print(index);
+                              Get.to(HomeScreenModes(title: topic.title, date: topic.date, topicID: topic.topicID, active: topic.active,userID: topic.userID, folderId: topic.folderId));
                             },
                           ),
                         ),
