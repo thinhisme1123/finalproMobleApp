@@ -1,6 +1,6 @@
 import 'package:finalproject/leaning-modes/flashcard-mode/flashcard_screen.dart';
 import 'package:finalproject/leaning-modes/quizz-mode/quiz_screen.dart';
-import 'package:finalproject/leaning-modes/type-mode/type_mode.dart';
+import 'package:finalproject/leaning-modes/type-mode/type_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -27,7 +27,7 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
     _widgetOptions = [
       FlashCardScreen(topicID: widget.topicID),
       QuizScreen(topicID: widget.topicID),
-      TypeMode(),
+      TypeScreen(topicID: widget.topicID),
     ];
   }
   @override

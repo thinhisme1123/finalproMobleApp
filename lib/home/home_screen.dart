@@ -1,7 +1,6 @@
 import 'package:finalproject/home/bottom_sheet.dart';
 import 'package:finalproject/leaning-modes/flashcard-mode/flashcard_screen.dart';
 import 'package:finalproject/leaning-modes/quizz-mode/quiz_screen.dart';
-import 'package:finalproject/leaning-modes/type-mode/type_mode.dart';
 import 'package:finalproject/screens/library_screen.dart';
 import 'package:finalproject/screens/profile_screen.dart';
 import 'package:finalproject/screens/search_screen.dart';

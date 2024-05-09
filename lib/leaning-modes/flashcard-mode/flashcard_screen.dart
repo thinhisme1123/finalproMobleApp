@@ -10,7 +10,8 @@ import 'package:flip_card/flip_card.dart';
 class FlashCardScreen extends StatefulWidget {
   final String topicID;
   const FlashCardScreen({Key? key, required this.topicID})
-      : super(key: key);  @override
+      : super(key: key);
+  @override
   State<StatefulWidget> createState() => _FlashCardScreenState();
 }
 
