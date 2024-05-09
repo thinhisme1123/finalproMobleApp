@@ -17,6 +17,9 @@ class LibraryScreen extends StatefulWidget {
 class _LibraryScreenState extends State<LibraryScreen> {
   List<Folder> _folders = [];
   List<Topic> _topics= [];
+  bool _isLoadingTopic = true;
+  bool _isLoadingFolder = true;
+
   @override
   void initState() {
     super.initState();
@@ -27,6 +30,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
     List<Topic> topics = await Topic().getTopics();
     setState(() {
       _topics = topics;
+      _isLoadingTopic = false;
     });
   }
 
@@ -34,6 +38,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
     List<Folder> folders = await Folder().getFolders();
     setState(() {
       _folders = folders;
+      _isLoadingFolder = false;
     });
   }
 
@@ -61,7 +66,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
         ),
         body: TabBarView(
           children: [
-            Container(
+            _isLoadingTopic
+                ? Center(child: CircularProgressIndicator())
+                :Container(
               color: Color(0xfff6f7fb), // Background color for the container
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -77,16 +84,16 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             .title), // Set a unique key for each item
                         endActionPane: ActionPane(
                           motion: const ScrollMotion(),
-                          dismissible: DismissiblePane(onDismissed: () {
+                          dismissible: DismissiblePane(onDismissed: () async {
                             // Handle topic deletion
-                            Folder().deleteFolder(topic.title);
+                            await Topic().deleteTopicByID(topic.topicID);
                             print('Folder ${topic.title} dismissed');
                           }),
                           children: [
                             SlidableAction(
                               onPressed: (context) async {
                                 // Handle folder deletion
-                                await Folder().deleteFolder(topic.title);
+                                await Topic().deleteTopicByID(topic.topicID);
                                 _fetchFolders();
                                 print('Topic ${topic.title} deleted');
                               },
@@ -129,7 +136,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     : null,
               ),
             ),
-            Container(
+            _isLoadingFolder
+                ? Center(child: CircularProgressIndicator())
+                :Container(
               color: Color(0xfff6f7fb), // Background color for the container
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -145,16 +154,16 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                   .title), // Set a unique key for each item
                               endActionPane: ActionPane(
                                 motion: const ScrollMotion(),
-                                dismissible: DismissiblePane(onDismissed: () {
+                                dismissible: DismissiblePane(onDismissed: () async {
                                   // Handle folder deletion
-                                  Folder().deleteFolder(folder.title);
+                                  await Folder().deleteFolderByID(folder.folderId);
                                   print('Folder ${folder.title} dismissed');
                                 }),
                                 children: [
                                   SlidableAction(
                                     onPressed: (context) async {
                                       // Handle folder deletion
-                                      await Folder().deleteFolder(folder.title);
+                                      await Folder().deleteFolderByID(folder.folderId);
                                       _fetchFolders();
                                       print('Folder ${folder.title} deleted');
                                     },

@@ -124,18 +124,11 @@ class Topic {
   //   }
   // }
   Future<void> deleteTopicByID(String topicID) async {
-    // try {
-    //   QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-    //       .collection('Topic')
-    //       .where('title', isEqualTo: topicID)
-    //       .get();
-    //   for (var doc in querySnapshot.docs) {
-    //     await doc.reference.delete();
-    //   }
-    //
-    //   print('Topic $topicTitle deleted successfully');
-    // } catch (e) {
-    //   print('Error deleting topic: $e');
-    // }
+    try {
+      await  FirebaseFirestore.instance.collection("Topic").doc(topicID).delete();
+      print('Topic $topicID deleted successfully');
+    } catch (e) {
+      print('Error deleting Topic: $e');
+    }
   }
 }

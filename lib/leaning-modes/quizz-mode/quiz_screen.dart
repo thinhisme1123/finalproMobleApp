@@ -1,10 +1,14 @@
 import 'package:finalproject/screens/achievment_topic_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../model/Word.dart';
 import '../flashcard-mode/flashcard.dart';
 import 'question_model.dart';
 
 class QuizScreen extends StatefulWidget {
+  final String topicID;
+  const QuizScreen({Key? key, required this.topicID})
+      : super(key: key);  @override
   @override
   State<QuizScreen> createState() => _QuizScreenState();
 }
@@ -14,22 +18,31 @@ class _QuizScreenState extends State<QuizScreen> {
   // List<Question> questionList = getQuestions();
   late List<Question> questionList;
   int questionLength = 0;
+  late List<Flashcard> _flashcards;
+  bool _isLoading = true;
+
   void initState() {
     super.initState();
-    List<Flashcard> flashcards = [
-      Flashcard(
-          question: "What programming language does Flutter use?",
-          answer: "Dart"),
-      Flashcard(question: "Who you gonna call?", answer: "Ghostbusters!"),
-      Flashcard(
-          question: "Who teaches you how to write sexy code?",
-          answer: "Ya boi Kilo Loco!"),
-      Flashcard(question: "Who is Mai Van Manh", answer: "Teacher")
-    ];
-    questionList = generateQuiz(flashcards);
-    questionLength = flashcards.length;
+    _loadWords();
+  }
+  Future<void> _loadWords() async {
+    List<Word> words = await Word().getWordsByTopicID(widget.topicID);
+    _flashcards = words.map((word) {
+      return Flashcard(
+        question: word.engWord,
+        answer: word.vietWord,
+      );
+    }).toList();
+    setState(() {
+      _isLoading = false;
+    });
+    loadQuizz(); //
   }
 
+  void loadQuizz() {
+    questionList = generateQuiz(_flashcards);
+    questionLength = _flashcards.length;
+  }
   int currentQuestionIndex = 0;
   int score = 0;
   Answer? selectedAnswer;
@@ -38,21 +51,25 @@ class _QuizScreenState extends State<QuizScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 5, 50, 80),
-      body: Container(
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-        child:
-            Column(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-          const Text(
-            "Simple Quiz App",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            const Text(
+              "Simple Quiz App",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+              ),
             ),
-          ),
-          _questionWidget(),
-          _answerList(),
-          _nextButton(),
-        ]),
+            _questionWidget(),
+            _answerList(),
+            _nextButton(),
+          ],
+        ),
       ),
     );
   }

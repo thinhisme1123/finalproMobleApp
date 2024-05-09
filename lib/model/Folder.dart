@@ -88,19 +88,10 @@ class Folder {
       print("Error updating folder: $e");
     }
   }
-
-  Future<void> deleteFolder(String folderTitle) async {
+  Future<void> deleteFolderByID(String folderID) async {
     try {
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('Folder')
-          .where('Title', isEqualTo: folderTitle)
-          .get();
-
-      for (var doc in querySnapshot.docs) {
-        await doc.reference.delete();
-      }
-
-      print('Folder $folderTitle deleted successfully');
+      await  FirebaseFirestore.instance.collection("Folder").doc(folderID).delete();
+      print('Folder $folderID deleted successfully');
     } catch (e) {
       print('Error deleting folder: $e');
     }

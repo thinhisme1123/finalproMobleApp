@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
                 initialRoute: _isLoggedIn ? "/home-screen" :"/welcome",
                 getPages: [
                   // GetPage(name: '/flashcard', page: () => FlashCardScreen()),
-                  GetPage(name: '/quizz', page: () => QuizScreen()),
+                  // GetPage(name: '/quizz', page: () => QuizScreen()),
                   GetPage(name: '/welcome', page: () => const WelcomeScreen()),
                   GetPage(name: '/profile', page: () => const ProfileScreen()),
                   GetPage(name: '/home-screen', page: () => HomeScreen()),

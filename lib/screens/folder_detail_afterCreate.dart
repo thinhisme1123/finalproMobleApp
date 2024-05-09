@@ -1,6 +1,8 @@
 import 'package:finalproject/home/home_screen.dart';
 import 'package:finalproject/model/Folder.dart';
+import 'package:finalproject/screens/library_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class FolderDetailAfterCreate extends StatefulWidget {
   final Folder folder;
@@ -22,11 +24,12 @@ class _FolderDetailAfterCreateState extends State<FolderDetailAfterCreate> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => HomeScreen()),
-            );
+            Get.off(() => HomeScreen());
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(
+            //       builder: (context) => HomeScreen()),
+            // );
           },
         ),
         actions: [
