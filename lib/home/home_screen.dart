@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:finalproject/home/bottom_sheet.dart';
 import 'package:finalproject/leaning-modes/flashcard-mode/flashcard_screen.dart';
 import 'package:finalproject/leaning-modes/quizz-mode/quiz_screen.dart';
@@ -25,6 +26,8 @@ class _HomeScreenState extends State<HomeScreen>{
   String userID ="";
   String email = "";
 
+  
+
   // void _initSharedPreferences() async {
   //   await sharedPreferencesHelper.init();
   //   setState(() async {
@@ -51,18 +54,17 @@ class _HomeScreenState extends State<HomeScreen>{
     });
   }
 
+  
+
   static List<Widget> _widgetOptions = <Widget>[
     SearchPage(),
     LibraryScreen(),
     BottomSheetScreen(), 
     ProfileScreen(), 
   ];
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _initSharedPreferences();
-  }
+  
+
+ 
   // void _onItemTapped(int index) {
   //   setState(() {
   //     _selectedIndex = index;

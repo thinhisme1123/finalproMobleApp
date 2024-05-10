@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 
 class UpdateScreen extends StatefulWidget {
   final fullname;
-  final email;
 
-  const UpdateScreen({Key? key, required this.fullname,required this.email}) : super(key: key);
+  const UpdateScreen({Key? key, required this.fullname}) : super(key: key);
 
   @override
   State<UpdateScreen> createState() => _UpdateScreenState();
@@ -13,19 +12,15 @@ class UpdateScreen extends StatefulWidget {
 class _UpdateScreenState extends State<UpdateScreen> {
 
   TextEditingController fullnameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-
   @override
   void initState() {
     fullnameController.text = widget.fullname;
-    emailController.text = widget.email;
     super.initState();
   }
 
   @override
   void dispose() {
     fullnameController.dispose();
-    emailController.dispose();
     super.dispose();
   }
 
@@ -53,13 +48,6 @@ class _UpdateScreenState extends State<UpdateScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            TextFormField(
-              controller: emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                prefixIcon: Icon(Icons.email),
-              ),
-            ),
             // const SizedBox(height: 20),
             // TextFormField(
             //   decoration: InputDecoration(

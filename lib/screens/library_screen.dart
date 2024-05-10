@@ -57,6 +57,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Text('Library'),
+          centerTitle: true,
           bottom: TabBar(
             tabs: [
               Tab(text: 'Topics'),

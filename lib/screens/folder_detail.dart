@@ -70,6 +70,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                         ElevatedButton(
                           onPressed: () {
                             // Navigate to the create topic screen
+                            
                           },
                           child: Text('Add New Topic'),
                         ),

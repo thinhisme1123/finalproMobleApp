@@ -1,3 +1,5 @@
+import 'package:finalproject/Helper/countdown_timer.dart';
+import 'package:finalproject/Helper/learning_mode_data.dart';
 import 'package:finalproject/screens/achievment_topic_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +11,7 @@ class QuizScreen extends StatefulWidget {
   final String topicID;
   const QuizScreen({Key? key, required this.topicID})
       : super(key: key);  @override
+
   @override
   State<QuizScreen> createState() => _QuizScreenState();
 }
@@ -59,7 +62,7 @@ class _QuizScreenState extends State<QuizScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             const Text(
-              "Simple Quiz App",
+              "Quizz",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 24,

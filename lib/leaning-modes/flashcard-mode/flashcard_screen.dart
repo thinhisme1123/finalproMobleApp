@@ -1,3 +1,4 @@
+import 'package:finalproject/Helper/countdown_timer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -59,8 +60,8 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                width: 250,
-                height: 250,
+                width: 300,
+                height: 200,
                 child: PageView.builder(
                   controller: _pageViewController,
                   itemCount: _flashcards.length,
@@ -82,6 +83,7 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
                   },
                 ),
               ),
+              SizedBox(height: 20,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [

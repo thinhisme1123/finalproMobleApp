@@ -134,6 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(tProfile, style: Theme.of(context).textTheme.headline4),
+        centerTitle: true,
         actions: [
           IconButton(
               onPressed: () {},
@@ -175,10 +176,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 10),
               Text(tProfileHeading,
-                  style: Theme.of(context).textTheme.headline4),
+                  style: Theme.of(context).textTheme.headline4),  
               Text(tProfileSubHeading,
                   style: Theme.of(context).textTheme.bodyText2),
               const SizedBox(height: 20),
+
 
               /// -- BUTTON
               SizedBox(
@@ -187,7 +189,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onPressed: () {
                     Get.to(() => UpdateScreen(
                           fullname: tProfileHeading,
-                          email: tProfileSubHeading,
                         ));
                   },
                   style: ElevatedButton.styleFrom(

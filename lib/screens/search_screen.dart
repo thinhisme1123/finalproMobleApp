@@ -52,6 +52,7 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
+        centerTitle: true,
       ),
       body: Column(
         children: [

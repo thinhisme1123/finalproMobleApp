@@ -7,7 +7,7 @@ class RankingScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ranking of this topic'),
+        title: Text('Top member in this topic'),
       ),
       body: ListView.builder(
         itemCount: typeAchivement.length,

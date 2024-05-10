@@ -66,6 +66,7 @@ class _TypeScreenState extends State<TypeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(81, 197, 245, 1.0),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
