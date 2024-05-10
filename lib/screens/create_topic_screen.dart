@@ -33,6 +33,7 @@ class _CreateTopicState extends State<CreateTopic> {
     DateTime now = DateTime.now();
     return '${now.day}:${now.month}:${now.year}';
   }
+  
   void _initSharedPreferences() async {
     setState(() async {
       userID = await sharedPreferencesHelper.getUserID() ?? '';

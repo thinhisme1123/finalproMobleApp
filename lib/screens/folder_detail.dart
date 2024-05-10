@@ -1,6 +1,8 @@
 import 'package:finalproject/home/home_screen.dart';
 import 'package:finalproject/model/Folder.dart';
+import 'package:finalproject/screens/list_topic_to_folder.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class FolderDetailScreen extends StatefulWidget {
   final Folder folder;
@@ -70,7 +72,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                         ElevatedButton(
                           onPressed: () {
                             // Navigate to the create topic screen
-                            
+                            Get.to(ListTopic());
                           },
                           child: Text('Add New Topic'),
                         ),

@@ -72,6 +72,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/images/fastest.png
+    - assets/images/mosttime.jpg
+    - assets/images/shortest.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -85,12 +88,16 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Playfair Display
-  #     fonts:
-  #       - asset: fonts/PlayfairDisplay-Regular.ttf
-  #       - asset: fonts/PlayfairDisplay-Bold.ttf
-  #         weight: 700
+  fonts:
+    - family: Playfair Display
+      fonts:
+        - asset: fonts/PlayfairDisplay-Regular.ttf
+        - asset: fonts/PlayfairDisplay-Bold.ttf
+          weight: 700
+    - family: Driff
+      fonts:
+        - asset: fonts/Drift___.ttf
+          weight: 700
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

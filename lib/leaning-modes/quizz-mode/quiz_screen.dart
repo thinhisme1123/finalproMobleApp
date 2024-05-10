@@ -65,7 +65,8 @@ class _QuizScreenState extends State<QuizScreen> {
               "Quizz",
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 24,
+                fontFamily: 'Driff',
+                fontSize: 30,
               ),
             ),
             _questionWidget(),
@@ -87,6 +88,7 @@ class _QuizScreenState extends State<QuizScreen> {
           style: const TextStyle(
             color: Colors.white,
             fontSize: 20,
+            fontFamily: 'Playfair Display',
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -104,7 +106,8 @@ class _QuizScreenState extends State<QuizScreen> {
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
-              fontWeight: FontWeight.w600,
+              fontFamily: 'Playfair Display',
+              fontWeight: FontWeight.w800,
             ),
           ),
         )
@@ -153,6 +156,8 @@ class _QuizScreenState extends State<QuizScreen> {
           answer.answerText,
           style: TextStyle(
             color: isSelected ? Colors.white : Colors.black,
+            fontFamily: 'Playfair Display',
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
