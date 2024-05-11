@@ -50,23 +50,21 @@ class User {
       return null;
     }
   }
-  Future<String?> getNameByEmail(String email) async {
+  Future<String?> getEmailByID(String userID) async {
     try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
-          .collection("User")
-          .where("Email", isEqualTo: email)
-          .get();
+      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance.collection('User').doc(userID).get();
 
-      if (querySnapshot.docs.isEmpty) {
-        print("No user found with email $email");
-        return null;
+      if (docSnapshot.exists) {
+        Map<String, dynamic>? data = docSnapshot.data() as Map<String, dynamic>?;
+
+        if (data != null) {
+          String email = data['Email'] ?? '';
+          return email;
+        }
       }
-
-      String userEmail = querySnapshot.docs.first.get("Name");
-      print("DOB for user with email $email: $userEmail");
-      return userEmail;
+      return null;
     } catch (e) {
-      print("Error getting DOB: $e");
+      print('Error getting email by ID: $e');
       return null;
     }
   }

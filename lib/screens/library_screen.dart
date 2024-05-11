@@ -6,8 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:finalproject/model/Folder.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
+import '../Helper/SharedPreferencesHelper.dart';
 
+import '../model/History.dart';
 import '../model/Topic.dart';
+import '../model/User.dart';
 
 class LibraryScreen extends StatefulWidget {
   @override
@@ -15,30 +18,76 @@ class LibraryScreen extends StatefulWidget {
 }
 
 class _LibraryScreenState extends State<LibraryScreen> {
+  final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
   List<Folder> _folders = [];
   List<Topic> _topics= [];
+  List<String> _names =[];
   bool _isLoadingTopic = true;
   bool _isLoadingFolder = true;
+  late String userID;
+  @override
+  @override
 
   @override
   void initState() {
     super.initState();
-    _fetchFolders();
-    _fetchTopics();
-  }
-  Future<void> _fetchTopics() async {
-    List<Topic> topics = await Topic().getTopics();
-    setState(() {
-      _topics = topics;
-      _isLoadingTopic = false;
+    _initSharedPreferences().then((_) {
+      // Sau khi userID được khởi tạo từ _initSharedPreferences(), gọi _fetchTopics
+      _fetchTopics(userID);
+      _fetchFolders();
     });
   }
+  Future<void> _fetchTopics(String userID) async {
+    try {
+      List<Map<String, dynamic>> openedTopics = await History().getUserOpenedTopics(userID);
+      print("Successsssssss");
+      for (var topicData in openedTopics) {
+        String topicID = topicData['topicID'];
+        print("topic id $topicID");
+        Topic? topic = await Topic().getTopicByID(topicID);
+        if (topic != null){
+          _topics.add(topic);
+          String? name = await(User().getEmailByID(userID));
+          _names.add(name!);
+        }
+      };
+      setState(() {
+        _isLoadingTopic = false;
+      });
+    } catch (e) {
+      print('Error processing topics: $e');
+    }
+  }
+
+
+  // Future<void> _fetchTopics() async {
+  //   List<Topic> topics = await Topic().getTopics();
+  //   setState(() {
+  //     _topics = topics;
+  //     _isLoadingTopic = false;
+  //   });
+  // }
 
   Future<void> _fetchFolders() async {
     List<Folder> folders = await Folder().getFolders();
     setState(() {
       _folders = folders;
       _isLoadingFolder = false;
+    });
+  }
+  Future<void> _initSharedPreferences() async {
+    await sharedPreferencesHelper.init();
+    // Perform asynchronous work first
+    String tempUserID = await sharedPreferencesHelper.getUserID() ?? '';
+    String tempEmail = await sharedPreferencesHelper.getEmail() ?? "";
+
+    // Update the state synchronously inside setState()
+    setState(() {
+      userID = tempUserID;
+      print("id $userID");
+      // email = tempEmail;
+      // tProfileSubHeading = email;
+      // print("email $email");
     });
   }
 
@@ -123,7 +172,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                           child: ListTile(
                             leading: Icon(Icons.newspaper),
                             title: Text(topic.title),
-                            subtitle: Text(topic.topicID),
+                            subtitle: Text(_names[index]),
                             onTap: () {
                               print(index);
                               Get.to(HomeScreenModes(title: topic.title, date: topic.date, topicID: topic.topicID, active: topic.active,userID: topic.userID, folderId: topic.folderId));
@@ -134,7 +183,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     );
                   },
                 )
-                    : null,
+                    : Center(child: Text("You don't have any topic")),
               ),
             ),
             _isLoadingFolder

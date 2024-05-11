@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'History.dart';
+
 class Topic {
   String title = '';
   String userID = '';
@@ -22,13 +24,45 @@ class Topic {
 
       DocumentReference docRef = await FirebaseFirestore.instance.collection("Topic").add(data);
       print("Topic created successfully with ID: ${docRef.id}");
+
+      String? historyId = await History().createHistory(userId, date, DateTime.now().toString(),"",docRef.id);
+      if (historyId != null) {
+        print("History created successfully with ID: $historyId");
+      } else {
+        print("Error creating history for topic");
+      }
+
       return docRef.id;
     } catch (e) {
       print("Error creating topic: $e");
       return null;
     }
+  }  Future<Topic?> getTopicByID(TopicID) async {
+    try {
+      DocumentSnapshot docSnapshot =
+      await FirebaseFirestore.instance.collection('Topic').doc(TopicID).get();
+
+      if (docSnapshot.exists) {
+        Map<String, dynamic>? data = docSnapshot.data() as Map<String, dynamic>?;
+
+        if (data != null) {
+          String id = docSnapshot.id;
+          String title = data['Title'] ?? '';
+          String folderId = data['FolderID'] ?? '';
+          bool active = data['Active'] ?? false;
+          String date = data['Date'] ?? '';
+          String userId = data['UserID'] ?? '';
+          Topic topic = Topic.n(date, userId, title, active,id,folderId: folderId);
+          return topic;
+        }
+      }
+      return null;
+    } catch (e) {
+      print('Error getting topic by ID: $e');
+      return null;
+    }
   }
-  
+
   Future<void> updateTopic(String topicId, String newTitle, List<Map<String, String>> newVocabularyList) async {
     try {
       await FirebaseFirestore.instance.collection("topics").doc(topicId).update({
