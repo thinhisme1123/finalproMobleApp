@@ -53,9 +53,6 @@ class _HomeScreenState extends State<HomeScreen>{
       print("email $email");
     });
   }
-
-  
-
   static List<Widget> _widgetOptions = <Widget>[
     SearchPage(),
     LibraryScreen(),
@@ -63,8 +60,6 @@ class _HomeScreenState extends State<HomeScreen>{
     ProfileScreen(), 
   ];
   
-
- 
   // void _onItemTapped(int index) {
   //   setState(() {
   //     _selectedIndex = index;

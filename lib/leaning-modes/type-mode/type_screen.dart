@@ -1,3 +1,4 @@
+import 'package:finalproject/Helper/countdown_timer.dart';
 import 'package:finalproject/leaning-modes/type-mode/type_mode.dart';
 import 'package:finalproject/screens/achievment_topic_screen.dart';
 import 'package:flutter/material.dart';
@@ -195,7 +196,7 @@ class _TypeScreenState extends State<TypeScreen> {
           'Question ${currentIndex + 1}/${_typeList.length}', // Display the question number and total questions
           style: TextStyle(
             fontSize: 20.0,
-            fontFamily: 'Driff',
+            fontFamily: 'Playfair Display',
             fontWeight: FontWeight.w500,
           ), // Adjust the font size as needed
         ),
@@ -207,7 +208,7 @@ class _TypeScreenState extends State<TypeScreen> {
               'Correct Answer:${correctAnswer}/${_typeList.length}',
               style: TextStyle(
                 fontSize: 20.0,
-                fontFamily: 'Driff',
+                fontFamily: 'Playfair Display',
               ),
             ),
           ),
@@ -222,9 +223,10 @@ class _TypeScreenState extends State<TypeScreen> {
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    CountUpTimer(color: 0xFF000000),
                     Text(
                       _typeList[currentIndex].vietWord!,
-                      style: TextStyle(fontSize: 24),
+                      style: TextStyle(fontSize: 24,fontFamily: 'Playfair Display',),
                     ),
                     SizedBox(height: 20),
                     TextField(

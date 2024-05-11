@@ -35,13 +35,17 @@ class _CreateTopicState extends State<CreateTopic> {
   }
   
   void _initSharedPreferences() async {
-    setState(() async {
-      userID = await sharedPreferencesHelper.getUserID() ?? '';
+    String id = await sharedPreferencesHelper.getUserID() ?? '';
+    String userEmail = await sharedPreferencesHelper.getEmail() ?? '';
+    
+    setState(() {
+      userID = id;
+      email = userEmail;
       print("id $userID");
-      email = await sharedPreferencesHelper.getEmail() ?? "";
       print("email $email");
     });
   }
+
   @override
   void initState() {
     super.initState();

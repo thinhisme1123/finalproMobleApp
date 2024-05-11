@@ -9,9 +9,8 @@ import 'question_model.dart';
 
 class QuizScreen extends StatefulWidget {
   final String topicID;
-  const QuizScreen({Key? key, required this.topicID})
-      : super(key: key);  @override
-
+  const QuizScreen({Key? key, required this.topicID}) : super(key: key);
+  @override
   @override
   State<QuizScreen> createState() => _QuizScreenState();
 }
@@ -28,6 +27,7 @@ class _QuizScreenState extends State<QuizScreen> {
     super.initState();
     _loadWords();
   }
+
   Future<void> _loadWords() async {
     List<Word> words = await Word().getWordsByTopicID(widget.topicID);
     _flashcards = words.map((word) {
@@ -46,6 +46,7 @@ class _QuizScreenState extends State<QuizScreen> {
     questionList = generateQuiz(_flashcards);
     questionLength = _flashcards.length;
   }
+
   int currentQuestionIndex = 0;
   int score = 0;
   Answer? selectedAnswer;
@@ -57,24 +58,27 @@ class _QuizScreenState extends State<QuizScreen> {
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            const Text(
-              "Quizz",
-              style: TextStyle(
-                color: Colors.white,
-                fontFamily: 'Driff',
-                fontSize: 30,
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  CountUpTimer(
+                    color: 0xFFFFFFFF,
+                  ),
+                  const Text(
+                    "Quizz",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontFamily: 'Driff',
+                      fontSize: 30,
+                    ),
+                  ),
+                  _questionWidget(),
+                  _answerList(),
+                  _nextButton(),
+                ],
               ),
             ),
-            _questionWidget(),
-            _answerList(),
-            _nextButton(),
-          ],
-        ),
-      ),
     );
   }
 
@@ -206,9 +210,16 @@ class _QuizScreenState extends State<QuizScreen> {
     }
     String title = isPassed ? "Passed " : "Failed";
 
+    final countUpTimer = context.findAncestorWidgetOfExactType<CountUpTimer>();
+    String duration = '';
+    if (countUpTimer != null) {
+      duration = countUpTimer.getFormattedDuration();
+      print('Current duration: $duration');
+    }
+
     return AlertDialog(
       title: Text(
-        title + " | Score is $score/$questionLength",
+        title + " | Score is $score/$questionLength | Time you complete is $duration",
         style: TextStyle(color: isPassed ? Colors.green : Colors.redAccent),
       ),
       content: SingleChildScrollView(
