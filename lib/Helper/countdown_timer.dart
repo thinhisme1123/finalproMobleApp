@@ -3,21 +3,27 @@ import 'package:flutter/material.dart';
 
 class CountUpTimer extends StatefulWidget {
   final int color;
-
+  final Function(String) onTimeUpdate;
   
-  const CountUpTimer({Key? key, required this.color}) : super(key: key);
+  const CountUpTimer({Key? key, required this.color, required this.onTimeUpdate})
+      : super(key: key);
 
   @override
   _CountUpTimerState createState() => _CountUpTimerState();
-  String getFormattedDuration() {
+
+  // New method to get the current time value
+  String getCurrentTime() {
     final state = this.createState() as _CountUpTimerState;
-    return state.getFormattedDuration();
+    return state.time;
   }
 }
 
 class _CountUpTimerState extends State<CountUpTimer> {
+  
+
   Duration _duration = Duration.zero;
   Timer? _timer;
+  String time = '';
 
   @override
   void initState() {
@@ -29,6 +35,8 @@ class _CountUpTimerState extends State<CountUpTimer> {
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         _duration += Duration(seconds: 1);
+        String time = getFormattedDuration(); // Get formatted time
+        widget.onTimeUpdate(time); 
       });
     });
   }
@@ -46,6 +54,7 @@ class _CountUpTimerState extends State<CountUpTimer> {
     String seconds = twoDigits(_duration.inSeconds.remainder(60));
     return '$hours:$minutes:$seconds';
   }
+
 
   @override
   Widget build(BuildContext context) {

@@ -22,7 +22,7 @@ class _QuizScreenState extends State<QuizScreen> {
   int questionLength = 0;
   late List<Flashcard> _flashcards;
   bool _isLoading = true;
-
+  String time = '';
   void initState() {
     super.initState();
     _loadWords();
@@ -64,6 +64,11 @@ class _QuizScreenState extends State<QuizScreen> {
                 children: [
                   CountUpTimer(
                     color: 0xFFFFFFFF,
+                    onTimeUpdate: (updatedTime) {
+                      setState(() {
+                        time = updatedTime;
+                      });
+                    },
                   ),
                   const Text(
                     "Quizz",
@@ -210,16 +215,11 @@ class _QuizScreenState extends State<QuizScreen> {
     }
     String title = isPassed ? "Passed " : "Failed";
 
-    final countUpTimer = context.findAncestorWidgetOfExactType<CountUpTimer>();
-    String duration = '';
-    if (countUpTimer != null) {
-      duration = countUpTimer.getFormattedDuration();
-      print('Current duration: $duration');
-    }
 
     return AlertDialog(
       title: Text(
-        title + " | Score is $score/$questionLength | Time you complete is $duration",
+        title +
+            " | Score is $score/$questionLength | Time you complete is $time",
         style: TextStyle(color: isPassed ? Colors.green : Colors.redAccent),
       ),
       content: SingleChildScrollView(

@@ -22,6 +22,7 @@ class _TypeScreenState extends State<TypeScreen> {
   int correctAnswer = 0;
 
   bool _isLoading = true;
+  String time = '';
 
   String getDate() {
     DateTime now = DateTime.now();
@@ -117,9 +118,9 @@ class _TypeScreenState extends State<TypeScreen> {
     double score = correctAnswer / _typeList.length * 100;
     String message;
     if (score >= 60) {
-      message = "Congratulations! You scored $score%. Keep up the good work!";
+      message = "Congratulations! You scored $score%. Keep up the good work! You completed this test in $time";
     } else {
-      message = "Your score is $score%. Don't worry, practice makes perfect!";
+      message = "Your score is $score%. Don't worry, practice makes perfect! You completed this test in $time";
     }
 
     showDialog(
@@ -223,7 +224,14 @@ class _TypeScreenState extends State<TypeScreen> {
               : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    CountUpTimer(color: 0xFF000000),
+                    CountUpTimer(
+                      color: 0xFF000000,
+                      onTimeUpdate: (updatedTime) {
+                        setState(() {
+                          time = updatedTime;
+                        });
+                    },
+                ),
                     Text(
                       _typeList[currentIndex].vietWord!,
                       style: TextStyle(fontSize: 24,fontFamily: 'Playfair Display',),
