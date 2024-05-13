@@ -41,7 +41,13 @@ class _EditFolderScreenState extends State<EditFolderScreen> {
       try {
         Folder folder = Folder();
         await folder.updateFolder(id,_titleController.text, _descriptionController.text);
-        Get.off(() => HomeScreen());
+        Folder? folderAfterUpdate = await Folder().getFolderByID(id);
+        if (folderAfterUpdate != null) {
+          Get.to(FolderDetailAfterCreate(folder: folderAfterUpdate));
+        } else {
+          print("Error: Folder can not be updated with ID $id");
+        }
+        // Get.off(() => HomeScreen());
       } catch (e) {
         print("Error creating folder: $e");
       }
@@ -53,6 +59,7 @@ class _EditFolderScreenState extends State<EditFolderScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Folder'),
+        backgroundColor: Color.fromRGBO(74, 89, 255,1),
         actions: [
           TextButton(
             onPressed: _handleSave,

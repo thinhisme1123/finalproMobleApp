@@ -51,6 +51,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromRGBO(74, 89, 255,1),
         title: Text('Home'),
         centerTitle: true,
       ),

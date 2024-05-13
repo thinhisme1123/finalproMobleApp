@@ -8,18 +8,25 @@ import 'package:get/get.dart';
 
 import '../model/Word.dart';
 
-class CreateTopic extends StatefulWidget {
+class EditTopicScreen extends StatefulWidget {
+  final String topicId;
+  final String title;
+
+  const EditTopicScreen({Key? key,required this.topicId, required this.title,})
+      : super(key: key);
+
   @override
-  _CreateTopicState createState() => _CreateTopicState();
+  _EditTopicScreenState createState() => _EditTopicScreenState();
 }
 
-class _CreateTopicState extends State<CreateTopic> {
+class _EditTopicScreenState extends State<EditTopicScreen> {
   final _formKey = GlobalKey<FormState>();
   String _title = "";
   bool active = true;
   late String userID;
   late String email;
   List<Topic> _topics = [];
+  List<Word> words = [];
 
   final SharedPreferencesHelper sharedPreferencesHelper =
       SharedPreferencesHelper();
@@ -33,6 +40,14 @@ class _CreateTopicState extends State<CreateTopic> {
   String getDate() {
     DateTime now = DateTime.now();
     return '${now.day}:${now.month}:${now.year}';
+  }
+
+  Future<void> _loadWords() async {
+    List<Word> words = await Word().getWordsByTopicID(widget.topicId);
+    
+    setState(() {
+      words = words;
+    });
   }
 
   void _initSharedPreferences() async {
@@ -51,6 +66,8 @@ class _CreateTopicState extends State<CreateTopic> {
   void initState() {
     super.initState();
     _initSharedPreferences();
+    _titleController.text = widget.title;
+    _loadWords();
     _addTerm(); // Add an initial term
   }
 
@@ -159,7 +176,7 @@ class _CreateTopicState extends State<CreateTopic> {
               SizedBox(height: 10.0),
               ListView.builder(
                 shrinkWrap: true,
-                itemCount: _vocabularyList.length,
+                itemCount: words.length,
                 itemBuilder: (context, index) {
                   return Dismissible(
                     key: Key(UniqueKey().toString()),
