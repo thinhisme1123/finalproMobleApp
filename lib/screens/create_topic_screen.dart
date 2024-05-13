@@ -66,6 +66,8 @@ class _CreateTopicState extends State<CreateTopic> {
         // String? errorMessage = await Topic().createTopic("", getDate(), _title, folderId: "folderID");
         String? topicId = await Topic().createTopic(userID, getDate(), _title, active, folderId: "folderID");
         if (topicId != null) {
+          //update number of flashcard
+          await Topic().updateNumber(_vocabularyList.length, topicId);
           // Create words associated with the newly created topic
           print("Topic ID $topicId");
           for (var vocabMap in _vocabularyList) {

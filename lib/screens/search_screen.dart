@@ -1,49 +1,56 @@
 import 'package:flutter/material.dart';
 
+import '../model/Topic.dart';
+import '../model/User.dart';
+
 class SearchPage extends StatefulWidget {
   @override
   _SearchPageState createState() => _SearchPageState();
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final List<Map<String, dynamic>> comments = [
-    {
-      'username': 'quizlette22788555',
-      'message': 'Hoa quả',
-      'timeSince': '29 thuật ngữ',
-    },
-    {
-      'username': 'quochanh_dle',
-      'message': 'Hoa quả',
-      'timeSince': '56 thuật ngữ',
-    },
-    {
-      'username': 'ngocanh290507',
-      'message': 'hoa quả',
-      'timeSince': '20 thuật ngữ',
-    },
-  ];
 
-  List<Map<String, dynamic>> _filteredItems = [];
+
+  late List<Topic> topics =[];
+
+  List<Topic> _filteredItems = [];
+
+  // List<Topic> buffer = [];
+
+  List<String> userNames = [];
 
   final _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _filteredItems = comments;
   }
 
-  void _filterItems(String query) {
+
+  void _filterItems(String title) async {
+    List<Topic> buffer1 = [];
+
+    List<String> buffer2 = [];
+
+    buffer1 = await Topic().searchTopicByTitle(_searchController.text);
+
+    for (var topicData in buffer1) {
+      String userID = topicData.userID;
+      if (userID != null){
+        String? name = await(User().getEmailByID(userID));
+        buffer2.add(name!);
+      }
+    }
     setState(() {
-      //hand do search filter from database
+      userNames  = buffer2;
+      _filteredItems = buffer1;
     });
   }
 
   void _clearSearch() {
     setState(() {
       _searchController.clear();
-      _filteredItems = comments;
+      _filteredItems = [];
     });
   }
 
@@ -86,16 +93,17 @@ class _SearchPageState extends State<SearchPage> {
           ),SizedBox(height: 10,),
           Expanded(
             child: ListView.builder(
-              itemCount: comments.length,
+              itemCount: _filteredItems.length,
               itemBuilder: (context, index) {
-                final comment = comments[index];
+                final filteredItem = _filteredItems[index];
+                final userName = userNames[index];
                 return ListTile(
                   leading: CircleAvatar(
-                    child: Text(comment['username'][0]),
+                    child: Text(filteredItem.userID),
                   ),
-                  title: Text(comment['username']),
-                  subtitle: Text(comment['message']),
-                  trailing: Text(comment['timeSince']),
+                  title: Text(filteredItem.title),
+                  subtitle: Text(userName),
+                  trailing: Text(filteredItem.numberFlashcard.toString()),
                   onTap: () {
                     
                   },

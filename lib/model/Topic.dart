@@ -9,8 +9,10 @@ class Topic {
   String? folderId; // Optional folderId to associate the topic with a folder
   bool active = true;
   String topicID = "";
+  int numberFlashcard = 0;
   Topic();
   Topic.n(this.date, this.userID, this.title, this.active,this.topicID, {this.folderId});
+  Topic.a(this.date, this.userID, this.title, this.active,this.topicID, this.numberFlashcard, {this.folderId});
 
   Future<String?> createTopic(String userId, String date, String title, bool active, {String? folderId}) async {
     try {
@@ -37,7 +39,8 @@ class Topic {
       print("Error creating topic: $e");
       return null;
     }
-  }  Future<Topic?> getTopicByID(TopicID) async {
+  }
+  Future<Topic?> getTopicByID(TopicID) async {
     try {
       DocumentSnapshot docSnapshot =
       await FirebaseFirestore.instance.collection('Topic').doc(TopicID).get();
@@ -62,23 +65,64 @@ class Topic {
       return null;
     }
   }
-
-  Future<void> updateTopic(String topicId, String newTitle, List<Map<String, String>> newVocabularyList) async {
+  Future<List<Topic>> searchTopicByTitle(String title) async {
     try {
-      await FirebaseFirestore.instance.collection("topics").doc(topicId).update({
-        "title": newTitle,
-        "vocabularyList": newVocabularyList,
+      List<Topic> topics = [];
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('Topic')
+          .where('Title', isGreaterThanOrEqualTo: title)
+          .where('Title', isLessThan: title + 'z')
+          .where('Active', isEqualTo: true)
+          .get();
+
+      for (QueryDocumentSnapshot docSnapshot in querySnapshot.docs) {
+        Map<String, dynamic>? data = docSnapshot.data() as Map<String, dynamic>?;
+
+        if (data != null) {
+          String id = docSnapshot.id;
+          String topicTitle = data['Title'] ?? '';
+          String folderId = data['FolderID'] ?? '';
+          bool active = data['Active'] ?? false;
+          String date = data['Date'] ?? '';
+          String userId = data['UserID'] ?? '';
+          int number = data['Number'] ?? 0;
+          Topic topic = Topic.a(date, userId, topicTitle, active, id, number, folderId: folderId);
+          topics.add(topic);
+        }
+      }
+      return topics;
+    } catch (e) {
+      print('Error searching topic by title: $e');
+      return [];
+    }
+  }
+  Future<void> updateNumber(int number, String topicID) async{
+    try {
+      await FirebaseFirestore.instance.collection("Topic").doc(topicID).update({
+        "Number": number,
       });
 
-      print("Topic updated successfully");
+      print("Number updated successfully");
     } catch (e) {
-      print("Error updating topic: $e");
+      print("Error updating number: $e");
     }
   }
 
+  // Future<void> updateTopic(String topicId, String newTitle, List<Map<String, String>> newVocabularyList) async {
+  //   try {
+  //     await FirebaseFirestore.instance.collection("topics").doc(topicId).update({
+  //       "title": newTitle,
+  //       "vocabularyList": newVocabularyList,
+  //     });
+  //
+  //     print("Topic updated successfully");
+  //   } catch (e) {
+  //     print("Error updating topic: $e");
+  //   }
+  // }
+
   Future<List<Topic>> getTopics() async {
     List<Topic> topicList = [];
-
     try {
       QuerySnapshot querySnapshot =
       await FirebaseFirestore.instance.collection('Topic').get();
@@ -94,7 +138,7 @@ class Topic {
           String date = data['Date'] ?? '';
           String userId = data['userID'] ?? '';
 
-          Topic topic = Topic.n(date, userId, title, active,id,folderId: folderId);
+          Topic topic = Topic.n(date, userId, title, active,id, folderId: folderId);
           topicList.add(topic);
         }
       }

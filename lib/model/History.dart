@@ -18,7 +18,6 @@ class History{
         "TimeOpen": timeOpen,
         "TopicID": topicId,
       };
-
       DocumentReference docRef = await FirebaseFirestore.instance.collection("History").add(data);
       print("History created successfully with ID: ${docRef.id}");
       return docRef.id;
@@ -27,6 +26,46 @@ class History{
       return null;
     }
   }
+  Future<void> updateHistoryDateTime(String userId, String topicId, String newDate, String newTime) async {
+    try {
+      bool historyExists = await checkHistoryExists(userId, topicId);
+
+      if (historyExists) {
+        QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+            .collection("History")
+            .where("UserID", isEqualTo: userId)
+            .where("TopicID", isEqualTo: topicId)
+            .get();
+
+        for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+          String docId = doc.id;
+          await FirebaseFirestore.instance
+              .collection("History")
+              .doc(docId)
+              .update({"DateOpen": newDate, "TimeOpen": newTime});
+          print("History updated successfully with ID: $docId");
+        }
+      } else {
+        print("No history found for user with this topic.");
+      }
+    } catch (e) {
+      print("Error updating history: $e");
+    }
+  }
+  Future<bool> checkHistoryExists(String userId, String topicId) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("History")
+          .where("UserID", isEqualTo: userId)
+          .where("TopicID", isEqualTo: topicId)
+          .get();
+      return querySnapshot.docs.isNotEmpty;
+    } catch (e) {
+      print("Error checking history: $e");
+      return false;
+    }
+  }
+
   Future<List<Map<String, dynamic>>> getUserOpenedTopics(String userID) async {
     List<Map<String, dynamic>> openedTopics = [];
 
