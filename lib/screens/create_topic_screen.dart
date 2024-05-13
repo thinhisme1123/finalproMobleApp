@@ -63,7 +63,6 @@ class _CreateTopicState extends State<CreateTopic> {
       _formKey.currentState!.save();
       try {
         // Create a new topic
-        // String? errorMessage = await Topic().createTopic("", getDate(), _title, folderId: "folderID");
         String? topicId = await Topic().createTopic(userID, getDate(), _title, active, folderId: "folderID");
         if (topicId != null) {
           //update number of flashcard

@@ -33,14 +33,14 @@ class _LibraryScreenState extends State<LibraryScreen> {
     super.initState();
     _initSharedPreferences().then((_) {
       // Sau khi userID được khởi tạo từ _initSharedPreferences(), gọi _fetchTopics
-      _fetchTopics(userID);
-      _fetchFolders();
+      fetchTopics(userID);
+      fetchFolders();
     });
   }
-  Future<void> _fetchTopics(String userID) async {
+  Future<void> fetchTopics(String userID) async {
     try {
       List<Map<String, dynamic>> openedTopics = await History().getUserOpenedTopics(userID);
-      print("Successsssssss");
+      print("Success");
       for (var topicData in openedTopics) {
         String topicID = topicData['topicID'];
         print("topic id $topicID");
@@ -58,7 +58,33 @@ class _LibraryScreenState extends State<LibraryScreen> {
       print('Error processing topics: $e');
     }
   }
-
+  Future<void> storeHistory(String userID, String date, String time, String topicID) async{
+    try {
+      // List<Map<String, dynamic>> openedTopics = await History().getUserOpenedTopics(userID);
+      // print("Success");
+      // for (var topicData in openedTopics) {
+      //   String topicID = topicData['topicID'];
+      //   print("topic id $topicID");
+      //   Topic? topic = await Topic().getTopicByID(topicID);
+      //   if (topic != null){
+      //     _topics.add(topic);
+      //     String? name = await(User().getEmailByID(userID));
+      //     _names.add(name!);
+      //   }
+      // };
+      // setState(() {
+      //   _isLoadingTopic = false;
+      // });
+      String? historyId = await History().createHistory(userID, date, DateTime.now().toString(),"",topicID);
+      if (historyId != null) {
+        print("History created successfully with ID: $historyId");
+      } else {
+        print("Error creating history for topic");
+      }
+    } catch (e) {
+      print('Error processing topics: $e');
+    }
+  }
 
   // Future<void> _fetchTopics() async {
   //   List<Topic> topics = await Topic().getTopics();
@@ -68,7 +94,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
   //   });
   // }
 
-  Future<void> _fetchFolders() async {
+  Future<void> fetchFolders() async {
     List<Folder> folders = await Folder().getFolders();
     setState(() {
       _folders = folders;
@@ -137,14 +163,14 @@ class _LibraryScreenState extends State<LibraryScreen> {
                           dismissible: DismissiblePane(onDismissed: () async {
                             // Handle topic deletion
                             await Topic().deleteTopicByID(topic.topicID);
-                            print('Folder ${topic.title} dismissed');
+                            print('Topic ${topic.title} dismissed');
                           }),
                           children: [
                             SlidableAction(
                               onPressed: (context) async {
                                 // Handle folder deletion
                                 await Topic().deleteTopicByID(topic.topicID);
-                                _fetchFolders();
+                                fetchTopics(userID);
                                 print('Topic ${topic.title} deleted');
                               },
                               backgroundColor: Colors.red,
@@ -175,6 +201,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             subtitle: Text(_names[index]),
                             onTap: () {
                               print(index);
+
                               Get.to(HomeScreenModes(title: topic.title, date: topic.date, topicID: topic.topicID, active: topic.active,userID: topic.userID, folderId: topic.folderId));
                             },
                           ),
@@ -214,7 +241,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                     onPressed: (context) async {
                                       // Handle folder deletion
                                       await Folder().deleteFolderByID(folder.folderId);
-                                      _fetchFolders();
+                                      fetchFolders();
                                       print('Folder ${folder.title} deleted');
                                     },
                                     backgroundColor: Colors.red,
