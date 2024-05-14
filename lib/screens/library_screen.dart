@@ -32,10 +32,17 @@ class _LibraryScreenState extends State<LibraryScreen> {
   void initState() {
     super.initState();
     _initSharedPreferences().then((_) {
-      // Sau khi userID được khởi tạo từ _initSharedPreferences(), gọi _fetchTopics
       fetchTopics(userID);
       fetchFolders();
     });
+  }
+  String getDate() {
+    DateTime now = DateTime.now();
+    return '${now.day}:${now.month}:${now.year}';
+  }
+  String getTime(){
+    DateTime now = DateTime.now();
+    return '${now.hour}:${now.minute}:${now.second}';
   }
   Future<void> fetchTopics(String userID) async {
     try {
@@ -58,28 +65,22 @@ class _LibraryScreenState extends State<LibraryScreen> {
       print('Error processing topics: $e');
     }
   }
-  Future<void> storeHistory(String userID, String date, String time, String topicID) async{
+  Future<void> storeHistory(String userID, String date, String time, String topicID, String folderID) async{
     try {
-      // List<Map<String, dynamic>> openedTopics = await History().getUserOpenedTopics(userID);
-      // print("Success");
-      // for (var topicData in openedTopics) {
-      //   String topicID = topicData['topicID'];
-      //   print("topic id $topicID");
-      //   Topic? topic = await Topic().getTopicByID(topicID);
-      //   if (topic != null){
-      //     _topics.add(topic);
-      //     String? name = await(User().getEmailByID(userID));
-      //     _names.add(name!);
-      //   }
-      // };
-      // setState(() {
-      //   _isLoadingTopic = false;
-      // });
-      String? historyId = await History().createHistory(userID, date, DateTime.now().toString(),"",topicID);
-      if (historyId != null) {
-        print("History created successfully with ID: $historyId");
-      } else {
-        print("Error creating history for topic");
+      if (await History().checkHistoryExists(userID, topicID)){
+        String? historyId = await History().updateHistoryDateTime(userID,topicID, date, time);
+        if (historyId != null) {
+          print("History update successfully with ID: $historyId");
+        } else {
+          print("Error update history for topic");
+        }      }
+      else{
+        String? historyId = await History().createHistory(userID, date, DateTime.now().toString(),folderID,topicID);
+        if (historyId != null) {
+          print("History created successfully with ID: $historyId");
+        } else {
+          print("Error creating history for topic");
+        }
       }
     } catch (e) {
       print('Error processing topics: $e');
@@ -201,7 +202,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             subtitle: Text(_names[index]),
                             onTap: () {
                               print(index);
-
+                              storeHistory(userID, getDate(), getTime(), topic.topicID, topic.folderId);
                               Get.to(HomeScreenModes(title: topic.title, date: topic.date, topicID: topic.topicID, active: topic.active,userID: topic.userID, folderId: topic.folderId));
                             },
                           ),

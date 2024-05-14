@@ -52,12 +52,12 @@ class _CreateTopicState extends State<CreateTopic> {
     _initSharedPreferences();
     _addTerm(); // Add an initial term
   }
-  Future<void> _fetchTopics() async {
-    List<Topic> topics = await Topic().getTopics();
-    setState(() {
-      _topics = topics;
-    });
-  }
+  // Future<void> _fetchTopics() async {
+  //   List<Topic> topics = await Topic().getTopics();
+  //   setState(() {
+  //     _topics = topics;
+  //   });
+  // }
   void _handleSave() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -80,7 +80,7 @@ class _CreateTopicState extends State<CreateTopic> {
               Get.back();
             }
           }
-          await _fetchTopics();
+          // await _fetchTopics();
           Get.off(HomeScreen());
         }
       } catch (e) {

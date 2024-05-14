@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:finalproject/model/Folder.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
+import '../Helper/SharedPreferencesHelper.dart';
 
+import '../model/History.dart';
 import '../model/Topic.dart';
 
 class ListTopic extends StatefulWidget {
@@ -15,39 +17,75 @@ class ListTopic extends StatefulWidget {
 }
 
 class _ListTopicState extends State<ListTopic> {
-  List<Folder> _folders = [];
-  List<Topic> _topics= [];
-  bool _isLoadingTopic = true;
-  bool _isLoadingFolder = true;
+  final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
+
+  List<Topic> _learnttopics = [];
+  List<Topic> buffer = [];
+  List<Topic> _createdtopics= [];
+  bool _isLoadingCreatedTopic = true;
+  bool _isLearntTopic = true;
+  late String userID;
 
   @override
   void initState() {
     super.initState();
-    _fetchFolders();
-    _fetchTopics();
-  }
-  Future<void> _fetchTopics() async {
-    List<Topic> topics = await Topic().getTopics();
-    setState(() {
-      _topics = topics;
-      _isLoadingTopic = false;
+    _initSharedPreferences().then((_) {
+      fetchCreatedTopics();
+      fetchLearntTopics();
     });
   }
 
-  Future<void> _fetchFolders() async {
-    List<Folder> folders = await Folder().getFolders();
+  Future<void> _initSharedPreferences() async {
+    await sharedPreferencesHelper.init();
+    // Perform asynchronous work first
+    String tempUserID = await sharedPreferencesHelper.getUserID() ?? '';
+    String tempEmail = await sharedPreferencesHelper.getEmail() ?? "";
+
+    // Update the state synchronously inside setState()
     setState(() {
-      _folders = folders;
-      _isLoadingFolder = false;
+      userID = tempUserID;
+      print("id $userID");
+      // email = tempEmail;
+      // tProfileSubHeading = email;
+      // print("email $email");
     });
   }
 
-
-  void _addFolder(Folder folder) {
+  Future<void> fetchCreatedTopics() async {
+    List<Topic> topics = await Topic().getTopicsByUserID_NoFolderID(userID);
     setState(() {
-      _folders.add(folder);
+      _createdtopics = topics;
+      _isLoadingCreatedTopic = false;
     });
   }
+
+  Future<void> fetchLearntTopics() async {
+    try {
+      List<Map<String, dynamic>> openedTopics = await History().getUserOpenedTopics_NoFolderID(userID);
+      print("Success");
+      for (var topicData in openedTopics) {
+        String topicID = topicData['topicID'];
+        print("topic id $topicID");
+        Topic? topic = await Topic().getTopicByID(topicID);
+        if (topic != null){
+          buffer.add(topic);
+        }
+      }
+      setState(() {
+        _learnttopics = buffer;
+        _isLearntTopic = false;
+      });
+    } catch (e) {
+      print('Error processing topics: $e');
+    }
+  }
+
+
+  // void _addFolder(Folder folder) {
+  //   setState(() {
+  //     _learnttopics.add(folder);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -67,17 +105,17 @@ class _ListTopicState extends State<ListTopic> {
         ),
         body: TabBarView(
           children: [
-            _isLoadingTopic
+            _isLoadingCreatedTopic
                 ? Center(child: CircularProgressIndicator())
                 :Container(
               color: Color(0xfff6f7fb), // Background color for the container
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: _topics.length > 0
+                child: _createdtopics.length > 0
                     ? ListView.builder(
-                  itemCount: _topics.length,
+                  itemCount: _createdtopics.length,
                   itemBuilder: (context, index) {
-                    Topic topic = _topics[index];
+                    Topic topic = _createdtopics[index];
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Slidable(
@@ -85,34 +123,23 @@ class _ListTopicState extends State<ListTopic> {
                             .title), // Set a unique key for each item
                         endActionPane: ActionPane(
                           motion: const ScrollMotion(),
-                          dismissible: DismissiblePane(onDismissed: () async {
-                            // Handle topic deletion
-                            await Topic().deleteTopicByID(topic.topicID);
-                            print('Folder ${topic.title} dismissed');
-                          }),
+                          dismissible: DismissiblePane(onDismissed: () async {}),
                           children: [
                             SlidableAction(
-                              onPressed: (context) async {
-                                // Handle folder deletion
-                                await Topic().deleteTopicByID(topic.topicID);
-                                _fetchFolders();
-                                print('Topic ${topic.title} deleted');
-                              },
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
-                              icon: Icons.delete,
-                              label: 'Delete',
-                            ),
-                            SlidableAction(
-                              onPressed: (context) {
-                                // Handle folder edit
-                                // Get.to(HomeScreenModes(title: topic.title, date: topic.date, topicID: topic.topicID, active: topic.active,userID: topic.userID, folderId: topic.folderId));
-                              },
+                              onPressed: (context) async {},
                               backgroundColor: Colors.green,
                               foregroundColor: Colors.white,
-                              icon: Icons.update,
-                              label: 'Edit',
+                              icon: Icons.delete,
+                              label: 'Add',
                             ),
+                            // SlidableAction(
+                            //   onPressed: (context) {
+                            //   },
+                            //   backgroundColor: Colors.green,
+                            //   foregroundColor: Colors.white,
+                            //   icon: Icons.update,
+                            //   label: 'Edit',
+                            // ),
                           ],
                         ),
                         child: Container(
@@ -124,10 +151,7 @@ class _ListTopicState extends State<ListTopic> {
                             leading: Icon(Icons.newspaper),
                             title: Text(topic.title),
                             subtitle: Text(topic.topicID),
-                            onTap: () {
-                              print(index);
-                              Get.to(HomeScreenModes(title: topic.title, date: topic.date, topicID: topic.topicID, active: topic.active,userID: topic.userID, folderId: topic.folderId));
-                            },
+                            onTap: () {},
                           ),
                         ),
                       ),
@@ -137,36 +161,29 @@ class _ListTopicState extends State<ListTopic> {
                     : null,
               ),
             ),
-            _isLoadingFolder
+            _isLearntTopic
                 ? Center(child: CircularProgressIndicator())
                 :Container(
               color: Color(0xfff6f7fb), // Background color for the container
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: _folders.length > 0
+                child: _learnttopics.length > 0
                     ? ListView.builder(
-                        itemCount: _folders.length,
+                        itemCount: _learnttopics.length,
                         itemBuilder: (context, index) {
-                          Folder folder = _folders[index];
+                          Topic topic = _learnttopics[index];
                           return Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8.0),
                             child: Slidable(
-                              key: Key(folder
+                              key: Key(topic
                                   .title), // Set a unique key for each item
                               endActionPane: ActionPane(
                                 motion: const ScrollMotion(),
                                 dismissible: DismissiblePane(onDismissed: () async {
-                                  // Handle folder deletion
-                                  await Folder().deleteFolderByID(folder.folderId);
-                                  print('Folder ${folder.title} dismissed');
                                 }),
                                 children: [
                                   SlidableAction(
                                     onPressed: (context) async {
-                                      // Handle folder deletion
-                                      await Folder().deleteFolderByID(folder.folderId);
-                                      _fetchFolders();
-                                      print('Folder ${folder.title} deleted');
                                     },
                                     backgroundColor: Colors.red,
                                     foregroundColor: Colors.white,
@@ -175,8 +192,6 @@ class _ListTopicState extends State<ListTopic> {
                                   ),
                                   SlidableAction(
                                     onPressed: (context) {
-                                      // Handle folder edit
-                                      Get.to(EditFolderScreen(title: folder.title, desc: folder.description, id: folder.folderId));
                                     },
                                     backgroundColor: Colors.green,
                                     foregroundColor: Colors.white,
@@ -191,18 +206,10 @@ class _ListTopicState extends State<ListTopic> {
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                                 child: ListTile(
-                                  leading: Icon(Icons.folder),
-                                  title: Text(folder.title),
-                                  subtitle: Text(folder.description),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              FolderDetailScreen(
-                                                  folder: folder)),
-                                    );
-                                  },
+                                  leading: Icon(Icons.topic),
+                                  title: Text(topic.title),
+                                  subtitle: Text(topic.userID),
+                                  onTap: () {}
                                 ),
                               ),
                             ),
