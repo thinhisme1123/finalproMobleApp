@@ -127,7 +127,7 @@ class _ListTopicState extends State<ListTopic> {
                             .title), // Set a unique key for each item
                         endActionPane: ActionPane(
                           motion: const ScrollMotion(),
-                          dismissible: DismissiblePane(onDismissed: () async {}),
+                          // dismissible: DismissiblePane(onDismissed: () async {}),
                           children: [
                             SlidableAction(
                               onPressed: (context) async {
@@ -198,8 +198,8 @@ class _ListTopicState extends State<ListTopic> {
                                   .title), // Set a unique key for each item
                               endActionPane: ActionPane(
                                 motion: const ScrollMotion(),
-                                dismissible: DismissiblePane(onDismissed: () async {
-                                }),
+                                // dismissible: DismissiblePane(onDismissed: () async {
+                                // }),
                                 children: [
                                   SlidableAction(
                                     onPressed: (context) async {

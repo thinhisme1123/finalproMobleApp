@@ -59,7 +59,8 @@ class Topic {
           bool active = data['Active'] ?? false;
           String date = data['Date'] ?? '';
           String userId = data['UserID'] ?? '';
-          Topic topic = Topic.n(date, userId, title, active,id);
+          int number = data["Number"] ?? 0;
+          Topic topic = Topic.a(date, userId, title, active,id, number);
           return topic;
         }
       }

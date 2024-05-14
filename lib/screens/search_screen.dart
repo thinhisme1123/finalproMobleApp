@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
+import '../Helper/SharedPreferencesHelper.dart';
+import '../home/home_modes_screen.dart';
+import '../model/History.dart';
 import '../model/Topic.dart';
 import '../model/User.dart';
 
@@ -9,6 +13,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
 
 
   late List<Topic> topics =[];
@@ -19,14 +24,60 @@ class _SearchPageState extends State<SearchPage> {
 
   List<String> userNames = [];
 
+  late String userID;
+
   final _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    _initSharedPreferences();
+  }
+  Future<void> _initSharedPreferences() async {
+    await sharedPreferencesHelper.init();
+    // Perform asynchronous work first
+    String tempUserID = await sharedPreferencesHelper.getUserID() ?? '';
+    String tempEmail = await sharedPreferencesHelper.getEmail() ?? "";
+
+    // Update the state synchronously inside setState()
+    setState(() {
+      userID = tempUserID;
+      print("id $userID");
+      // email = tempEmail;
+      // tProfileSubHeading = email;
+      // print("email $email");
+    });
   }
 
-
+  Future<void> storeHistory(String userID, String date, String time, String topicID) async{
+    try {
+      if (await History().checkHistoryExists(userID, topicID)){
+        String? historyId = await History().updateHistoryDateTime(userID,topicID, date, time);
+        if (historyId != null) {
+          print("History update successfully with ID: $historyId");
+        } else {
+          print("Error update history for topic");
+        }      }
+      else{
+        String? historyId = await History().createHistory(userID, date, time,topicID);
+        if (historyId != null) {
+          print("History created successfully with ID: $historyId");
+        } else {
+          print("Error creating history for topic");
+        }
+      }
+    } catch (e) {
+      print('Error processing topics: $e');
+    }
+  }
+  String getDate() {
+    DateTime now = DateTime.now();
+    return '${now.day}:${now.month}:${now.year}';
+  }
+  String getTime(){
+    DateTime now = DateTime.now();
+    return '${now.hour}:${now.minute}:${now.second}';
+  }
   void _filterItems(String title) async {
     List<Topic> buffer1 = [];
 
@@ -58,6 +109,7 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color.fromRGBO(74, 89, 255,1),
         title: Text('Home'),
         centerTitle: true,
       ),
@@ -105,7 +157,8 @@ class _SearchPageState extends State<SearchPage> {
                   subtitle: Text(userName),
                   trailing: Text(filteredItem.numberFlashcard.toString()),
                   onTap: () {
-                    
+                    storeHistory(userID, getDate(), getTime(), filteredItem.topicID);
+                    Get.to(HomeScreenModes(title: filteredItem.title, date: filteredItem.date, topicID: filteredItem.topicID, active: filteredItem.active, userID: filteredItem.userID, folderId: ""));
                   },
                 );
               },
