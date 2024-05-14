@@ -11,6 +11,7 @@ import '../Helper/SharedPreferencesHelper.dart';
 
 import '../model/History.dart';
 import '../model/Topic.dart';
+import '../model/User.dart';
 
 class ListTopic extends StatefulWidget {
   final String folderID;
@@ -26,6 +27,9 @@ class _ListTopicState extends State<ListTopic> {
   List<Topic> _learnttopics = [];
   List<Topic> buffer = [];
   List<Topic> _createdtopics= [];
+  List<String> name1 = [];
+  List<String> name2 = [];
+
   bool _isLoadingCreatedTopic = true;
   bool _isLearntTopic = true;
   late String userID;
@@ -57,8 +61,16 @@ class _ListTopicState extends State<ListTopic> {
 
   Future<void> fetchCreatedTopics() async {
     List<Topic> topics = await Topic().getTopicsByUserID(userID);
+    for (var topicData in topics) {
+      String? name = await(User().getEmailByID(userID));
+      print("user: $name");
+      print("Success");
+      name1.add(name!);
+    };
     setState(() {
       _createdtopics = topics;
+      print(name2);
+      print(_createdtopics.length);
       _isLoadingCreatedTopic = false;
     });
   }
@@ -73,7 +85,12 @@ class _ListTopicState extends State<ListTopic> {
         Topic? topic = await Topic().getTopicByID(topicID);
         if (topic != null){
           buffer.add(topic);
+          String? name = await(User().getEmailByID(topic.userID));
+          print("user: $name");
+          print("Success");
+          name2.add(name!);
         }
+
       }
       setState(() {
         _learnttopics = buffer;
@@ -83,13 +100,6 @@ class _ListTopicState extends State<ListTopic> {
       print('Error processing topics: $e');
     }
   }
-
-
-  // void _addFolder(Folder folder) {
-  //   setState(() {
-  //     _learnttopics.add(folder);
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -123,8 +133,7 @@ class _ListTopicState extends State<ListTopic> {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Slidable(
-                        key: Key(topic
-                            .title), // Set a unique key for each item
+                        key: Key(topic.title), // Set a unique key for each item
                         endActionPane: ActionPane(
                           motion: const ScrollMotion(),
                           // dismissible: DismissiblePane(onDismissed: () async {}),
@@ -169,7 +178,7 @@ class _ListTopicState extends State<ListTopic> {
                           child: ListTile(
                             leading: Icon(Icons.newspaper),
                             title: Text(topic.title),
-                            subtitle: Text(topic.topicID),
+                            subtitle: Text(name1[index]),
                             onTap: () {},
                           ),
                         ),
@@ -177,7 +186,7 @@ class _ListTopicState extends State<ListTopic> {
                     );
                   },
                 )
-                    : null,
+                    : Center(child: Text("You don't create any topic?")),
               ),
             ),
             _isLearntTopic
@@ -241,7 +250,7 @@ class _ListTopicState extends State<ListTopic> {
                                 child: ListTile(
                                   leading: Icon(Icons.topic),
                                   title: Text(topic.title),
-                                  subtitle: Text(topic.userID),
+                                  subtitle: Text(name2[index]),
                                   onTap: () {}
                                 ),
                               ),

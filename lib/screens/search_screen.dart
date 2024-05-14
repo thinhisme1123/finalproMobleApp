@@ -150,8 +150,22 @@ class _SearchPageState extends State<SearchPage> {
                 final filteredItem = _filteredItems[index];
                 final userName = userNames[index];
                 return ListTile(
+                  // leading: CircleAvatar(
+                  //   backgroundImage: NetworkImage(
+                  //       'https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?w=740&t=st=1715584089~exp=1715584689~hmac=19c5214fff7fd007e469f8c88727ac4d0bd3ad37aeb40473d419d06744bf17de'),
+                  // ),
                   leading: CircleAvatar(
-                    child: Text(filteredItem.userID),
+                    radius: 40,
+                    backgroundColor: Colors.blue,
+                    child: Center(
+                      child: Text(
+                          userName.isNotEmpty ? userName[0].toUpperCase() : '',
+                      style: TextStyle(
+                        fontSize: 40,
+                        color: Colors.white,
+                        )
+                      ),
+                    ),
                   ),
                   title: Text(filteredItem.title),
                   subtitle: Text(userName),

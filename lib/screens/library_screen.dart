@@ -56,7 +56,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
         Topic? topic = await Topic().getTopicByID(topicID);
         if (topic != null){
           _topics.add(topic);
-          String? name = await(User().getEmailByID(userID));
+          String? name = await(User().getEmailByID(topic.userID));
           _names.add(name!);
         }
       };
@@ -168,10 +168,31 @@ class _LibraryScreenState extends State<LibraryScreen> {
                           children: [
                             SlidableAction(
                               onPressed: (context) async {
-                                // Handle folder deletion
-                                await Topic().deleteTopicByID(topic.topicID);
-                                fetchTopics(userID);
-                                print('Topic ${topic.title} deleted');
+                                if (topic.userID == userID){
+                                  await Topic().deleteTopicByID(topic.topicID);
+                                  fetchTopics(userID);
+                                  print('Topic ${topic.title} deleted');
+                                  Fluttertoast.showToast(
+                                      msg: "Delete successfully",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.green,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0
+                                  );
+                                }
+                                else{
+                                  Fluttertoast.showToast(
+                                      msg: "You don't have permission to delete this topic",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.CENTER,
+                                      timeInSecForIosWeb: 2,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0
+                                  );
+                                }
                               },
                               backgroundColor: Colors.red,
                               foregroundColor: Colors.white,
@@ -184,8 +205,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                 : Fluttertoast.showToast(
                                     msg: "You don't have permission to edit this topic",
                                     toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM,
-                                    timeInSecForIosWeb: 1,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 2,
                                     backgroundColor: Colors.red,
                                     textColor: Colors.white,
                                     fontSize: 16.0);
@@ -362,7 +383,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     );
                   },
                 )
-                    : null,
+                    : Center(child: Text("You don't have any folder")),
               ),
             ),
           ],

@@ -4,6 +4,7 @@ import 'package:finalproject/model/Topic.dart';
 import 'package:finalproject/screens/form_add_vocab.dart';
 import 'package:finalproject/screens/library_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 import '../model/Word.dart';
@@ -80,8 +81,15 @@ class _CreateTopicState extends State<CreateTopic> {
               Get.back();
             }
           }
-          // await _fetchTopics();
-          Get.off(HomeScreen());
+          Fluttertoast.showToast(
+              msg: "Topic added successfully!",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0
+          );          Get.off(HomeScreen());
         }
       } catch (e) {
         print("Error creating topic: $e");
