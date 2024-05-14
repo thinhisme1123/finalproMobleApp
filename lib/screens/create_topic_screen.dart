@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:csv/csv.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:finalproject/Helper/SharedPreferencesHelper.dart';
 import 'package:finalproject/home/home_screen.dart';
 import 'package:finalproject/model/Topic.dart';
@@ -112,6 +116,31 @@ class _CreateTopicState extends State<CreateTopic> {
     }
   }
 
+  Future<void> _importFromCSV(String filePath) async {
+    String csvData = await File(filePath).readAsString();
+    List<List<dynamic>> rows = const CsvToListConverter().convert(csvData);
+
+    setState(() {
+      // Clear existing data
+      _vocabularyList.clear();
+      _englishControllers.clear();
+      _vietnameseControllers.clear();
+
+      // Skip the header row
+      for (int i = 1; i < rows.length; i++) {
+        List<dynamic> row = rows[i];
+        String englishWord = row[0]; // English word
+        String vietnameseWord = row[1]; // Vietnamese word
+
+        // Add the vocabulary to your list
+        _vocabularyList
+            .add({"english": englishWord, "vietnamese": vietnameseWord});
+        _englishControllers.add(TextEditingController(text: englishWord));
+        _vietnameseControllers.add(TextEditingController(text: vietnameseWord));
+      }
+    });
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -128,11 +157,30 @@ class _CreateTopicState extends State<CreateTopic> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromRGBO(74, 89, 255,1),
+        backgroundColor: Color.fromRGBO(74, 89, 255, 1),
         title: Text('Create Topic'),
-        actions: [IconButton(onPressed: () {
-          print('exelfile');
-        }, icon: Icon(Icons.upload_file))],
+        actions: [
+          IconButton(
+              onPressed: () async {
+                FilePickerResult? result = await FilePicker.platform.pickFiles(
+                  type: FileType.custom,
+                  allowedExtensions: ['csv'],
+                );
+
+                if (result != null) {
+                  PlatformFile file = result.files.single;
+                  if (file.path != null) {
+                    String filePath = file.path!;
+                    _importFromCSV(filePath);
+                  } else {
+                    print('No file path received');
+                  }
+                } else {
+                  print('No file selected');
+                }
+              },
+              icon: Icon(Icons.upload_file))
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.0),
