@@ -6,6 +6,7 @@ class Folder {
   String description = '';
   String folderId ="";
   String userId ="";
+  List<String> topicID = [];
   Folder();
 
   Folder.n(this.title, this.description, this.userId, this.folderId);
@@ -27,6 +28,30 @@ class Folder {
       return 'Failed to add user details: $e';
     }
   }
+  Future<bool> addTopicToFolder(String folderId, String topicId) async {
+    try {
+      DocumentReference folderRef = FirebaseFirestore.instance.collection("Folder").doc(folderId);
+      DocumentSnapshot docSnapshot = await folderRef.get();
+      if (docSnapshot.exists) {
+        Map<String, dynamic>? data = docSnapshot.data() as Map<String, dynamic>?;
+        if (data != null) {
+          List<String> currentTopicIDs = List<String>.from(data['TopicID'] ?? []);
+          if (!currentTopicIDs.contains(topicId)) {
+            currentTopicIDs.add(topicId);
+            await folderRef.update({'TopicID': currentTopicIDs});
+            print('Topic $topicId added to folder $folderId successfully');
+          } else {
+            print('Topic $topicId already exists in folder $folderId');
+            return false;
+          }
+        }
+      }
+    } catch (e) {
+      print('Error adding topic to folder: $e');
+      return false;
+    }
+    return true;
+  }
 
   Future<List<Folder>> getFolders() async {
     List<Folder> folderList = [];
@@ -43,7 +68,31 @@ class Folder {
           String folderId = document.id;
           String title = data['Title'] ?? '';
           String description = data['Desc'] ?? '';
+          Folder folder = Folder.n(title, description, userId, folderId);
+          folderList.add(folder);
+        }
+      }
+      return folderList;
+    } catch (e) {
+      print('Error getting folders: $e');
+      return [];
+    }
+  }
+  Future<List<Folder>> getFoldersByUserID(String userID) async {
+    List<Folder> folderList = [];
 
+    try {
+      QuerySnapshot querySnapshot =
+      await FirebaseFirestore.instance.collection('Folder').where("UserID", isEqualTo: userID).get();
+
+      for (var document in querySnapshot.docs) {
+        Map<String, dynamic>? data = document.data() as Map<String, dynamic>?;
+
+        if (data != null) {
+          String userId = data["userID"] ?? "";
+          String folderId = document.id;
+          String title = data['Title'] ?? '';
+          String description = data['Desc'] ?? '';
           Folder folder = Folder.n(title, description, userId, folderId);
           folderList.add(folder);
         }

@@ -5,6 +5,7 @@ import 'package:finalproject/screens/folder_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:finalproject/model/Folder.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import '../Helper/SharedPreferencesHelper.dart';
 
@@ -12,6 +13,9 @@ import '../model/History.dart';
 import '../model/Topic.dart';
 
 class ListTopic extends StatefulWidget {
+  final String folderID;
+  const ListTopic({Key? key, required this.folderID})
+      : super(key: key);
   @override
   _ListTopicState createState() => _ListTopicState();
 }
@@ -52,7 +56,7 @@ class _ListTopicState extends State<ListTopic> {
   }
 
   Future<void> fetchCreatedTopics() async {
-    List<Topic> topics = await Topic().getTopicsByUserID_NoFolderID(userID);
+    List<Topic> topics = await Topic().getTopicsByUserID(userID);
     setState(() {
       _createdtopics = topics;
       _isLoadingCreatedTopic = false;
@@ -61,7 +65,7 @@ class _ListTopicState extends State<ListTopic> {
 
   Future<void> fetchLearntTopics() async {
     try {
-      List<Map<String, dynamic>> openedTopics = await History().getUserOpenedTopics_NoFolderID(userID);
+      List<Map<String, dynamic>> openedTopics = await History().getUserOpenedTopics(userID);
       print("Success");
       for (var topicData in openedTopics) {
         String topicID = topicData['topicID'];
@@ -126,20 +130,35 @@ class _ListTopicState extends State<ListTopic> {
                           dismissible: DismissiblePane(onDismissed: () async {}),
                           children: [
                             SlidableAction(
-                              onPressed: (context) async {},
+                              onPressed: (context) async {
+                                  bool done = await Folder().addTopicToFolder(widget.folderID, topic.topicID);
+                                  if (done) {
+                                    Fluttertoast.showToast(
+                                        msg: "Topic added successfully!",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: Colors.green,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0
+                                    );
+                                  } else {
+                                    Fluttertoast.showToast(
+                                        msg: "Failed to add topic or topic already exists!",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.BOTTOM,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: Colors.red,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0
+                                    );
+                                  }
+                              },
                               backgroundColor: Colors.green,
                               foregroundColor: Colors.white,
                               icon: Icons.delete,
                               label: 'Add',
                             ),
-                            // SlidableAction(
-                            //   onPressed: (context) {
-                            //   },
-                            //   backgroundColor: Colors.green,
-                            //   foregroundColor: Colors.white,
-                            //   icon: Icons.update,
-                            //   label: 'Edit',
-                            // ),
                           ],
                         ),
                         child: Container(
@@ -184,19 +203,33 @@ class _ListTopicState extends State<ListTopic> {
                                 children: [
                                   SlidableAction(
                                     onPressed: (context) async {
-                                    },
-                                    backgroundColor: Colors.red,
-                                    foregroundColor: Colors.white,
-                                    icon: Icons.delete,
-                                    label: 'Delete',
-                                  ),
-                                  SlidableAction(
-                                    onPressed: (context) {
+                                      bool done = await Folder().addTopicToFolder(widget.folderID, topic.topicID);
+                                      if (done) {
+                                        Fluttertoast.showToast(
+                                            msg: "Topic added successfully!",
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.BOTTOM,
+                                            timeInSecForIosWeb: 1,
+                                            backgroundColor: Colors.green,
+                                            textColor: Colors.white,
+                                            fontSize: 16.0
+                                        );
+                                      } else {
+                                        Fluttertoast.showToast(
+                                            msg: "Failed to add topic or topic already exists!",
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.BOTTOM,
+                                            timeInSecForIosWeb: 1,
+                                            backgroundColor: Colors.red,
+                                            textColor: Colors.white,
+                                            fontSize: 16.0
+                                        );
+                                      }
                                     },
                                     backgroundColor: Colors.green,
                                     foregroundColor: Colors.white,
-                                    icon: Icons.update,
-                                    label: 'Edit',
+                                    icon: Icons.delete,
+                                    label: 'Add',
                                   ),
                                 ],
                               ),

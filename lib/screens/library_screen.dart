@@ -65,7 +65,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
       print('Error processing topics: $e');
     }
   }
-  Future<void> storeHistory(String userID, String date, String time, String topicID, String folderID) async{
+  Future<void> storeHistory(String userID, String date, String time, String topicID) async{
     try {
       if (await History().checkHistoryExists(userID, topicID)){
         String? historyId = await History().updateHistoryDateTime(userID,topicID, date, time);
@@ -75,7 +75,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
           print("Error update history for topic");
         }      }
       else{
-        String? historyId = await History().createHistory(userID, date, DateTime.now().toString(),folderID,topicID);
+        String? historyId = await History().createHistory(userID, date, time,topicID);
         if (historyId != null) {
           print("History created successfully with ID: $historyId");
         } else {
@@ -96,7 +96,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
   // }
 
   Future<void> fetchFolders() async {
-    List<Folder> folders = await Folder().getFolders();
+    List<Folder> folders = await Folder().getFoldersByUserID(userID);
     setState(() {
       _folders = folders;
       _isLoadingFolder = false;
@@ -164,6 +164,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                           dismissible: DismissiblePane(onDismissed: () async {
                             // Handle topic deletion
                             await Topic().deleteTopicByID(topic.topicID);
+                            fetchTopics(userID);
                             print('Topic ${topic.title} dismissed');
                           }),
                           children: [
@@ -202,8 +203,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             subtitle: Text(_names[index]),
                             onTap: () {
                               print(index);
-                              storeHistory(userID, getDate(), getTime(), topic.topicID, topic.folderId);
-                              Get.to(HomeScreenModes(title: topic.title, date: topic.date, topicID: topic.topicID, active: topic.active,userID: topic.userID, folderId: topic.folderId));
+                              storeHistory(userID, getDate(), getTime(), topic.topicID);
+                              Get.to(HomeScreenModes(title: topic.title, date: topic.date, topicID: topic.topicID, active: topic.active,userID: topic.userID, folderId: ""));
                             },
                           ),
                         ),
@@ -235,6 +236,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                 dismissible: DismissiblePane(onDismissed: () async {
                                   // Handle folder deletion
                                   await Folder().deleteFolderByID(folder.folderId);
+                                  fetchFolders();
                                   print('Folder ${folder.title} dismissed');
                                 }),
                                 children: [
@@ -286,7 +288,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                           );
                         },
                       )
-                    : null,
+                    :Center(child: Text("You don't have any folder")),
               ),
             ),
           ],

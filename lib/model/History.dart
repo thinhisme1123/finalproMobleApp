@@ -3,16 +3,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class History{
   String userID = "";
   String topicID = "";
-  String folderID = "folderID";
   String timeOpen = " ";
   String dateOpen = "";
   History();
-  History.n(this.userID, this.dateOpen, this.timeOpen, this.folderID, this.topicID);
+  History.n(this.userID, this.dateOpen, this.timeOpen, this.topicID);
 
-  Future<String?> createHistory(String userId, String dateOpen, String timeOpen, String folderID, String topicId) async {
+  Future<String?> createHistory(String userId, String dateOpen, String timeOpen, String topicId) async {
     try {
       Map<String, dynamic> data = {
-        "FolderID": folderID,
         "DateOpen": dateOpen,
         "UserID": userId,
         "TimeOpen": timeOpen,

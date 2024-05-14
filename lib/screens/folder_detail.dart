@@ -4,6 +4,8 @@ import 'package:finalproject/screens/list_topic_to_folder.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../model/Topic.dart';
+
 class FolderDetailScreen extends StatefulWidget {
   final Folder folder;
 
@@ -14,8 +16,16 @@ class FolderDetailScreen extends StatefulWidget {
 }
 
 class _FolderDetailScreenState extends State<FolderDetailScreen> {
-  List<String> topics = []; // Replace this with your actual topics data
+  List<Topic> topics = [];
 
+  bool _isLoadingFolder = true;
+  Future<void> fetchTopics(String userID) async {
+    List<Topic> _topics = await Topic().getTopicsByFolderID(widget.folder.folderId);
+    setState(() {
+      topics = _topics;
+      _isLoadingFolder = false;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +58,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
             ),
           ),
           Expanded(
-            child: topics.isEmpty
+            child: topics.length < 1
                 ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -72,7 +82,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                         ElevatedButton(
                           onPressed: () {
                             // Navigate to the create topic screen
-                            Get.to(ListTopic());
+                            Get.to(ListTopic(folderID: widget.folder.folderId));
                           },
                           child: Text('Add New Topic'),
                         ),
@@ -83,7 +93,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                     itemCount: topics.length,
                     itemBuilder: (context, index) {
                       return ListTile(
-                        title: Text(topics[index]),
+                        // title: Text(topics[index]),
                       );
                     },
                   ),
