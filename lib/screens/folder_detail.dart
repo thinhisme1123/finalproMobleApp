@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 
+import '../Helper/SharedPreferencesHelper.dart';
 import '../model/Topic.dart';
+import '../model/User.dart';
 
 class FolderDetailScreen extends StatefulWidget {
   final Folder folder;
@@ -18,15 +20,50 @@ class FolderDetailScreen extends StatefulWidget {
 
 class _FolderDetailScreenState extends State<FolderDetailScreen> {
   List<Topic> topics = [];
+  final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
+  late String userID;
+  List<String> _names =[];
 
   bool _isLoadingFolder = true;
   Future<void> fetchTopics(String userID) async {
     List<Topic> _topics = await Topic().getTopicsByFolderID(widget.folder.folderId);
-    setState(() {
+    for (var topicData in _topics) {
+      String topicID = topicData.topicID;
+      print("topic id $topicID");
+      Topic? topic = await Topic().getTopicByID(topicID);
+      if(topic != null){
+        String? name = await(User().getEmailByID(topic.userID));
+        _names.add(name!);
+      }
+    }
+      setState(() {
       topics = _topics;
       _isLoadingFolder = false;
     });
+    print(topics.length);
   }
+  Future<void> _initSharedPreferences() async {
+    await sharedPreferencesHelper.init();
+    // Perform asynchronous work first
+    String tempUserID = await sharedPreferencesHelper.getUserID() ?? '';
+    String tempEmail = await sharedPreferencesHelper.getEmail() ?? "";
+
+    // Update the state synchronously inside setState()
+    setState(() {
+      userID = tempUserID;
+      print("id $userID");
+      // email = tempEmail;
+      // tProfileSubHeading = email;
+      // print("email $email");
+    });
+  }
+  void initState() {
+    super.initState();
+    _initSharedPreferences().then((_) {
+      fetchTopics(userID);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,7 +77,9 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
               icon: Icon(Icons.add))
         ],
       ),
-      body: Column(
+      body: _isLoadingFolder
+          ? Center(child: CircularProgressIndicator())
+          :Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
@@ -104,53 +143,13 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                       children: [
                         SlidableAction(
                           onPressed: (context) async {
-                            // if (topic.userID == userID){
-                            //   await Topic().deleteTopicByID(topic.topicID);
-                            //   fetchTopics(userID);
-                            //   print('Topic ${topic.title} deleted');
-                            //   Fluttertoast.showToast(
-                            //       msg: "Delete successfully",
-                            //       toastLength: Toast.LENGTH_SHORT,
-                            //       gravity: ToastGravity.CENTER,
-                            //       timeInSecForIosWeb: 1,
-                            //       backgroundColor: Colors.green,
-                            //       textColor: Colors.white,
-                            //       fontSize: 16.0
-                            //   );
-                            // }
-                            // else{
-                            //   Fluttertoast.showToast(
-                            //       msg: "You don't have permission to delete this topic",
-                            //       toastLength: Toast.LENGTH_SHORT,
-                            //       gravity: ToastGravity.CENTER,
-                            //       timeInSecForIosWeb: 2,
-                            //       backgroundColor: Colors.red,
-                            //       textColor: Colors.white,
-                            //       fontSize: 16.0
-                            //   );
-                            // }
+                            Folder().deleteTopicFromFolder(widget.folder.folderId, topic.topicID);
+                            fetchTopics(userID);
                           },
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
                           icon: Icons.delete,
                           label: 'Delete',
-                        ),
-                        SlidableAction(
-                          onPressed: (context) {
-                            // (topic.userID == userID) ? Get.to(EditTopicScreen(topicId: topic.topicID ,title: topic.title))
-                            // : Fluttertoast.showToast(
-                            //     msg: "You don't have permission to edit this topic",
-                            //     toastLength: Toast.LENGTH_SHORT,
-                            //     gravity: ToastGravity.CENTER,
-                            //     timeInSecForIosWeb: 2,
-                            //     backgroundColor: Colors.red,
-                            //     textColor: Colors.white,
-                            //     fontSize: 16.0);
-                          },
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                          icon: Icons.update,
-                          label: 'Edit',
                         ),
                       ],
                     ),
@@ -196,8 +195,8 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                                       const EdgeInsets.only(
                                           left: 10),
                                       child: Text(
-                                        // _names[index],
-                                        'User name',
+                                        _names[index],
+                                        // 'User name',
                                         style: TextStyle(
                                           fontSize:
                                           14, // Adjust the font size as needed

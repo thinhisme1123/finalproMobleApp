@@ -41,6 +41,7 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
   final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
   String userID ="";
   String email = "";
+  bool isloading = false;
   void initState() {
     super.initState();
     _widgetOptions = [
@@ -51,6 +52,7 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
     _initSharedPreferences().then((_) {
       storeHistory(userID, getDate(), getTime(), widget.topicID).then((_){
         Quizz_Achievement().updateMostTime(userID, widget.topicID);
+        isloading = true;
       });
     });
   }
@@ -67,16 +69,17 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
       if (await History().checkHistoryExists(userID, topicID)){
         String? historyId = await History().updateHistoryDateTimeAndCount(userID,topicID, date, time);
         if (historyId != null) {
-          print("History update successfully with ID: $historyId");
+          // print("History update successfully with ID: $historyId");
         } else {
-          print("Error update history for topic");
-        }      }
+          // print("Error update history for topic");
+        }
+      }
       else{
         String? historyId = await History().createHistory(userID, date, time,topicID);
         if (historyId != null) {
-          print("History created successfully with ID: $historyId");
+          // print("History created successfully with ID: $historyId");
         } else {
-          print("Error creating history for topic");
+          // print("Error creating history for topic");
         }
       }
     } catch (e) {
@@ -167,7 +170,9 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return isloading
+        ? Center(child: CircularProgressIndicator())
+        :Scaffold(
       appBar: AppBar(
         title: Text('Learning Modes'),
         leading: IconButton(

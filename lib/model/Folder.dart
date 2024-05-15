@@ -145,4 +145,28 @@ class Folder {
       print('Error deleting folder: $e');
     }
   }
+  Future<bool> deleteTopicFromFolder(String folderId, String topicId) async {
+    try {
+      DocumentReference folderRef = FirebaseFirestore.instance.collection("Folder").doc(folderId);
+      DocumentSnapshot docSnapshot = await folderRef.get();
+      if (docSnapshot.exists) {
+        Map<String, dynamic>? data = docSnapshot.data() as Map<String, dynamic>?;
+        if (data != null) {
+          List<String> currentTopicIDs = List<String>.from(data['TopicID'] ?? []);
+          if (currentTopicIDs.contains(topicId)) {
+            currentTopicIDs.remove(topicId);
+            await folderRef.update({'TopicID': currentTopicIDs});
+            print('Topic $topicId removed from folder $folderId successfully');
+            return true;
+          } else {
+            print('Topic $topicId does not exist in folder $folderId');
+            return false;
+          }
+        }
+      }
+    } catch (e) {
+      print('Error deleting topic from folder: $e');
+    }
+    return false;
+  }
 }

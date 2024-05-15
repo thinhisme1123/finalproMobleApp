@@ -56,7 +56,7 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
         if (folderId != null) {
           Folder? folder = await Folder().getFolderByID(folderId);
           if (folder != null) {
-            Get.to(FolderDetailAfterCreate(folder: folder));
+            Get.off(FolderDetailScreen(folder: folder));
           } else {
             print("Error: Folder not found with ID $folderId");
           }

@@ -120,7 +120,28 @@ class _LibraryScreenState extends State<LibraryScreen> {
     });
   }
 
-
+  Future<void> _deleteFolder(String folderId) async {
+    try {
+      await Folder().deleteFolderByID(folderId);
+      setState(() {
+        _folders.removeWhere((folder) => folder.folderId == folderId);
+      });
+      print('Folder $folderId deleted');
+    } catch (e) {
+      print('Error deleting folder: $e');
+    }
+  }
+  Future<void> _deleteTopic(String topicId) async {
+    try {
+      await Topic().deleteTopicByID(topicId);
+      setState(() {
+        _topics.removeWhere((topic) => topic.topicID == topicId);
+      });
+      print('Topic $topicId deleted');
+    } catch (e) {
+      print('Error deleting topic: $e');
+    }
+  }
   void _addFolder(Folder folder) {
     setState(() {
       _folders.add(folder);
@@ -128,7 +149,9 @@ class _LibraryScreenState extends State<LibraryScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
+    return _isLoadingTopic
+        ? Center(child: CircularProgressIndicator())
+        :DefaultTabController(
       length: 2, // Specify the number of tabs
       child: Scaffold(
         appBar: AppBar(
@@ -169,8 +192,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             SlidableAction(
                               onPressed: (context) async {
                                 if (topic.userID == userID){
-                                  await Topic().deleteTopicByID(topic.topicID);
-                                  fetchTopics(userID);
+                                  _deleteTopic(topic.topicID);
                                   print('Topic ${topic.title} deleted');
                                   Fluttertoast.showToast(
                                       msg: "Delete successfully",
@@ -325,13 +347,26 @@ class _LibraryScreenState extends State<LibraryScreen> {
                           motion: const ScrollMotion(),
                           children: [
                             SlidableAction(
-                              onPressed: (context) async {
-                                // Handle folder deletion
-                                await Folder().deleteFolderByID(folder.folderId);
-                                fetchFolders();
-                                print(
-                                    'Folder ${folder.title} deleted');
+                              onPressed: (context) {
+                                _deleteFolder(folder.folderId);
+                                Fluttertoast.showToast(
+                                    msg: "Delete successfully",
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.CENTER,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor: Colors.green,
+                                    textColor: Colors.white,
+                                    fontSize: 16.0
+                                );
                               },
+                              // onPressed: (context) async {
+                              //
+                              //   // Handle folder deletion
+                              //   // await Folder().deleteFolderByID(folder.folderId);
+                              //   // fetchFolders();
+                              //   // print(
+                              //   //     'Folder ${folder.title} deleted');
+                              // },
                               backgroundColor: Colors.red,
                               foregroundColor: Colors.white,
                               icon: Icons.delete,

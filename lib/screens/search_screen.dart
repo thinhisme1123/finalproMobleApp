@@ -50,30 +50,31 @@ class _SearchPageState extends State<SearchPage> {
     });
   }
 
-  Future<void> storeHistory(
-      String userID, String date, String time, String topicID) async {
-    try {
-      if (await History().checkHistoryExists(userID, topicID)) {
-        String? historyId =
-        await History().updateHistoryDateTimeAndCount(userID, topicID, date, time);
-        if (historyId != null) {
-          print("History update successfully with ID: $historyId");
-        } else {
-          print("Error update history for topic");
-        }
-      } else {
-        String? historyId =
-        await History().createHistory(userID, date, time, topicID);
-        if (historyId != null) {
-          print("History created successfully with ID: $historyId");
-        } else {
-          print("Error creating history for topic");
-        }
-      }
-    } catch (e) {
-      print('Error processing topics: $e');
-    }
-  }
+  // Future<void> storeHistory(
+  //     String userID, String date, String time, String topicID) async {
+  //   try {
+  //     bool check = await History().checkHistoryExists(userID, topicID);
+  //     print(check);
+  //     if (check) {
+  //       String? historyId =  await History().updateHistoryDateTimeAndCount(userID, topicID, date, time);
+  //       // if (historyId != null) {
+  //       //   print("History update successfully with ID: $historyId");
+  //       // } else {
+  //       //   print("Error update history for topic");
+  //       // }
+  //     } else {
+  //       print("1");
+  //       // String? historyId = await History().createHistory(userID, date, time, topicID);
+  //       // if (historyId != null) {
+  //       //   print("History created successfully with ID: $historyId");
+  //       // } else {
+  //       //   print("Error creating history for topic");
+  //       // }
+  //     }
+  //   } catch (e) {
+  //     print('Error processing topics: $e');
+  //   }
+  // }
 
   String getDate() {
     DateTime now = DateTime.now();
@@ -235,8 +236,7 @@ class _SearchPageState extends State<SearchPage> {
                           ),
                         ),
                         onTap: () {
-                          storeHistory(userID, getDate(), getTime(),
-                              filteredItem.topicID);
+                          // storeHistory(userID, getDate(), getTime(), filteredItem.topicID);
                           Get.to(HomeScreenModes(
                               title: filteredItem.title,
                               date: filteredItem.date,
