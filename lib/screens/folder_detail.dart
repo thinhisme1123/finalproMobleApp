@@ -2,6 +2,7 @@ import 'package:finalproject/home/home_screen.dart';
 import 'package:finalproject/model/Folder.dart';
 import 'package:finalproject/screens/list_topic_to_folder.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 
 import '../model/Topic.dart';
@@ -34,7 +35,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
         actions: [
           IconButton(
               onPressed: () {
-                print("add topic this folder");
+                Get.to(ListTopic(folderID: widget.folder.folderId));
               },
               icon: Icon(Icons.add))
         ],
@@ -90,13 +91,153 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                     ),
                   )
                 : ListView.builder(
-                    itemCount: topics.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        // title: Text(topics[index]),
-                      );
-                    },
-                  ),
+                  itemCount: topics.length,
+                  itemBuilder: (context, index) {
+                    Topic topic = topics[index];
+                    return Padding(
+                      padding:
+                      const EdgeInsets.symmetric(vertical: 8.0),
+                      child: Slidable(
+                        key: Key(topic.title), // Set a unique key for each item
+                        endActionPane:  ActionPane(
+                          motion: const ScrollMotion(),
+                          children: [
+                            SlidableAction(
+                              onPressed: (context) async {
+                                // if (topic.userID == userID){
+                                //   await Topic().deleteTopicByID(topic.topicID);
+                                //   fetchTopics(userID);
+                                //   print('Topic ${topic.title} deleted');
+                                //   Fluttertoast.showToast(
+                                //       msg: "Delete successfully",
+                                //       toastLength: Toast.LENGTH_SHORT,
+                                //       gravity: ToastGravity.CENTER,
+                                //       timeInSecForIosWeb: 1,
+                                //       backgroundColor: Colors.green,
+                                //       textColor: Colors.white,
+                                //       fontSize: 16.0
+                                //   );
+                                // }
+                                // else{
+                                //   Fluttertoast.showToast(
+                                //       msg: "You don't have permission to delete this topic",
+                                //       toastLength: Toast.LENGTH_SHORT,
+                                //       gravity: ToastGravity.CENTER,
+                                //       timeInSecForIosWeb: 2,
+                                //       backgroundColor: Colors.red,
+                                //       textColor: Colors.white,
+                                //       fontSize: 16.0
+                                //   );
+                                // }
+                              },
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                              icon: Icons.delete,
+                              label: 'Delete',
+                            ),
+                            SlidableAction(
+                              onPressed: (context) {
+                                // (topic.userID == userID) ? Get.to(EditTopicScreen(topicId: topic.topicID ,title: topic.title))
+                                // : Fluttertoast.showToast(
+                                //     msg: "You don't have permission to edit this topic",
+                                //     toastLength: Toast.LENGTH_SHORT,
+                                //     gravity: ToastGravity.CENTER,
+                                //     timeInSecForIosWeb: 2,
+                                //     backgroundColor: Colors.red,
+                                //     textColor: Colors.white,
+                                //     fontSize: 16.0);
+                              },
+                              backgroundColor: Colors.green,
+                              foregroundColor: Colors.white,
+                              icon: Icons.update,
+                              label: 'Edit',
+                            ),
+                          ],
+                        ),
+                        child: Container(
+                          height: 160,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors
+                                  .black, // Set the color of the border
+                              width: 1.0,
+                            ),
+                            color: Colors.white,
+                            borderRadius:
+                            BorderRadius.circular(8.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ListTile(
+                              title: Text(
+                                topic.title,
+                                style: TextStyle(
+                                  fontSize:
+                                  18, // Adjust the font size as needed
+                                  fontWeight: FontWeight
+                                      .bold, // Apply bold font weight
+                                  color: Colors
+                                      .black, // Change the text color
+                                ),
+                              ),
+                              subtitle: Padding(
+                                padding:
+                                const EdgeInsets.only(top: 50),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        CircleAvatar(
+                                          backgroundImage: NetworkImage(
+                                              'https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?w=740&t=st=1715584089~exp=1715584689~hmac=19c5214fff7fd007e469f8c88727ac4d0bd3ad37aeb40473d419d06744bf17de'),
+                                        ),
+                                        Padding(
+                                          padding:
+                                          const EdgeInsets.only(
+                                              left: 10),
+                                          child: Text(
+                                            // _names[index],
+                                            'User name',
+                                            style: TextStyle(
+                                              fontSize:
+                                              14, // Adjust the font size as needed
+                                              color: Colors
+                                                  .grey, // Change the text color
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              trailing: Text(
+                                topic.numberFlashcard.toString(),
+                                style: TextStyle(
+                                  fontSize:
+                                  15,
+                                  color: Colors
+                                      .black,
+                                ),
+                              ),
+                              onTap: () {
+                                // print(index);
+                                // storeHistory(userID, getDate(), getTime(), topic.topicID);
+                                // Get.to(HomeScreenModes(
+                                //     title: topic.title,
+                                //     date: topic.date,
+                                //     topicID: topic.topicID,
+                                //     active: topic.active,
+                                //     userID: topic.userID,
+                                //     folderId: ""));
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
           ),
         ],
       ),

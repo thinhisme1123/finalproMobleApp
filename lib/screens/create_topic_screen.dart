@@ -183,7 +183,8 @@ class _CreateTopicState extends State<CreateTopic> {
                   print('No file selected');
                 }
               },
-              icon: Icon(Icons.upload_file))
+              icon: Icon(Icons.upload_file)),
+          TextButton(onPressed: _handleSave, child: Text('Save', style: TextStyle(color: Colors.black, fontSize: 20),))
         ],
       ),
       body: SingleChildScrollView(
