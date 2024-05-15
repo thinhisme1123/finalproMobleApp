@@ -41,18 +41,20 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
   final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
   String userID ="";
   String email = "";
-  bool isloading = false;
+  bool isloading = true;
   void initState() {
     super.initState();
     _widgetOptions = [
       FlashCardScreen(topicID: widget.topicID),
-      QuizScreen(topicID: widget.topicID, userID: widget.userID),
+      QuizScreen(topicID: widget.topicID, userID: userID),
       TypeScreen(topicID: widget.topicID),
     ];
     _initSharedPreferences().then((_) {
       storeHistory(userID, getDate(), getTime(), widget.topicID).then((_){
         Quizz_Achievement().updateMostTime(userID, widget.topicID);
-        isloading = true;
+        setState(() {
+          isloading = false;
+        });
       });
     });
   }
@@ -170,9 +172,16 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
 
   @override
   Widget build(BuildContext context) {
-    return isloading
-        ? Center(child: CircularProgressIndicator())
-        :Scaffold(
+    // return isloading
+    //     ? Container(
+    //   color: Color.fromRGBO(0, 0, 0, 0.5), // Đặt màu nền trong suốt (0.5 là độ trong suốt)
+    //   child: Center(
+    //     child: CircularProgressIndicator(
+    //       backgroundColor: Colors.white,
+    //     ),
+    //   ),
+    // )
+        return Scaffold(
       appBar: AppBar(
         title: Text('Learning Modes'),
         leading: IconButton(

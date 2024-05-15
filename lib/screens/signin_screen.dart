@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:finalproject/home/home_screen.dart';
 import 'package:finalproject/screens/forget_passsword_screen.dart';
 import 'package:finalproject/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -369,7 +370,7 @@ class _SignInScreenState extends State<SignInScreen> {
       sharedPreferencesHelper.saveUserID(userId);
       sharedPreferencesHelper.saveEmail(_email.text);
       sharedPreferencesHelper.saveLoginState(true);
-      Get.toNamed('/home-screen');
+      Get.off(HomeScreen());
       print("User Logged In");
     } else {
       print("error");

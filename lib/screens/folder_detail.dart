@@ -3,9 +3,11 @@ import 'package:finalproject/model/Folder.dart';
 import 'package:finalproject/screens/list_topic_to_folder.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 import '../Helper/SharedPreferencesHelper.dart';
+import '../home/home_modes_screen.dart';
 import '../model/Topic.dart';
 import '../model/User.dart';
 
@@ -42,6 +44,17 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
     });
     print(topics.length);
   }
+  Future<void> _deleteTopic(String topicId) async {
+    try {
+      await Topic().deleteTopicByID(topicId);
+      setState(() {
+        topics.removeWhere((topic) => topic.topicID == topicId);
+      });
+      print('Topic $topicId deleted');
+    } catch (e) {
+      print('Error deleting topic: $e');
+    }
+  }
   Future<void> _initSharedPreferences() async {
     await sharedPreferencesHelper.init();
     // Perform asynchronous work first
@@ -63,7 +76,6 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
       fetchTopics(userID);
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,8 +155,24 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                       children: [
                         SlidableAction(
                           onPressed: (context) async {
-                            Folder().deleteTopicFromFolder(widget.folder.folderId, topic.topicID);
-                            fetchTopics(userID);
+                            if (topic.userID == userID){
+                              _deleteTopic(topic.topicID);
+                              print('Topic ${topic.title} deleted');
+                              Fluttertoast.showToast(
+                                  msg: "Delete successfully",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.green,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0
+                              );
+                            }
+                            // Folder().deleteTopicFromFolder(widget.folder.folderId, topic.topicID);
+                            // setState(() {
+                            //   topics.removeAt(index); // Xoá mục khỏi danh sách
+                            // });
+                            // fetchTopics(userID); // Tả
                           },
                           backgroundColor: Colors.red,
                           foregroundColor: Colors.white,
@@ -220,15 +248,15 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                             ),
                           ),
                           onTap: () {
-                            // print(index);
-                            // storeHistory(userID, getDate(), getTime(), topic.topicID);
-                            // Get.to(HomeScreenModes(
-                            //     title: topic.title,
-                            //     date: topic.date,
-                            //     topicID: topic.topicID,
-                            //     active: topic.active,
-                            //     userID: topic.userID,
-                            //     folderId: ""));
+                            print(index);
+                            print(index);
+                            Get.to(HomeScreenModes(
+                                title: topic.title,
+                                date: topic.date,
+                                topicID: topic.topicID,
+                                active: topic.active,
+                                userID: topic.userID,
+                                folderId: ""));
                           },
                         ),
                       ),

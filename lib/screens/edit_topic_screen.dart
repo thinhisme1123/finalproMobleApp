@@ -139,8 +139,10 @@ class _EditTopicScreenState extends State<EditTopicScreen> {
     if (_vocabularyList.length > 1) {
       setState(() {
         _vocabularyList.removeAt(index);
-        _englishControllers.removeAt(index);
-        _vietnameseControllers.removeAt(index);
+        _englishControllers[index].dispose(); // Xóa controller tương ứng
+        _englishControllers.removeAt(index); // Xóa controller từ danh sách
+        _vietnameseControllers[index].dispose(); // Xóa controller tương ứng
+        _vietnameseControllers.removeAt(index); // Xóa controller từ danh sách
       });
     }
   }
@@ -203,56 +205,52 @@ class _EditTopicScreenState extends State<EditTopicScreen> {
                 shrinkWrap: true,
                 itemCount: _vocabularyList.length,
                 itemBuilder: (context, index) {
-                  return Dismissible(
-                    key: Key(UniqueKey().toString()),
-                    // onDismissed: (direction) => _removeTerm(index),
-                    child: Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                TextFormField(
-                                  controller: _englishControllers[index],
-                                  decoration: InputDecoration(
-                                    labelText: 'English Word',
-                                  ),
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'Please enter an English word.';
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (value) => _vocabularyList[index]
-                                      ["english"] = value!,
+                  return Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                controller: _englishControllers[index],
+                                decoration: InputDecoration(
+                                  labelText: 'English Word',
                                 ),
-                                SizedBox(height: 10.0),
-                                TextFormField(
-                                  controller: _vietnameseControllers[index],
-                                  decoration: InputDecoration(
-                                    labelText: 'Vietnamese Meaning',
-                                  ),
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'Please enter the Vietnamese meaning.';
-                                    }
-                                    return null;
-                                  },
-                                  onSaved: (value) => _vocabularyList[index]
-                                      ["vietnamese"] = value!,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Please enter an English word.';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) => _vocabularyList[index]
+                                    ["english"] = value!,
+                              ),
+                              SizedBox(height: 10.0),
+                              TextFormField(
+                                controller: _vietnameseControllers[index],
+                                decoration: InputDecoration(
+                                  labelText: 'Vietnamese Meaning',
                                 ),
-                              ],
-                            ),
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Please enter the Vietnamese meaning.';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) => _vocabularyList[index]
+                                    ["vietnamese"] = value!,
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(height: 10.0),
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: 10.0),
+                    ],
                   );
                 },
               ),

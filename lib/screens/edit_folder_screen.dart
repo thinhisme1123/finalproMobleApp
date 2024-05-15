@@ -43,7 +43,7 @@ class _EditFolderScreenState extends State<EditFolderScreen> {
         await folder.updateFolder(id,_titleController.text, _descriptionController.text);
         Folder? folderAfterUpdate = await Folder().getFolderByID(id);
         if (folderAfterUpdate != null) {
-          Get.to(FolderDetailAfterCreate(folder: folderAfterUpdate));
+          Get.off(FolderDetailScreen(folder: folderAfterUpdate));
         } else {
           print("Error: Folder can not be updated with ID $id");
         }

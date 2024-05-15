@@ -189,7 +189,9 @@ class _TypeScreenState extends State<TypeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return _isLoading
+        ? Center(child: CircularProgressIndicator())
+        : Scaffold(
       backgroundColor: Color.fromRGBO(81, 197, 245, 1.0),
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -219,9 +221,10 @@ class _TypeScreenState extends State<TypeScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
-          child: _isLoading
-              ? CircularProgressIndicator()
-              : Column(
+          // child: _isLoading
+          //     ? CircularProgressIndicator()
+          //     :
+             child:  Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     CountUpTimer(

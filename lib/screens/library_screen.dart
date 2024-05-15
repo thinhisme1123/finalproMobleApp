@@ -403,13 +403,14 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             title: Text(folder.title),
                             subtitle: Text(folder.description),
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        FolderDetailScreen(
-                                            folder: folder)),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //       builder: (context) =>
+                              //           FolderDetailScreen(
+                              //               folder: folder)),
+                              // );
+                              Get.to(FolderDetailScreen(folder: folder));
                             },
                           ),
                         ),
