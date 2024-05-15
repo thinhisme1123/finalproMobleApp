@@ -4,6 +4,7 @@ import 'package:finalproject/model/Quizz_Achievement.dart';
 import 'package:finalproject/screens/achievment_topic_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../Helper/SharedPreferencesHelper.dart';
 import '../../model/Word.dart';
 import '../flashcard-mode/flashcard.dart';
 import 'question_model.dart';
@@ -17,6 +18,8 @@ class QuizScreen extends StatefulWidget {
 }
 
 class _QuizScreenState extends State<QuizScreen> {
+  final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
+
   //define the datas
   // List<Question> questionList = getQuestions();
   late List<Question> questionList;
@@ -28,13 +31,26 @@ class _QuizScreenState extends State<QuizScreen> {
   late String topicID;
   bool _timerRunning = true;
 
+
   void initState() {
     super.initState();
-    userID = widget.userID;
+    _initSharedPreferences();
     topicID = widget.topicID;
     _loadWords();
   }
-
+  Future<void> _initSharedPreferences() async {
+    await sharedPreferencesHelper.init();
+    String newUserID = await sharedPreferencesHelper.getUserID() ?? '';
+    String newEmail = await sharedPreferencesHelper.getEmail() ?? "";
+    userID = await sharedPreferencesHelper.getUserID() ?? '';
+    // email = await sharedPreferencesHelper.getEmail() ?? "";
+    setState(() {
+      userID = newUserID;
+      // email = newEmail;
+      print("id $userID");
+      // print("email $email");
+    });
+  }
   Future<void> _loadWords() async {
     List<Word> words = await Word().getWordsByTopicID(widget.topicID);
     _flashcards = words.map((word) {
