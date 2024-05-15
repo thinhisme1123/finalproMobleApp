@@ -49,7 +49,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
 
   Future<void> _deleteTopic(String topicId) async {
     try {
-      await Topic().deleteTopicByID(topicId);
+      await Folder().deleteTopicFromFolder(widget.folder.folderId, topicId);
       setState(() {
         topics.removeWhere((topic) => topic.topicID == topicId);
       });
