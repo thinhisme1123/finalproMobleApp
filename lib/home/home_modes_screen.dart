@@ -38,8 +38,9 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
   int _selectedIndex = 0;
   late String topicID;
   static List<Widget> _widgetOptions = <Widget>[];
-  final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
-  String userID ="";
+  final SharedPreferencesHelper sharedPreferencesHelper =
+      SharedPreferencesHelper();
+  String userID = "";
   String email = "";
   bool isloading = true;
   void initState() {
@@ -50,7 +51,7 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
       TypeScreen(topicID: widget.topicID),
     ];
     _initSharedPreferences().then((_) {
-      storeHistory(userID, getDate(), getTime(), widget.topicID).then((_){
+      storeHistory(userID, getDate(), getTime(), widget.topicID).then((_) {
         Quizz_Achievement().updateMostTime(userID, widget.topicID);
         setState(() {
           isloading = false;
@@ -58,26 +59,31 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
       });
     });
   }
+
   String getDate() {
     DateTime now = DateTime.now();
     return '${now.day}:${now.month}:${now.year}';
   }
-  String getTime(){
+
+  String getTime() {
     DateTime now = DateTime.now();
     return '${now.hour}:${now.minute}:${now.second}';
   }
-  Future<void> storeHistory(String userID, String date, String time, String topicID) async{
+
+  Future<void> storeHistory(
+      String userID, String date, String time, String topicID) async {
     try {
-      if (await History().checkHistoryExists(userID, topicID)){
-        String? historyId = await History().updateHistoryDateTimeAndCount(userID,topicID, date, time);
+      if (await History().checkHistoryExists(userID, topicID)) {
+        String? historyId = await History()
+            .updateHistoryDateTimeAndCount(userID, topicID, date, time);
         if (historyId != null) {
           // print("History update successfully with ID: $historyId");
         } else {
           // print("Error update history for topic");
         }
-      }
-      else{
-        String? historyId = await History().createHistory(userID, date, time,topicID);
+      } else {
+        String? historyId =
+            await History().createHistory(userID, date, time, topicID);
         if (historyId != null) {
           // print("History created successfully with ID: $historyId");
         } else {
@@ -95,6 +101,7 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
       _showDialog(index);
     });
   }
+
   Future<void> _initSharedPreferences() async {
     await sharedPreferencesHelper.init();
     String newUserID = await sharedPreferencesHelper.getUserID() ?? '';
@@ -108,6 +115,7 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
       print("email $email");
     });
   }
+
   Future<void> _showDialog(int index) async {
     String message;
     if (index == 0) {
@@ -119,23 +127,75 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
     } else if (index == 3) {
       message = 'Are you sure you want to exit learning?';
     } else {
-      // Handle invalid index, or add more conditions as needed
       return;
     }
 
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button to dismiss dialog
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            'Exit this screen',
+            // mode xử lí tiếng việt là câu hỏi tiếng anh là câu trả lời
+            'Choose the mode you want',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text(message),
+                // Text(message),
+                Text('Which mode do you want to learn?'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'Vietnamese - English',
+                style: TextStyle(color: Colors.red),
+              ),
+              onPressed: () {
+                //xử lí logic chuyển đổi từ ở đây
+                Navigator.of(context).pop(); // Dismiss the dialog
+              },
+            ),
+            TextButton(
+              child: Text(
+                'English - VietNamese',
+                style: TextStyle(color: Colors.blue),
+              ),
+              onPressed: () {
+                //xử lí logic chuyển đổi từ ở đây
+
+                Navigator.of(context).pop(); // Dismiss the dialog
+                // Navigate to another screen
+                setState(() {
+                  if (index != 3) {
+                    _selectedIndex = index;
+                  }
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  //dùng lại sau này
+  Future<bool> _showDialogBack() async {
+    final result = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Exit the screen?',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Are you sure you want to exit the screen?'),
               ],
             ),
           ),
@@ -146,7 +206,7 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
                 style: TextStyle(color: Colors.red),
               ),
               onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
+                Navigator.of(context).pop(false); 
               },
             ),
             TextButton(
@@ -155,19 +215,15 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
                 style: TextStyle(color: Colors.blue),
               ),
               onPressed: () {
-                Navigator.of(context).pop(); // Dismiss the dialog
-                // Navigate to another screen
-                setState(() {
-                  if(index != 3) {
-                    _selectedIndex = index;
-                  }
-                });
+                Navigator.of(context).pop(true); 
               },
             ),
           ],
         );
       },
     );
+
+    return result!; 
   }
 
   @override
@@ -181,13 +237,17 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
     //     ),
     //   ),
     // )
-        return Scaffold(
+    return Scaffold(
       appBar: AppBar(
         title: Text('Learning Modes'),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            _showDialog(3).then((value) => Get.back());
+          //dùng lại sau này
+          onPressed: () async {
+            final shouldExit = await _showDialogBack();
+            if (shouldExit) {
+              Get.back(); 
+            }
           },
         ),
       ),
