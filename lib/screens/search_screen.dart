@@ -14,7 +14,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   final SharedPreferencesHelper sharedPreferencesHelper =
-  SharedPreferencesHelper();
+      SharedPreferencesHelper();
 
   late List<Topic> topics = [];
 
@@ -135,9 +135,9 @@ class _SearchPageState extends State<SearchPage> {
                       prefixIcon: Icon(Icons.search),
                       suffixIcon: _searchController.text.isNotEmpty
                           ? IconButton(
-                        icon: Icon(Icons.clear),
-                        onPressed: _clearSearch,
-                      )
+                              icon: Icon(Icons.clear),
+                              onPressed: _clearSearch,
+                            )
                           : null,
                     ),
                     onChanged: _filterItems,
@@ -184,56 +184,59 @@ class _SearchPageState extends State<SearchPage> {
                           style: TextStyle(
                             fontSize: 18, // Adjust the font size as needed
                             fontWeight:
-                            FontWeight.bold, // Apply bold font weight
+                                FontWeight.bold, // Apply bold font weight
                             color: Colors.black, // Change the text color
                           ),
                         ),
-                        subtitle: Padding(
-                          padding: const EdgeInsets.only(top: 50),
-                          child: Column(
-                            children: [
-                              Row(
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${filteredItem.numberFlashcard.toString()} words',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(top: 50),
+                              child: Column(
                                 children: [
-                                  CircleAvatar(
-                                    radius: 20,
-                                    backgroundColor: Colors.blue,
-                                    child: Center(
-                                      child: Text(
-                                          userName.isNotEmpty
-                                              ? userName[0].toUpperCase()
-                                              : '',
-                                          style: TextStyle(
-                                            fontSize: 15,
-                                            color: Colors.white,
-                                          )),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 10),
-                                    child: Text(
-                                      userName,
-                                      style: TextStyle(
-                                        fontSize:
-                                        14, // Adjust the font size as needed
-                                        color: Colors
-                                            .grey, // Change the text color
+                                  Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 20,
+                                        backgroundColor: Colors.blue,
+                                        child: Center(
+                                          child: Text(
+                                              userName.isNotEmpty
+                                                  ? userName[0].toUpperCase()
+                                                  : '',
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                                color: Colors.white,
+                                              )),
+                                        ),
                                       ),
-                                    ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 10),
+                                        child: Text(
+                                          userName,
+                                          style: TextStyle(
+                                            fontSize:
+                                                14, // Adjust the font size as needed
+                                            color: Colors
+                                                .grey, // Change the text color
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                        ),
-                        trailing: Padding(
-                          padding: const EdgeInsets.only(bottom: 30),
-                          child: Text(
-                            filteredItem.numberFlashcard.toString(),
-                            style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.black,
                             ),
-                          ),
+                          ],
                         ),
                         onTap: () {
                           // storeHistory(userID, getDate(), getTime(), filteredItem.topicID);

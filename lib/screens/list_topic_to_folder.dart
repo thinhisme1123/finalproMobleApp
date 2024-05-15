@@ -180,6 +180,7 @@ class _ListTopicState extends State<ListTopic> {
                             title: Text(topic.title),
                             subtitle: Text(name1[index]),
                             onTap: () {},
+                            trailing: Text('${topic.numberFlashcard.toString()} words',style: TextStyle(color: Colors.black, fontSize: 15)),
                           ),
                         ),
                       ),
