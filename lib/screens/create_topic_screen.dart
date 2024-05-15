@@ -38,11 +38,11 @@ class _CreateTopicState extends State<CreateTopic> {
     DateTime now = DateTime.now();
     return '${now.day}:${now.month}:${now.year}';
   }
-  
+
   void _initSharedPreferences() async {
     String id = await sharedPreferencesHelper.getUserID() ?? '';
     String userEmail = await sharedPreferencesHelper.getEmail() ?? '';
-    
+
     setState(() {
       userID = id;
       email = userEmail;
