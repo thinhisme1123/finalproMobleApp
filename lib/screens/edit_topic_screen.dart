@@ -163,7 +163,7 @@ class _EditTopicScreenState extends State<EditTopicScreen> {
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(74, 89, 255,1),
         title: Text('Update Topic', style: TextStyle(
-          color: Colors.white
+          color: Colors.black
         ),),
         actions: [
           IconButton(
@@ -173,6 +173,8 @@ class _EditTopicScreenState extends State<EditTopicScreen> {
               });
             },
             icon: Icon(active ? Icons.lock_open : Icons.lock),
+          ),
+          TextButton(onPressed:_handleSave, child: Text("Save",style: TextStyle(color: Colors.black, fontSize: 20))
           ),
         ],
       ),

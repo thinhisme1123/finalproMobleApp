@@ -266,13 +266,6 @@ class _CreateTopicState extends State<CreateTopic> {
                 },
               ),
               SizedBox(height: 20.0),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _handleSave,
-                  child: Text('Add Topic'),
-                ),
-              ),
             ],
           ),
         ),
