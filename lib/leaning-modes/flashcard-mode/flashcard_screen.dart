@@ -52,6 +52,15 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: const Color(0xFF51C5F5),
+          actions: [
+            IconButton(onPressed: () {
+
+
+            }, icon: Icon(Icons.speaker))
+          ], // Background color of the AppBar
+        ),
         backgroundColor: const Color(0xFF51C5F5),
         body: Center(
           child:_isLoading
