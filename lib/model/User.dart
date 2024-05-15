@@ -9,6 +9,8 @@ class User {
   String email = "";
   String dob = "";
   String id ="";
+  String avatar = "";
+
   User();
 
   User.n(this.email, this.dob, this.id);
@@ -86,6 +88,60 @@ class User {
     } catch (e) {
       print("Error getting DOB: $e");
       return null;
+    }
+  }
+  Future<String?> getAvatarByID(String userID) async {
+    try {
+      DocumentSnapshot docSnapshot =
+      await FirebaseFirestore.instance.collection('User').doc(userID).get();
+
+      if (docSnapshot.exists) {
+        Map<String, dynamic>? data =
+        docSnapshot.data() as Map<String, dynamic>?;
+
+        if (data != null) {
+          String avatarImg = data['Avatar'] ?? '';
+          return avatarImg;
+        }
+      }
+      return null;
+    } catch (e) {
+      print('Error getting avatar by ID: $e');
+      return null;
+    }
+  }
+  // Future<String?> getAvatarByEmail(String email) async {
+  //   try {
+  //     QuerySnapshot<Map<String, dynamic>> querySnapshot =
+  //         await FirebaseFirestore.instance
+  //             .collection("User")
+  //             .where("Email", isEqualTo: email)
+  //             .get();
+
+  //     if (querySnapshot.docs.isEmpty) {
+  //       print("No user found with email $email");
+  //       return null;
+  //     }
+
+  //     String userEmail = querySnapshot.docs.first.get("Avatar");
+  //     print("Avatar for user with email $email: $userEmail");
+  //     return userEmail;
+  //   } catch (e) {
+  //     print("Error getting Avatar: $e");
+  //     return null;
+  //   }
+  // }
+  Future<void> changeUserData(String userID, String avatar) async {
+    if (userID.isEmpty || avatar.isEmpty) {
+      throw Exception("Email and Avatar must not be empty");
+    }
+    try {
+      await FirebaseFirestore.instance.collection("User").doc(userID).update({
+        'Avatar': avatar,
+      });
+    } catch (e) {
+      print("Error updating user data: $e");
+      throw Exception("Failed to update user data");
     }
   }
 
