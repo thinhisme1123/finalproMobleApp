@@ -285,7 +285,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
                               ),
                               onTap: () {
                                 print(index);
-                                storeHistory(userID, getDate(), getTime(), topic.topicID);
                                 Get.to(HomeScreenModes(
                                     title: topic.title,
                                     date: topic.date,

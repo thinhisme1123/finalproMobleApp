@@ -9,6 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
+import '../Helper/SharedPreferencesHelper.dart';
+import '../model/History.dart';
+import '../model/Quizz_Achievement.dart';
+
 class HomeScreenModes extends StatefulWidget {
   final String title;
   final String userID;
@@ -34,7 +38,9 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
   int _selectedIndex = 0;
   late String topicID;
   static List<Widget> _widgetOptions = <Widget>[];
-
+  final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
+  String userID ="";
+  String email = "";
   void initState() {
     super.initState();
     _widgetOptions = [
@@ -42,6 +48,40 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
       QuizScreen(topicID: widget.topicID, userID: widget.userID),
       TypeScreen(topicID: widget.topicID),
     ];
+    _initSharedPreferences().then((_) {
+      storeHistory(userID, getDate(), getTime(), widget.topicID).then((_){
+        Quizz_Achievement().updateMostTime(userID, widget.topicID);
+      });
+    });
+  }
+  String getDate() {
+    DateTime now = DateTime.now();
+    return '${now.day}:${now.month}:${now.year}';
+  }
+  String getTime(){
+    DateTime now = DateTime.now();
+    return '${now.hour}:${now.minute}:${now.second}';
+  }
+  Future<void> storeHistory(String userID, String date, String time, String topicID) async{
+    try {
+      if (await History().checkHistoryExists(userID, topicID)){
+        String? historyId = await History().updateHistoryDateTimeAndCount(userID,topicID, date, time);
+        if (historyId != null) {
+          print("History update successfully with ID: $historyId");
+        } else {
+          print("Error update history for topic");
+        }      }
+      else{
+        String? historyId = await History().createHistory(userID, date, time,topicID);
+        if (historyId != null) {
+          print("History created successfully with ID: $historyId");
+        } else {
+          print("Error creating history for topic");
+        }
+      }
+    } catch (e) {
+      print('Error processing topics: $e');
+    }
   }
 
   @override
@@ -50,7 +90,19 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
       _showDialog(index);
     });
   }
-
+  Future<void> _initSharedPreferences() async {
+    await sharedPreferencesHelper.init();
+    String newUserID = await sharedPreferencesHelper.getUserID() ?? '';
+    String newEmail = await sharedPreferencesHelper.getEmail() ?? "";
+    userID = await sharedPreferencesHelper.getUserID() ?? '';
+    email = await sharedPreferencesHelper.getEmail() ?? "";
+    setState(() {
+      userID = newUserID;
+      email = newEmail;
+      print("id $userID");
+      print("email $email");
+    });
+  }
   Future<void> _showDialog(int index) async {
     String message;
     if (index == 0) {

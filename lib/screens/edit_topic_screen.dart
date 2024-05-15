@@ -96,32 +96,25 @@ class _EditTopicScreenState extends State<EditTopicScreen> {
 
         // Duyệt qua từng từ trong danh sách từ
         for (var vocabMap in _vocabularyList) {
-          if (vocabMap["deleted"] != "true") {
-            // Kiểm tra xem từ có bị đánh dấu là đã xoá không
-            // Nếu từ có ID, đó là từ đã tồn tại và bạn cần cập nhật nó
-            if (vocabMap.containsKey("wordID")) {
-              // Lấy ID của từ
-              String wordId = vocabMap["wordID"] ?? "";
-              // Lấy từ tiếng Anh và tiếng Việt từ danh sách từ
-              String engWord = vocabMap["english"] ?? "";
-              String vietWord = vocabMap["vietnamese"] ?? "";
-              // Cập nhật từ trong cơ sở dữ liệu
-              await Word().updateWord(wordId, engWord, vietWord);
-            } else {
-              // Nếu từ không có ID, đó là từ mới và bạn cần tạo nó
-              String engWord = vocabMap["english"] ?? "";
-              String vietWord = vocabMap["vietnamese"] ?? "";
-              // Tạo từ mới trong cơ sở dữ liệu và lấy ID của nó
-              String? wordId = await Word().createWord(widget.topicId, engWord, vietWord);
-              if (wordId == null) {
-                // Xử lý lỗi nếu không thể tạo từ mới
-                print("Error creating word: $engWord");
-              }
-            }
+          // Kiểm tra xem từ có bị đánh dấu là đã xoá không
+          // Nếu từ có ID, đó là từ đã tồn tại và bạn cần cập nhật nó
+          if (vocabMap.containsKey("wordID")) {
+            // Lấy ID của từ
+            String wordId = vocabMap["wordID"] ?? "";
+            // Lấy từ tiếng Anh và tiếng Việt từ danh sách từ
+            String engWord = vocabMap["english"] ?? "";
+            String vietWord = vocabMap["vietnamese"] ?? "";
+            // Cập nhật từ trong cơ sở dữ liệu
+            await Word().updateWord(wordId, engWord, vietWord);
           } else {
-            String? wordId = vocabMap["wordID"];
-            if (wordId != null) {
-              await Word().deleteWordById(wordId);
+            // Nếu từ không có ID, đó là từ mới và bạn cần tạo nó
+            String engWord = vocabMap["english"] ?? "";
+            String vietWord = vocabMap["vietnamese"] ?? "";
+            // Tạo từ mới trong cơ sở dữ liệu và lấy ID của nó
+            String? wordId = await Word().createWord(widget.topicId, engWord, vietWord);
+            if (wordId == null) {
+              // Xử lý lỗi nếu không thể tạo từ mới
+              print("Error creating word: $engWord");
             }
           }
         }
@@ -212,7 +205,7 @@ class _EditTopicScreenState extends State<EditTopicScreen> {
                 itemBuilder: (context, index) {
                   return Dismissible(
                     key: Key(UniqueKey().toString()),
-                    onDismissed: (direction) => _removeTerm(index),
+                    // onDismissed: (direction) => _removeTerm(index),
                     child: Column(
                       children: [
                         Container(

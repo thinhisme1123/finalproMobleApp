@@ -26,6 +26,28 @@ class History{
       return null;
     }
   }
+  Future<int> getCountByUserIDAndTopicID(String userID, String topicID) async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("History")
+          .where("UserID", isEqualTo: userID)
+          .where("TopicID", isEqualTo: topicID)
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        // If documents are found, return the count
+        return querySnapshot.docs.first.get("Count");
+      } else {
+        // If no documents are found, return 0
+        return 0;
+      }
+    } catch (e) {
+      print("Error getting count by userID and topicID: $e");
+      // Handle error
+      throw e;
+    }
+  }
+
   Future<String?> updateHistoryDateTimeAndCount(String userID, String topicID, String newDate, String newTime) async {
     try {
       bool historyExists = await checkHistoryExists(userID, topicID);

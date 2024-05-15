@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import 'History.dart';
+
 class Quizz_Achievement {
   String Quizz_AchievementID = "";
   String topicID = "";
@@ -91,6 +93,8 @@ class Quizz_Achievement {
             'MostCorrect': {
               'UserID': userID,
               'Result': correctAnswers,
+              "Date": getDate(),
+              "Time": getTime(),
             },
           });
         }
@@ -101,24 +105,41 @@ class Quizz_Achievement {
     }
   }
 
-  Future<void> updateMostTimeByTopicID(String topicID, Map<String, dynamic> mostTime, String userID) async {
+  Future<void> updateMostTime(String userID, String topicID) async {
     try {
+      // Load the count using the getCount function
+      int time = await History().getCountByUserIDAndTopicID(userID, topicID);
+      print("Count $time");
+      // Query the Firestore collection to find Type_Achievement documents based on topicID
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("Quizz_Achievement")
           .where("TopicID", isEqualTo: topicID)
           .get();
 
+      // Iterate through each document in the query result (there should be only one document since topicID is unique)
       querySnapshot.docs.forEach((doc) async {
-        await doc.reference.update({
-          'mostTime': {
-            'UserID': userID,
-            'MostTime': mostTime,
-          },
-        });
+        // Get the MostTime field from the document
+        Map<String, dynamic> mostTime = doc["MostTime"];
+
+        // Get the current count from the mostTime field
+        int currentMostTime = mostTime['Result'] ?? 0;
+
+        // If the new count is greater than or equal to the current count
+        if (time >= currentMostTime) {
+          // Update the currentMostTime field with the new UserID and count
+          await doc.reference.update({
+            'MostTime': {
+              'UserID': userID,
+              'Result': time,
+              "Time": getTime(),
+              "Date": getDate(),
+            },
+          });
+        }
       });
     } catch (e) {
-      print('Error updating most time quizz achievement: $e');
-      rethrow;
+      print('Error updating most time: $e');
+      throw e;
     }
   }
 
