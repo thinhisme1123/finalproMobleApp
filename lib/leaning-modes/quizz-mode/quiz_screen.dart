@@ -1,5 +1,6 @@
 import 'package:finalproject/Helper/countdown_timer.dart';
 import 'package:finalproject/Helper/learning_mode_data.dart';
+import 'package:finalproject/model/Quizz_Achievement.dart';
 import 'package:finalproject/screens/achievment_topic_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,8 +10,8 @@ import 'question_model.dart';
 
 class QuizScreen extends StatefulWidget {
   final String topicID;
-  const QuizScreen({Key? key, required this.topicID}) : super(key: key);
-  @override
+  final String userID;
+  const QuizScreen({Key? key, required this.topicID, required this.userID}) : super(key: key);
   @override
   State<QuizScreen> createState() => _QuizScreenState();
 }
@@ -23,8 +24,14 @@ class _QuizScreenState extends State<QuizScreen> {
   late List<Flashcard> _flashcards;
   bool _isLoading = true;
   String time = '';
+  late String userID;
+  late String topicID;
+  bool _timerRunning = true;
+
   void initState() {
     super.initState();
+    userID = widget.userID;
+    topicID = widget.topicID;
     _loadWords();
   }
 
@@ -65,9 +72,11 @@ class _QuizScreenState extends State<QuizScreen> {
                   CountUpTimer(
                     color: 0xFFFFFFFF,
                     onTimeUpdate: (updatedTime) {
-                      setState(() {
-                        time = updatedTime;
-                      });
+                      if (_timerRunning) {
+                        setState(() {
+                          time = updatedTime;
+                        });
+                      }
                     },
                   ),
                   const Text(
@@ -192,7 +201,7 @@ class _QuizScreenState extends State<QuizScreen> {
         onPressed: () {
           if (isLastQuestion) {
             //display score
-
+            Quizz_Achievement().updateMostCorrect(userID, topicID, score);
             showDialog(context: context, builder: (_) => _showScoreDialog());
           } else {
             //next question
@@ -208,7 +217,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
   _showScoreDialog() {
     bool isPassed = false;
-
+    _timerRunning = false;
     if (score >= questionList.length * 0.6) {
       //pass if 60 %
       isPassed = true;
@@ -229,7 +238,7 @@ class _QuizScreenState extends State<QuizScreen> {
               child: const Text("View Achievement"),
               onPressed: () {
                 // Move to achievement page
-                Get.to(AchievementTopicScreen());
+                Get.to(AchievementType(type: "Quizz", userID: "userID", topicID: topicID));
                 Navigator.of(context, rootNavigator: true).pop('dialog');
               },
             ),

@@ -19,7 +19,6 @@ class RankingScreen extends StatelessWidget {
             ),
             title: Text(achievement),
             onTap: () {
-
             },
           );
         },

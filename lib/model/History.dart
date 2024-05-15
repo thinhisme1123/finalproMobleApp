@@ -5,6 +5,7 @@ class History{
   String topicID = "";
   String timeOpen = " ";
   String dateOpen = "";
+  int count = 0;
   History();
   History.n(this.userID, this.dateOpen, this.timeOpen, this.topicID);
 
@@ -15,6 +16,7 @@ class History{
         "UserID": userId,
         "TimeOpen": timeOpen,
         "TopicID": topicId,
+        "Count": 1
       };
       DocumentReference docRef = await FirebaseFirestore.instance.collection("History").add(data);
       print("History created successfully with ID: ${docRef.id}");
@@ -24,7 +26,7 @@ class History{
       return null;
     }
   }
-  Future<String?> updateHistoryDateTime(String userID, String topicID, String newDate, String newTime) async {
+  Future<String?> updateHistoryDateTimeAndCount(String userID, String topicID, String newDate, String newTime) async {
     try {
       bool historyExists = await checkHistoryExists(userID, topicID);
 
@@ -37,10 +39,12 @@ class History{
 
         for (QueryDocumentSnapshot doc in querySnapshot.docs) {
           String docId = doc.id;
+          int currentCount = doc.get("Count") ?? 0; // Lấy giá trị hiện tại của "Count"
+          int newCount = currentCount + 1; // Tăng giá trị lên 1
           await FirebaseFirestore.instance
               .collection("History")
               .doc(docId)
-              .update({"DateOpen": newDate, "TimeOpen": newTime});
+              .update({"DateOpen": newDate, "TimeOpen": newTime, "Count": newCount}); // Cập nhật lại tài liệu với giá trị mới của "Count"
           print("History updated successfully with ID: $docId");
           return docId; // Trả về id của bản ghi lịch sử đã được cập nhật
         }

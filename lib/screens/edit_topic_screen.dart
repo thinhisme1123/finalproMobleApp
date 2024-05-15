@@ -3,6 +3,7 @@ import 'package:finalproject/home/home_screen.dart';
 import 'package:finalproject/model/Topic.dart';
 import 'package:finalproject/screens/form_add_vocab.dart';
 import 'package:finalproject/screens/library_screen.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,8 +12,9 @@ import '../model/Word.dart';
 class EditTopicScreen extends StatefulWidget {
   final String topicId;
   final String title;
-
-  const EditTopicScreen({Key? key,required this.topicId, required this.title,})
+  final bool active;
+  final int number;
+  const EditTopicScreen({Key? key,required this.topicId, required this.title, required this.active, required this.number,})
       : super(key: key);
 
   @override
@@ -22,7 +24,7 @@ class EditTopicScreen extends StatefulWidget {
 class _EditTopicScreenState extends State<EditTopicScreen> {
   final _formKey = GlobalKey<FormState>();
   String _title = "";
-  bool active = true;
+  late bool active;
   late String userID;
   late String email;
   List<Topic> _topics = [];
@@ -43,10 +45,23 @@ class _EditTopicScreenState extends State<EditTopicScreen> {
   }
 
   Future<void> _loadWords() async {
-    List<Word> words = await Word().getWordsByTopicID(widget.topicId);
-    
+    List<Word> loadedWords = await Word().getWordsByTopicID(widget.topicId);
     setState(() {
-      words = words;
+      words = loadedWords;
+      _englishControllers.clear();
+      _vietnameseControllers.clear();
+      _vocabularyList.clear();
+      for (var word in words) {
+        _englishControllers.add(TextEditingController(text: word.engWord));
+        _vietnameseControllers
+            .add(TextEditingController(text: word.vietWord));
+        _vocabularyList.add({
+          "english": word.engWord,
+          "vietnamese": word.vietWord,
+          "wordID": word.wordID
+        });
+      }
+      print(words.length);
     });
   }
 
@@ -66,50 +81,60 @@ class _EditTopicScreenState extends State<EditTopicScreen> {
   void initState() {
     super.initState();
     _initSharedPreferences();
+    active = widget.active;
     _titleController.text = widget.title;
     _loadWords();
-    _addTerm(); // Add an initial term
   }
 
-  Future<void> _fetchTopics() async {
-    List<Topic> topics = await Topic().getTopics();
-    setState(() {
-      _topics = topics;
-    });
-  }
 
   void _handleSave() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       try {
-        // Create a new topic
-        // String? errorMessage = await Topic().createTopic("", getDate(), _title, folderId: "folderID");
-        String? topicId = await Topic().createTopic(userID, getDate(), _title, active);
-        if (topicId != null) {
-          // Create words associated with the newly created topic
-          print("Topic ID $topicId");
-          for (var vocabMap in _vocabularyList) {
-            String engWord = vocabMap["english"]!;
-            String vietWord = vocabMap["vietnamese"]!;
-            // Word word =  Word.n(topicId,engWord, vietWord);
-            try {
-              await Word().createWord(topicId, engWord, vietWord);
-            } catch (e) {
-              print("Error creating word $engWord: $e");
-              Get.back();
+        // Cập nhật thông tin chủ đề
+        await Topic().updateTopicAndWord(widget.topicId, _title, _vocabularyList.length, active, _vocabularyList);
+
+        // Duyệt qua từng từ trong danh sách từ
+        for (var vocabMap in _vocabularyList) {
+          if (vocabMap["deleted"] != "true") {
+            // Kiểm tra xem từ có bị đánh dấu là đã xoá không
+            // Nếu từ có ID, đó là từ đã tồn tại và bạn cần cập nhật nó
+            if (vocabMap.containsKey("wordID")) {
+              // Lấy ID của từ
+              String wordId = vocabMap["wordID"] ?? "";
+              // Lấy từ tiếng Anh và tiếng Việt từ danh sách từ
+              String engWord = vocabMap["english"] ?? "";
+              String vietWord = vocabMap["vietnamese"] ?? "";
+              // Cập nhật từ trong cơ sở dữ liệu
+              await Word().updateWord(wordId, engWord, vietWord);
+            } else {
+              // Nếu từ không có ID, đó là từ mới và bạn cần tạo nó
+              String engWord = vocabMap["english"] ?? "";
+              String vietWord = vocabMap["vietnamese"] ?? "";
+              // Tạo từ mới trong cơ sở dữ liệu và lấy ID của nó
+              String? wordId = await Word().createWord(widget.topicId, engWord, vietWord);
+              if (wordId == null) {
+                // Xử lý lỗi nếu không thể tạo từ mới
+                print("Error creating word: $engWord");
+              }
+            }
+          } else {
+            String? wordId = vocabMap["wordID"];
+            if (wordId != null) {
+              await Word().deleteWordById(wordId);
             }
           }
-          await _fetchTopics();
-          Get.off(HomeScreen());
         }
+        // Sau khi lưu thành công, điều hướng đến màn hình chính
+        Get.off(HomeScreen());
       } catch (e) {
-        print("Error creating topic: $e");
-        Get.back();
+        // Xử lý lỗi nếu không thể cập nhật chủ đề hoặc từ
+        print("Error updating topic or words: $e");
       }
     }
   }
 
-  void _addTerm() {
+    void _addTerm() {
     setState(() {
       _vocabularyList.add({"english": "", "vietnamese": ""});
       _englishControllers.add(TextEditingController());
@@ -144,10 +169,19 @@ class _EditTopicScreenState extends State<EditTopicScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(74, 89, 255,1),
-        title: Text('Create Topic'),
-        actions: [IconButton(onPressed: () {
-          print('exelfile');
-        }, icon: Icon(Icons.upload_file))],
+        title: Text('Update Topic', style: TextStyle(
+          color: Colors.white
+        ),),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                active = !active;
+              });
+            },
+            icon: Icon(active ? Icons.lock_open : Icons.lock),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.0),
@@ -174,7 +208,7 @@ class _EditTopicScreenState extends State<EditTopicScreen> {
               SizedBox(height: 10.0),
               ListView.builder(
                 shrinkWrap: true,
-                itemCount: words.length,
+                itemCount: _vocabularyList.length,
                 itemBuilder: (context, index) {
                   return Dismissible(
                     key: Key(UniqueKey().toString()),
@@ -234,7 +268,7 @@ class _EditTopicScreenState extends State<EditTopicScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: _handleSave,
-                  child: Text('Add Topic'),
+                  child: Text('Save Topic'),
                 ),
               ),
             ],

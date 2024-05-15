@@ -4,9 +4,10 @@ class Word {
   String topicID = "";
   String engWord  = "";
   String vietWord = "";
-
+  String wordID = "";
   Word();
   Word.n(this.topicID, this.engWord, this.vietWord);
+  Word.a(this.topicID, this.engWord, this.vietWord, this.wordID);
 
   Future<String?> createWord(String topicId, String engWord, String vietWord) async {
     try {
@@ -23,6 +24,14 @@ class Word {
     }
   }
 
+  Future<void> deleteWordById(String wordID) async {
+    try {
+      await FirebaseFirestore.instance.collection('Word').doc(wordID).delete();
+      print('Word deleted successfully!');
+    } catch (e) {
+      print('Error deleting word: $e');
+    }
+  }
   Future<List<Word>> getWordsByTopicID(String topicID) async {
     List<Word> wordList = [];
 
@@ -36,7 +45,8 @@ class Word {
           String topicID = data["TopicId"] ?? "";
           String engWord = data['EngWord'] ?? '';
           String vietWord = data['VietWord'] ?? '';
-          Word word = Word.n(topicID, engWord, vietWord);
+          String id = document.id;
+          Word word = Word.a(topicID, engWord, vietWord,id);
           wordList.add(word);
         }
       }
@@ -44,6 +54,19 @@ class Word {
     } catch (e) {
       print('Error getting words: $e');
       return [];
+    }
+  }
+  Future<void> updateWord(String wordId, String newEngWord, String newVietWord) async {
+    try {
+      await FirebaseFirestore.instance.collection("Word").doc(wordId).update({
+        "EngWord": newEngWord,
+        "VietWord": newVietWord,
+        // Cập nhật các trường khác của word nếu cần
+      });
+
+      print("Word updated successfully");
+    } catch (e) {
+      print("Error updating word: $e");
     }
   }
 }

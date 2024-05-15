@@ -70,7 +70,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
   Future<void> storeHistory(String userID, String date, String time, String topicID) async{
     try {
       if (await History().checkHistoryExists(userID, topicID)){
-        String? historyId = await History().updateHistoryDateTime(userID,topicID, date, time);
+        String? historyId = await History().updateHistoryDateTimeAndCount(userID,topicID, date, time);
         if (historyId != null) {
           print("History update successfully with ID: $historyId");
         } else {
@@ -201,7 +201,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                             ),
                             SlidableAction(
                               onPressed: (context) {
-                                (topic.userID == userID) ? Get.to(EditTopicScreen(topicId: topic.topicID ,title: topic.title))
+                                (topic.userID == userID) ? Get.to(EditTopicScreen(topicId: topic.topicID ,title: topic.title, active: topic.active, number: topic.numberFlashcard,))
                                 : Fluttertoast.showToast(
                                     msg: "You don't have permission to edit this topic",
                                     toastLength: Toast.LENGTH_SHORT,

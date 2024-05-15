@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:finalproject/model/Type_Achievement.dart';
 
 import 'History.dart';
+import 'Quizz_Achievement.dart';
+import 'Word.dart';
 
 class Topic {
   String title = '';
@@ -16,6 +19,10 @@ class Topic {
   String getTime(){
     DateTime now = DateTime.now();
     return '${now.hour}:${now.minute}:${now.second}';
+  }
+  String getDate(){
+    DateTime now = DateTime.now();
+    return '${now.day}:${now.month}:${now.year}';
   }
 
   Future<String?> createTopic(String userId, String date, String title, bool active) async {
@@ -36,7 +43,55 @@ class Topic {
       } else {
         print("Error creating history for topic");
       }
-
+      String? Quizz_AID = await Quizz_Achievement().createQuizzAchievement(docRef.id,
+        {
+          'Date': getDate(),
+          'Time': getTime(),
+          'Result': 0,
+          'UserID': '',
+        },
+        {
+          'Date': getDate(),
+          'Time': getTime(),
+          'Result': 0,
+          'UserID': userId,
+        },
+        {
+          'Date': getDate(),
+          'Time': getTime(),
+          'Result': 0,
+          'UserID': "",
+        },
+      );
+      if (Quizz_AID != null){
+        print("Quizz_Achievement created successfully with ID: $Quizz_AID");
+      } else{
+        print("Error creating Quizz_achievement for topic")  ;
+      }
+      String? Type_AID = await Type_Achievement().createTypeAchievement(docRef.id, {
+        'Date': getDate(),
+        'Time': getTime(),
+        'Result': 0,
+        'UserID': '',
+      },
+        {
+          'Date': getDate(),
+          'Time': getTime(),
+          'Result': 1,
+          'UserID': userId,
+        },
+        {
+          'Date': getDate(),
+          'Time': getTime(),
+          'Result': 0,
+          'UserID': '',
+        },
+      );
+      if (Type_AID != null){
+        print("Type_Achievement created successfully with ID: $Type_AID");
+      }else{
+        print("Error creating Type_achievement for topic");
+      }
       return docRef.id;
     } catch (e) {
       print("Error creating topic: $e");
@@ -114,18 +169,28 @@ class Topic {
     }
   }
 
-  // Future<void> updateTopic(String topicId, String newTitle, List<Map<String, String>> newVocabularyList) async {
-  //   try {
-  //     await FirebaseFirestore.instance.collection("topics").doc(topicId).update({
-  //       "title": newTitle,
-  //       "vocabularyList": newVocabularyList,
-  //     });
-  //
-  //     print("Topic updated successfully");
-  //   } catch (e) {
-  //     print("Error updating topic: $e");
-  //   }
-  // }
+  Future<void> updateTopicAndWord(String topicId, String newTitle, int number, bool active, List<Map<String, String>> newVocabularyList)  async {
+    try{
+      try {
+        await FirebaseFirestore.instance.collection("Topic").doc(topicId).update({
+          "Title": newTitle,
+          "Active": active,
+          "Number": number
+        });
+        print("Topic updated successfully");
+      } catch (e) {
+        print("Error updating topic: $e");
+      }
+      for (var vocabMap in newVocabularyList) {
+        String wordId = vocabMap["wordID"]!; // Lấy ID của từ
+        String newEngWord = vocabMap["english"]!;
+        String newVietWord = vocabMap["vietnamese"]!;
+        await Word().updateWord(wordId, newEngWord, newVietWord);
+      }
+    }catch(e){
+      print("Topic and word updated successfully");
+    }
+  }
   Future<List<Topic>> getTopicsByUserID(String userID) async {
     List<Topic> topicList = [];
     try {

@@ -52,7 +52,7 @@ class _SearchPageState extends State<SearchPage> {
   Future<void> storeHistory(String userID, String date, String time, String topicID) async{
     try {
       if (await History().checkHistoryExists(userID, topicID)){
-        String? historyId = await History().updateHistoryDateTime(userID,topicID, date, time);
+        String? historyId = await History().updateHistoryDateTimeAndCount(userID,topicID, date, time);
         if (historyId != null) {
           print("History update successfully with ID: $historyId");
         } else {

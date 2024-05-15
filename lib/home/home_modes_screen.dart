@@ -39,7 +39,7 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
     super.initState();
     _widgetOptions = [
       FlashCardScreen(topicID: widget.topicID),
-      QuizScreen(topicID: widget.topicID),
+      QuizScreen(topicID: widget.topicID, userID: widget.userID),
       TypeScreen(topicID: widget.topicID),
     ];
   }
