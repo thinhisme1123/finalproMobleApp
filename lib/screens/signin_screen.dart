@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:finalproject/screens/forget_passsword_screen.dart';
 import 'package:finalproject/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -207,24 +209,18 @@ class _SignInScreenState extends State<SignInScreen> {
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
-                            // if (_formSignInKey.currentState!.validate() &&
-                            //     rememberPassword) {
-                            //   // hanlde compare data to DB to pass login or not
-                            //   _signin();
-                            //   //Get.toNamed('/home-screen');
-                            // } else if (!rememberPassword) {
-                            //   ScaffoldMessenger.of(context).showSnackBar(
-                            //     const SnackBar(
-                            //         content: Text(
-                            //             'Please agree to the processing of personal data')),
-                            //   );
-                            // }
-
-                            String? userId = await user.getUserIdByEmail(_email.text);
-                            sharedPreferencesHelper.saveUserID(userId);
-                            sharedPreferencesHelper.saveEmail(_email.text);
-                            sharedPreferencesHelper.saveLoginState(true);
-                            Get.toNamed('/home-screen');
+                            if (_formSignInKey.currentState!.validate() && rememberPassword) {
+                              // hanlde compare data to DB to pass login or not
+                              _signin();
+                              //Get.toNamed('/home-screen');
+                            } else if (!rememberPassword) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text(
+                                        'Please agree to the processing of personal data')),
+                              );
+                            }
+                            // _signin();
                           },
                           child: const Text('Sign in'),
                         ),
@@ -325,57 +321,68 @@ class _SignInScreenState extends State<SignInScreen> {
 
   late FToast fToast;
 
-  showToast(String message,
-      {required ToastGravity gravity,
-      Color? backgroundColor,
-      Color? textColor,
-      double? fontSize,
-      IconData? icon}) {
-    Widget toast = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25.0),
-        color: backgroundColor ?? Colors.greenAccent,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) Icon(icon, color: textColor),
-          if (icon != null) const SizedBox(width: 12.0),
-          Text(
-            message,
-            style: TextStyle(
-              color: textColor ?? Colors.black,
-              fontSize: fontSize,
+  showToast(String message, {required ToastGravity gravity, Color? backgroundColor, Color? textColor, double? fontSize, IconData? icon}) {
+    Widget toast = SafeArea(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(25.0),
+          color: backgroundColor ?? Colors.greenAccent,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (icon != null) Icon(icon, color: textColor),
+            if (icon != null) const SizedBox(width: 12.0),
+            Flexible(
+              child: Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: textColor ?? Colors.black,
+                  fontSize: fontSize,
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
-
     fToast.showToast(
       child: toast,
       gravity: ToastGravity.BOTTOM,
       toastDuration: Duration(seconds: 2),
     );
   }
-  // _signin() async {
-  //   final user =
-  //       await _auth.loginUserWithEmailAndPassword(_email.text, _password.text);
-  //   if (user != null) {
-  //     showToast(
-  //       'Login successfully',
-  //       gravity: ToastGravity.BOTTOM,
-  //       backgroundColor: Colors.green,
-  //       textColor: Colors.white,
-  //       fontSize: 16.0,
-  //       icon: Icons.check_circle,
-  //     );
-  //     print("User Logged In");
-  //   } else {
-  //     print("error");
-  //   }
-  // }
+  _signin() async {
+    final user = await _auth.loginUserWithEmailAndPassword(_email.text, _password.text);
+    if (user != null) {
+      showToast(
+        'Login Successfully',
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+        icon: Icons.check_circle,
+      );
+      String? userId = await User().getUserIdByEmail(_email.text);
+      sharedPreferencesHelper.saveUserID(userId);
+      sharedPreferencesHelper.saveEmail(_email.text);
+      sharedPreferencesHelper.saveLoginState(true);
+      Get.toNamed('/home-screen');
+      print("User Logged In");
+    } else {
+      print("error");
+      showToast(
+        'Invalid login credentials. Please check your information and try again.',
+        gravity: ToastGravity.BOTTOM,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+        icon: Icons.check_circle,
+      );
+    }
+  }
   // _signin() async {
   //   final userCredential = await _auth.loginUserWithEmailAndPassword(_email.text, _password.text);
   //   if (userCredential != null) {
