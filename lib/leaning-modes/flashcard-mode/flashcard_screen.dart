@@ -63,6 +63,8 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
     super.dispose();
   }
 
+  bool isFavorite = false;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -70,7 +72,17 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
         appBar: AppBar(
           backgroundColor: const Color(0xFF51C5F5),
           actions: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.speaker))
+            IconButton(
+                onPressed: () {
+                  setState(() {
+                    isFavorite = !isFavorite; // Đổi trạng thái khi nhấn nút
+                  });
+                },
+                icon: Icon(
+                  isFavorite ? Icons.star : Icons.star_border,
+                  color: isFavorite ? Colors.yellow : Colors.black,
+                  size: 35,
+                )),
           ], // Background color of the AppBar
         ),
         backgroundColor: const Color(0xFF51C5F5),

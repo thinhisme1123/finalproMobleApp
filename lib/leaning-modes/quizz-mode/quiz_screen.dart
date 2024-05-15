@@ -239,8 +239,7 @@ class _QuizScreenState extends State<QuizScreen> {
       isPassed = true;
     }
     String title = isPassed ? "Passed " : "Failed";
-
-
+    
     return AlertDialog(
       title: Text(
         title +
