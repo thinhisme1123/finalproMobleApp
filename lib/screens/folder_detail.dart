@@ -159,8 +159,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 8.0),
                                 child: Slidable(
-                                  key: Key(topic
-                                      .title), // Set a unique key for each item
+                                  key: Key(topic.title), // Set a unique key for each item
                                   endActionPane: ActionPane(
                                     motion: const ScrollMotion(),
                                     children: [

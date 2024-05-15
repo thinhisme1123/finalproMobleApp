@@ -5,6 +5,8 @@ import 'package:finalproject/screens/form_add_vocab.dart';
 import 'package:finalproject/screens/library_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 import '../model/Word.dart';
@@ -27,7 +29,6 @@ class _EditTopicScreenState extends State<EditTopicScreen> {
   late bool active;
   late String userID;
   late String email;
-  List<Topic> _topics = [];
   List<Word> words = [];
 
   final SharedPreferencesHelper sharedPreferencesHelper =
@@ -135,16 +136,50 @@ class _EditTopicScreenState extends State<EditTopicScreen> {
     });
   }
 
-  void _removeTerm(int index) {
+  void _removeTerm(int index, String oldName) async {
     if (_vocabularyList.length > 1) {
+      String wordId = _vocabularyList[index]["wordID"] ?? "";
+      if (wordId.isNotEmpty) {
+        // Xóa từ trong cơ sở dữ liệu
+        await Word().deleteWordById(wordId);
+        // Cập nhật số lượng từ trong chủ đề
+        await _updateNumber(-1);
+        Fluttertoast.showToast(
+          msg: "Word deleted $oldName",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
       setState(() {
+        // Xóa từ vựng khỏi danh sách
         _vocabularyList.removeAt(index);
-        _englishControllers[index].dispose(); // Xóa controller tương ứng
-        _englishControllers.removeAt(index); // Xóa controller từ danh sách
-        _vietnameseControllers[index].dispose(); // Xóa controller tương ứng
-        _vietnameseControllers.removeAt(index); // Xóa controller từ danh sách
+        // Huỷ bỏ sử dụng controller tương ứng
+        _englishControllers[index].dispose();
+        _vietnameseControllers[index].dispose();
+        // Xóa controller từ danh sách
+        _englishControllers.removeAt(index);
+        _vietnameseControllers.removeAt(index);
       });
+    }else{
+      Fluttertoast.showToast(
+        msg: "There must be at least 1 word",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     }
+  }
+
+  Future<void> _updateNumber(int change) async {
+    int currentNumber = widget.number + change;
+    await Topic().updateNumber(currentNumber, widget.topicId);
   }
 
   @override
@@ -207,52 +242,69 @@ class _EditTopicScreenState extends State<EditTopicScreen> {
                 shrinkWrap: true,
                 itemCount: _vocabularyList.length,
                 itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(16.0),
+                  var vocabularyName  = _vocabularyList[index]["english"];
+                  return Slidable(
+                    endActionPane: ActionPane(
+                      motion: const ScrollMotion(),
+                      children: [
+                        SlidableAction(
+                          onPressed: (context) async {
+                            _removeTerm(index, vocabularyName!);
+                          },
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          icon: Icons.delete,
+                          label: 'Delete',
                         ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              TextFormField(
-                                controller: _englishControllers[index],
-                                decoration: InputDecoration(
-                                  labelText: 'English Word',
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                TextFormField(
+                                  controller: _englishControllers[index],
+                                  decoration: InputDecoration(
+                                    labelText: 'English Word',
+                                  ),
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please enter an English word.';
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (value) => _vocabularyList[index]
+                                      ["english"] = value!,
                                 ),
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Please enter an English word.';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (value) => _vocabularyList[index]
-                                    ["english"] = value!,
-                              ),
-                              SizedBox(height: 10.0),
-                              TextFormField(
-                                controller: _vietnameseControllers[index],
-                                decoration: InputDecoration(
-                                  labelText: 'Vietnamese Meaning',
+                                SizedBox(height: 10.0),
+                                TextFormField(
+                                  controller: _vietnameseControllers[index],
+                                  decoration: InputDecoration(
+                                    labelText: 'Vietnamese Meaning',
+                                  ),
+                                  validator: (value) {
+                                    if (value!.isEmpty) {
+                                      return 'Please enter the Vietnamese meaning.';
+                                    }
+                                    return null;
+                                  },
+                                  onSaved: (value) => _vocabularyList[index]
+                                      ["vietnamese"] = value!,
                                 ),
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Please enter the Vietnamese meaning.';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (value) => _vocabularyList[index]
-                                    ["vietnamese"] = value!,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 10.0),
-                    ],
+                        SizedBox(height: 10.0),
+                      ],
+                    ),
                   );
                 },
               ),
