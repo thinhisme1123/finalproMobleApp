@@ -70,26 +70,27 @@ class User {
       return null;
     }
   }
-  Future<String?> getDBOByEmail(String email) async {
-    try {
-      QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
-          .collection("User")
-          .where("Email", isEqualTo: email)
-          .get();
 
-      if (querySnapshot.docs.isEmpty) {
-        print("No user found with email $email");
-        return null;
-      }
-
-      String userEmail = querySnapshot.docs.first.get("DOB");
-      print("DOB for user with email $email: $userEmail");
-      return userEmail;
-    } catch (e) {
-      print("Error getting DOB: $e");
-      return null;
-    }
-  }
+  // Future<String?> getDBOByEmail(String email) async {
+  //   try {
+  //     QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
+  //         .collection("User")
+  //         .where("Email", isEqualTo: email)
+  //         .get();
+  //
+  //     if (querySnapshot.docs.isEmpty) {
+  //       print("No user found with email $email");
+  //       return null;
+  //     }
+  //
+  //     String userEmail = querySnapshot.docs.first.get("DOB");
+  //     print("DOB for user with email $email: $userEmail");
+  //     return userEmail;
+  //   } catch (e) {
+  //     print("Error getting DOB: $e");
+  //     return null;
+  //   }
+  // }
   Future<String?> getAvatarByID(String userID) async {
     try {
       DocumentSnapshot docSnapshot =
@@ -104,10 +105,10 @@ class User {
           return avatarImg;
         }
       }
-      return null;
+      return "https://firebasestorage.googleapis.com/v0/b/finalmobilecrossplatform.appspot.com/o/images%2Fprofile.jpg?alt=media&token=4106415a-c61f-4940-a0bc-9a19d18f5259";
     } catch (e) {
       print('Error getting avatar by ID: $e');
-      return null;
+      return "https://firebasestorage.googleapis.com/v0/b/finalmobilecrossplatform.appspot.com/o/images%2Fprofile.jpg?alt=media&token=4106415a-c61f-4940-a0bc-9a19d18f5259";
     }
   }
   // Future<String?> getAvatarByEmail(String email) async {

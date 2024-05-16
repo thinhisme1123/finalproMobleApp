@@ -25,11 +25,10 @@ class _LibraryScreenState extends State<LibraryScreen> {
   List<Folder> _folders = [];
   List<Topic> _topics = [];
   List<String> _names = [];
+  List<String> avatars = [];
   bool _isLoadingTopic = true;
   bool _isLoadingFolder = true;
   late String userID;
-  @override
-  @override
   @override
   void initState() {
     super.initState();
@@ -62,6 +61,8 @@ class _LibraryScreenState extends State<LibraryScreen> {
           _topics.add(topic);
           String? name = await (User().getEmailByID(topic.userID));
           _names.add(name!);
+          String? url = await User().getAvatarByID(topic.userID);
+          (url == "") ? avatars.add('https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?w=740&t=st=1715584089~exp=1715584689~hmac=19c5214fff7fd007e469f8c88727ac4d0bd3ad37aeb40473d419d06744bf17de'): avatars.add(url!);
         }
       }
       ;
@@ -162,9 +163,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return _isLoadingTopic
-        ? Center(child: CircularProgressIndicator())
-        : DefaultTabController(
+    return DefaultTabController(
             length: 2, // Specify the number of tabs
             child: Scaffold(
               appBar: AppBar(
@@ -183,8 +182,17 @@ class _LibraryScreenState extends State<LibraryScreen> {
               body: TabBarView(
                 children: [
                   _isLoadingTopic
-                      ? Center(child: CircularProgressIndicator())
-                      : Container(
+                      ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 16),
+                        Text('Loading your topic, please wait...')
+                      ],
+                    ),
+                  )
+                      :  Container(
                           color: Color(
                               0xfff6f7fb), // Background color for the container
                           child: Padding(
@@ -319,6 +327,15 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                                         children: [
                                                           Row(
                                                             children: [
+                                                              // CircleAvatar(
+                                                              //   backgroundImage:
+                                                              //       NetworkImage(
+                                                              //           'https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?w=740&t=st=1715584089~exp=1715584689~hmac=19c5214fff7fd007e469f8c88727ac4d0bd3ad37aeb40473d419d06744bf17de'),
+                                                              // ),
+                                                              (avatars[index] != null)?
+                                                              CircleAvatar(
+                                                                backgroundImage: NetworkImage(avatars[index]),
+                                                              ):
                                                               CircleAvatar(
                                                                 backgroundImage:
                                                                     NetworkImage(
@@ -369,9 +386,18 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                     child: Text("You don't have any topic")),
                           ),
                         ),
-                  _isLoadingFolder
-                      ? Center(child: CircularProgressIndicator())
-                      : Container(
+                  _isLoadingTopic
+                      ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 16),
+                        Text('Loading your folders, please wait...')
+                      ],
+                    ),
+                  )
+                      :  Container(
                           color: Color(
                               0xfff6f7fb), // Background color for the container
                           child: Padding(

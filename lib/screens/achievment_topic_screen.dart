@@ -25,9 +25,12 @@ class AchievementType extends StatefulWidget {
 class AchievementTopicScreen extends State<AchievementType> {
   List<Quizz_Achievement> Qachievements = [];
   List<Type_Achievement> Tachievements = [];
-  List<Map<String, String>> shortest = [];
-  List<Map<String, String>> mostcorrect = [];
-  List<Map<String, String>> mosttime = [];
+  // List<Map<String, String>> shortest = [];
+  // List<Map<String, String>> mostcorrect = [];
+  // List<Map<String, String>> mosttime = [];
+  Map<String, dynamic> shortest = {};
+  Map<String, dynamic> mostcorrect = {};
+  Map<String, dynamic> mosttime = {};
   String shortestEmail = "";
   String mostcorrectEmail = "";
   String mostimeEmail = "";
@@ -43,23 +46,28 @@ class AchievementTopicScreen extends State<AchievementType> {
   Future<void> loadAchievements() async {
     try {
       if (type == "Quizz") {
-        List<Quizz_Achievement> loadedAchievements =
-            await Quizz_Achievement().loadByTopicID(widget.topicID);
+        // List<Quizz_Achievement> loadedAchievements =
+        //     await Quizz_Achievement().loadByTopicID(widget.topicID);
+        // Qachievements = loadedAchievements;
+        // String buffer1 =
+        //     await User().getEmailByID(Qachievements[0].shortest['UserID']) ??
+        //         "";
+        // String buffer2 =
+        //     await User().getEmailByID(Qachievements[0].mostTime['UserID']) ??
+        //         "";
+        // String buffer3 =
+        //     await User().getEmailByID(Qachievements[0].mostCorrect['UserID']) ??
+        //         "";
+        // setState(() {
+        //   shortestEmail = (buffer1 == "") ? "No result" : buffer1;
+        //   mostimeEmail = (buffer2 == "") ? "No result" : buffer2;
+        //   mostcorrectEmail = (buffer3 == "") ? "No result" : buffer3;
+        // });
+        List<Quizz_Achievement> loadedAchievements = await Quizz_Achievement().loadByTopicID(widget.topicID);
         Qachievements = loadedAchievements;
-        String buffer1 =
-            await User().getEmailByID(Qachievements[0].shortest['UserID']) ??
-                "";
-        String buffer2 =
-            await User().getEmailByID(Qachievements[0].mostTime['UserID']) ??
-                "";
-        String buffer3 =
-            await User().getEmailByID(Qachievements[0].mostCorrect['UserID']) ??
-                "";
-        setState(() {
-          shortestEmail = (buffer1 == "") ? "No result" : buffer1;
-          mostimeEmail = (buffer2 == "") ? "No result" : buffer2;
-          mostcorrectEmail = (buffer3 == "") ? "No result" : buffer3;
-        });
+        shortest = Qachievements[0].shortest;
+        mostcorrect = Qachievements[0].mostCorrect;
+        mosttime = Qachievements[0].mostTime;
       } else {
         List<Type_Achievement> loadedAchievements =
             await Type_Achievement().loadByTopicID(widget.topicID);

@@ -23,6 +23,7 @@ class _SearchPageState extends State<SearchPage> {
   // List<Topic> buffer = [];
 
   List<String> userNames = [];
+  List<String> avatars = [];
 
   late String userID;
 
@@ -91,6 +92,8 @@ class _SearchPageState extends State<SearchPage> {
 
     List<String> buffer2 = [];
 
+    List<String> buffer3 = [];
+
     buffer1 = await Topic().searchTopicByTitle(_searchController.text);
 
     for (var topicData in buffer1) {
@@ -98,11 +101,14 @@ class _SearchPageState extends State<SearchPage> {
       if (userID != null) {
         String? name = await (User().getEmailByID(userID));
         buffer2.add(name!);
+        String? url = await(User().getAvatarByID(userID));
+        (url == "") ? buffer3.add('https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?w=740&t=st=1715584089~exp=1715584689~hmac=19c5214fff7fd007e469f8c88727ac4d0bd3ad37aeb40473d419d06744bf17de'): buffer3.add(url!);
       }
     }
     setState(() {
       userNames = buffer2;
       _filteredItems = buffer1;
+      avatars = buffer3;
     });
   }
 
@@ -179,6 +185,7 @@ class _SearchPageState extends State<SearchPage> {
                         //   backgroundImage: NetworkImage(
                         //       'https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?w=740&t=st=1715584089~exp=1715584689~hmac=19c5214fff7fd007e469f8c88727ac4d0bd3ad37aeb40473d419d06744bf17de'),
                         // ),
+
                         title: Text(
                           filteredItem.title,
                           style: TextStyle(
@@ -199,24 +206,19 @@ class _SearchPageState extends State<SearchPage> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.only(top: 50),
+                              padding: const EdgeInsets.only(top: 40),
                               child: Column(
                                 children: [
                                   Row(
                                     children: [
+                                      (avatars[index] != null)?
                                       CircleAvatar(
-                                        radius: 20,
-                                        backgroundColor: Colors.blue,
-                                        child: Center(
-                                          child: Text(
-                                              userName.isNotEmpty
-                                                  ? userName[0].toUpperCase()
-                                                  : '',
-                                              style: TextStyle(
-                                                fontSize: 15,
-                                                color: Colors.white,
-                                              )),
-                                        ),
+                                        backgroundImage: NetworkImage(avatars[index]),
+                                      ):
+                                      CircleAvatar(
+                                        backgroundImage:
+                                        NetworkImage(
+                                            'https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?w=740&t=st=1715584089~exp=1715584689~hmac=19c5214fff7fd007e469f8c88727ac4d0bd3ad37aeb40473d419d06744bf17de'),
                                       ),
                                       Padding(
                                         padding:

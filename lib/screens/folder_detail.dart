@@ -26,7 +26,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
       SharedPreferencesHelper();
   late String userID;
   List<String> _names = [];
-
+  List<String> avatars = [];
   bool _isLoadingFolder = true;
   Future<void> fetchTopics(String userID) async {
     List<Topic> _topics =
@@ -38,6 +38,8 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
       if (topic != null) {
         String? name = await (User().getEmailByID(topic.userID));
         _names.add(name!);
+        String? url = await (User().getAvatarByID(topic.userID));
+        (url == "") ? avatars.add('https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?w=740&t=st=1715584089~exp=1715584689~hmac=19c5214fff7fd007e469f8c88727ac4d0bd3ad37aeb40473d419d06744bf17de'): avatars.add(url!);
       }
     }
     setState(() {
@@ -233,8 +235,13 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                                                 children: [
                                                   Row(
                                                     children: [
+                                                      (avatars[index] != null)?
                                                       CircleAvatar(
-                                                        backgroundImage: NetworkImage(
+                                                        backgroundImage: NetworkImage(avatars[index]),
+                                                      ):
+                                                      CircleAvatar(
+                                                        backgroundImage:
+                                                        NetworkImage(
                                                             'https://img.freepik.com/free-psd/3d-illustration-person-with-sunglasses_23-2149436188.jpg?w=740&t=st=1715584089~exp=1715584689~hmac=19c5214fff7fd007e469f8c88727ac4d0bd3ad37aeb40473d419d06744bf17de'),
                                                       ),
                                                       Padding(
