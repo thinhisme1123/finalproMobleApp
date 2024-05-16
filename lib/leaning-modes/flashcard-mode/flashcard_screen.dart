@@ -65,7 +65,6 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
     super.dispose();
   }
 
-  bool isFavorite = false;
 
   @override
   Widget build(BuildContext context) {
@@ -74,11 +73,6 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
         appBar: AppBar(
           backgroundColor: const Color(0xFF51C5F5),
           actions: [
-            IconButton(onPressed: () {
-              setState(() {
-                isFavorite = !isFavorite;
-              });
-            }, icon: Icon(Icons.star, size: 35,color: isFavorite ? Colors.yellow : Colors.grey,))
           ], // Background color of the AppBar
         ),
         backgroundColor: const Color(0xFF51C5F5),
