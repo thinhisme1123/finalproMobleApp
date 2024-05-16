@@ -218,6 +218,7 @@ class _QuizScreenState extends State<QuizScreen> {
           if (isLastQuestion) {
             //display score
             Quizz_Achievement().updateMostCorrect(userID, topicID, score);
+            Quizz_Achievement().updateShortest(userID, topicID, time);
             showDialog(context: context, builder: (_) => _showScoreDialog());
           } else {
             //next question

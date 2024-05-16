@@ -155,7 +155,24 @@ class Topic {
       return [];
     }
   }
+  Future<String?> getTitleByID(TopicID) async{
+    try{
+      DocumentSnapshot docSnapshot =
+      await FirebaseFirestore.instance.collection('Topic').doc(TopicID).get();
 
+      if (docSnapshot.exists) {
+        Map<String, dynamic>? data = docSnapshot.data() as Map<String, dynamic>?;
+        if (data != null) {
+          String title = data['Title'] ?? '';
+          return title;
+        }
+      }
+      return null;
+    }catch(e){
+      print("Error getting title by ID: $e");
+      return null;
+    }
+  }
 
   Future<void> updateNumber(int number, String topicID) async{
     try {

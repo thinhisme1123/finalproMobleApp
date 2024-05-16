@@ -1,9 +1,11 @@
 import 'package:finalproject/Helper/countdown_timer.dart';
 import 'package:finalproject/leaning-modes/type-mode/type_mode.dart';
+import 'package:finalproject/model/Type_Achievement.dart';
 import 'package:finalproject/screens/achievment_topic_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../Helper/SharedPreferencesHelper.dart';
 import '../../model/Word.dart';
 
 class TypeScreen extends StatefulWidget {
@@ -16,6 +18,9 @@ class TypeScreen extends StatefulWidget {
 
 class _TypeScreenState extends State<TypeScreen> {
   late List<TypeMode> _typeList = [];
+  late String userID;
+  late String topicID;
+  final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
 
   int currentIndex = 0;
   TextEditingController _textController = TextEditingController();
@@ -46,9 +51,23 @@ class _TypeScreenState extends State<TypeScreen> {
   void initState() {
     // TODO: implement
     super.initState();
+    _initSharedPreferences();
+    topicID = widget.topicID;
     _loadWords();
   }
-
+  Future<void> _initSharedPreferences() async {
+    await sharedPreferencesHelper.init();
+    String newUserID = await sharedPreferencesHelper.getUserID() ?? '';
+    String newEmail = await sharedPreferencesHelper.getEmail() ?? "";
+    userID = await sharedPreferencesHelper.getUserID() ?? '';
+    // email = await sharedPreferencesHelper.getEmail() ?? "";
+    setState(() {
+      userID = newUserID;
+      // email = newEmail;
+      print("id $userID");
+      // print("email $email");
+    });
+  }
   bool isLastQuestion = false;
 
   void _nextWord() {
@@ -250,6 +269,8 @@ class _TypeScreenState extends State<TypeScreen> {
                     isLastQuestion
                         ? ElevatedButton(
                             onPressed: () {
+                              Type_Achievement().updateMostCorrect(userID, topicID, correctAnswer);
+                              Type_Achievement().updateShortest(userID, topicID, time);
                               if (_typeList[currentIndex]
                                   .checkAnswer(_textController.text)) {
                                 correctAnswer++;

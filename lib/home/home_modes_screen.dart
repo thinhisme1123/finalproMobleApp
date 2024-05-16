@@ -5,6 +5,7 @@ import 'package:finalproject/Helper/learning_mode_data.dart';
 import 'package:finalproject/leaning-modes/flashcard-mode/flashcard_screen.dart';
 import 'package:finalproject/leaning-modes/quizz-mode/quiz_screen.dart';
 import 'package:finalproject/leaning-modes/type-mode/type_screen.dart';
+import 'package:finalproject/model/Type_Achievement.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
@@ -53,6 +54,7 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
     _initSharedPreferences().then((_) {
       storeHistory(userID, getDate(), getTime(), widget.topicID).then((_) {
         Quizz_Achievement().updateMostTime(userID, widget.topicID);
+        Type_Achievement().updateMostTime(userID, widget.topicID);
         setState(() {
           isloading = false;
         });
@@ -70,8 +72,7 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
     return '${now.hour}:${now.minute}:${now.second}';
   }
 
-  Future<void> storeHistory(
-      String userID, String date, String time, String topicID) async {
+  Future<void> storeHistory(String userID, String date, String time, String topicID) async {
     try {
       if (await History().checkHistoryExists(userID, topicID)) {
         String? historyId = await History()
@@ -237,41 +238,44 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
     //     ),
     //   ),
     // )
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Learning Modes'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          //dùng lại sau này
-          onPressed: () async {
-            final shouldExit = await _showDialogBack();
-            if (shouldExit) {
-              Get.back(); 
-            }
-          },
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Learning Modes'),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            //dùng lại sau này
+            onPressed: () async {
+              final shouldExit = await _showDialogBack();
+              if (shouldExit) {
+                Get.back();
+              }
+            },
+          ),
         ),
-      ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.flash_on),
-            label: 'FlashCard',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.quiz),
-            label: 'Quiz',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.edit),
-            label: 'Type',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        onTap: _onItemTapped,
+        body: Center(
+          child: _widgetOptions.elementAt(_selectedIndex),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.flash_on),
+              label: 'FlashCard',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.quiz),
+              label: 'Quiz',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.edit),
+              label: 'Type',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.blue,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }

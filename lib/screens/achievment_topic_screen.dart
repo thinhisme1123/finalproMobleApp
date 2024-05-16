@@ -1,3 +1,4 @@
+import 'package:finalproject/model/Topic.dart';
 import 'package:finalproject/model/Type_Achievement.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -35,7 +36,8 @@ class AchievementTopicScreen extends State<AchievementType> {
   String mostcorrectEmail = "";
   String mostimeEmail = "";
   late String type;
-
+  late String topicTitle;
+  bool loading = true;
   @override
   void initState() {
     super.initState();
@@ -45,54 +47,61 @@ class AchievementTopicScreen extends State<AchievementType> {
 
   Future<void> loadAchievements() async {
     try {
+      String title = await Topic().getTitleByID(widget.topicID) ?? "";
+      print("@");
       if (type == "Quizz") {
-        // List<Quizz_Achievement> loadedAchievements =
-        //     await Quizz_Achievement().loadByTopicID(widget.topicID);
-        // Qachievements = loadedAchievements;
-        // String buffer1 =
-        //     await User().getEmailByID(Qachievements[0].shortest['UserID']) ??
-        //         "";
-        // String buffer2 =
-        //     await User().getEmailByID(Qachievements[0].mostTime['UserID']) ??
-        //         "";
-        // String buffer3 =
-        //     await User().getEmailByID(Qachievements[0].mostCorrect['UserID']) ??
-        //         "";
-        // setState(() {
-        //   shortestEmail = (buffer1 == "") ? "No result" : buffer1;
-        //   mostimeEmail = (buffer2 == "") ? "No result" : buffer2;
-        //   mostcorrectEmail = (buffer3 == "") ? "No result" : buffer3;
-        // });
-        List<Quizz_Achievement> loadedAchievements = await Quizz_Achievement().loadByTopicID(widget.topicID);
+        List<Quizz_Achievement> loadedAchievements = await Quizz_Achievement()
+            .loadByTopicID(widget.topicID);
         Qachievements = loadedAchievements;
-        shortest = Qachievements[0].shortest;
-        mostcorrect = Qachievements[0].mostCorrect;
-        mosttime = Qachievements[0].mostTime;
-      } else {
-        List<Type_Achievement> loadedAchievements =
-            await Type_Achievement().loadByTopicID(widget.topicID);
-        Tachievements = loadedAchievements;
-        String buffer1 =
-            await User().getEmailByID(Tachievements[0].shortest['UserID']) ??
-                "";
-        String buffer2 =
-            await User().getEmailByID(Tachievements[0].mostTime['UserID']) ??
-                "";
-        String buffer3 =
-            await User().getEmailByID(Tachievements[0].mostCorrect['UserID']) ??
-                "";
+        String buffer1 = await User().getEmailByID(Qachievements[0].shortest['UserID']) ?? "";
+        String buffer2 = await User().getEmailByID(Qachievements[0].mostTime['UserID']) ?? "";
+        String buffer3 = await User().getEmailByID(Qachievements[0].mostCorrect['UserID']) ?? "";
         setState(() {
-          shortestEmail = buffer1;
-          mostimeEmail = buffer2;
-          mostcorrectEmail = buffer3;
+          topicTitle = title;
+          shortest = Qachievements[0].shortest;
+          mostcorrect = Qachievements[0].mostCorrect;
+          mosttime = Qachievements[0].mostTime;
+          shortestEmail = (buffer1 == "") ? "No one has achieved this yet" : buffer1;
+          mostimeEmail = (buffer2 == "") ? "No one has achieved this yet" : buffer2;
+          mostcorrectEmail = (buffer3 == "") ? "No one has achieved this yet": buffer3;
+          loading = false;
+        });
+      }else {
+        List<Type_Achievement> loadedTypeAchievement = await Type_Achievement().loadByTopicID(widget.topicID);
+        Tachievements = loadedTypeAchievement;
+        setState(() {
+          topicTitle = title;
+          shortest = Tachievements[0].shortest;
+          mostcorrect = Tachievements[0].mostCorrect;
+          mosttime = Tachievements[0].mostTime;
+          loading = false;
         });
       }
     } catch (e) {
       print("Error loading achievements: $e");
     }
   }
+  String formatSeconds(int seconds) {
+    int hours = seconds ~/ 3600;
+    int minutes = (seconds % 3600) ~/ 60;
+    int remainingSeconds = seconds % 60;
 
-  @override
+    String formattedTime = '';
+
+    if (hours > 0) {
+      formattedTime += '$hours' + 'h';
+    }
+
+    if (minutes > 0) {
+      formattedTime += ' $minutes' + 'm';
+    }
+
+    if (remainingSeconds > 0) {
+      formattedTime += ' $remainingSeconds' + 's';
+    }
+
+    return formattedTime.trim();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -104,7 +113,9 @@ class AchievementTopicScreen extends State<AchievementType> {
           // color: Color.fromRGBO(246, 247, 251,1),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: ListView.builder(
+            child: loading
+                ? CircularProgressIndicator()
+                : ListView.builder(
               itemCount:
                   (type == "Quizz") ? Qachievements.length : Tachievements.length,
               itemBuilder: (context, index) {
@@ -124,7 +135,7 @@ class AchievementTopicScreen extends State<AchievementType> {
                       child: ListTile(
                         // title: Text('Shortest: $shortestEmail'),
                         title: Text(
-                          'Topic Name',
+                          topicTitle,
                           style: TextStyle(
                             fontSize: 18, // Adjust the font size as needed
                             fontWeight: FontWeight.bold, // Apply bold font weight
@@ -144,9 +155,9 @@ class AchievementTopicScreen extends State<AchievementType> {
                             ),
                             SizedBox(height: 10,),
                             Text(
-                              'Achivement Type',
+                              "The shortest time to answer: ${formatSeconds(shortest["Result"])}",
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 18,
                                 color: Colors.black,
                               ),
                             ),
@@ -198,7 +209,7 @@ class AchievementTopicScreen extends State<AchievementType> {
                       child: ListTile(
                         // title: Text('Shortest: $shortestEmail'),
                         title: Text(
-                          'Topic Name',
+                          topicTitle,
                           style: TextStyle(
                             fontSize: 18, // Adjust the font size as needed
                             fontWeight: FontWeight.bold, // Apply bold font weight
@@ -218,9 +229,9 @@ class AchievementTopicScreen extends State<AchievementType> {
                             ),
                             SizedBox(height: 10,),
                             Text(
-                              'Achivement Type',
+                              "Number of times studied: ${mosttime["Result"]}",
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 18,
                                 color: Colors.black,
                               ),
                             ),
@@ -272,7 +283,7 @@ class AchievementTopicScreen extends State<AchievementType> {
                       child: ListTile(
                         // title: Text('Shortest: $shortestEmail'),
                         title: Text(
-                          'Topic Name',
+                          topicTitle,
                           style: TextStyle(
                             fontSize: 18, // Adjust the font size as needed
                             fontWeight: FontWeight.bold, // Apply bold font weight
@@ -284,7 +295,7 @@ class AchievementTopicScreen extends State<AchievementType> {
                           children: [
                             SizedBox(height: 10,),
                             Text(
-                              'Most Correct',
+                              'Most Correct (Recently)',
                               style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.black,
@@ -292,9 +303,9 @@ class AchievementTopicScreen extends State<AchievementType> {
                             ),
                             SizedBox(height: 10,),
                             Text(
-                              'Achivement Type',
+                              "Number of answers: ${mostcorrect["Result"]}",
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 20,
                                 color: Colors.black,
                               ),
                             ),
@@ -311,7 +322,7 @@ class AchievementTopicScreen extends State<AchievementType> {
                                       Padding(
                                         padding: const EdgeInsets.only(left: 10),
                                         child: Text(
-                                          "$mostcorrectEmail",
+                                          mostcorrectEmail,
                                           style: TextStyle(
                                             fontSize:
                                                 14, // Adjust the font size as needed

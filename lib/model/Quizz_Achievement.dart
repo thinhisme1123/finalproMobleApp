@@ -142,28 +142,45 @@ class Quizz_Achievement {
       throw e;
     }
   }
-
-  Future<void> updateShortestByTopicID(String topicID, Map<String, dynamic> shortest, String userID) async {
+  int convertTimeStringToSeconds(String timeString) {
+    List<String> parts = timeString.split(":");
+    int hours = int.parse(parts[0]);
+    int minutes = int.parse(parts[1]);
+    int seconds = int.parse(parts[2]);
+    return hours * 3600 + minutes * 60 + seconds;
+  }
+  Future<void> updateShortest(String userID, String topicID, String timeString) async {
     try {
+      int result = convertTimeStringToSeconds(timeString);
+      print("time $result");
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("Quizz_Achievement")
           .where("TopicID", isEqualTo: topicID)
           .get();
-
       querySnapshot.docs.forEach((doc) async {
-        await doc.reference.update({
-          'shortest': {
-            'UserID': userID,
-            'Shortest': shortest,
-            "Date": getDate(),
-            "Time": getTime(),
-          },
-        });
+        Map<String, dynamic> currentShortest = doc["Shortest"];
+        int currentShortestResult = currentShortest['Result'] ?? double.infinity.toInt();
+
+        // Handle the case where currentShortestResult is 0 (no previous record)
+        if (currentShortestResult == 0) {
+          currentShortestResult = 99999999999999999;
+        }
+
+        if (result < currentShortestResult) {
+          print("true");
+          await doc.reference.update({
+            'Shortest': {
+              'UserID': userID,
+              'Result': result,
+              "Date": getDate(),
+              "Time": getTime(),
+            },
+          });
+        }
       });
     } catch (e) {
       print('Error updating shortest quizz achievement: $e');
-      rethrow;
+      throw e;
     }
   }
-
 }

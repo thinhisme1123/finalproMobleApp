@@ -62,6 +62,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp( // Thêm MaterialApp widget
+      debugShowCheckedModeBanner: false,
       title: 'Learning Vocabulary Application',
       theme: lightMode,
       home: Directionality( 
