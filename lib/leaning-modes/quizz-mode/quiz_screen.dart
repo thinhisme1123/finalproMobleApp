@@ -12,7 +12,8 @@ import 'question_model.dart';
 class QuizScreen extends StatefulWidget {
   final String topicID;
   final String userID;
-  const QuizScreen({Key? key, required this.topicID, required this.userID}) : super(key: key);
+  final String type;
+  const QuizScreen({Key? key, required this.topicID, required this.userID, required this.type}) : super(key: key);
   @override
   State<QuizScreen> createState() => _QuizScreenState();
 }
@@ -36,7 +37,7 @@ class _QuizScreenState extends State<QuizScreen> {
     super.initState();
     _initSharedPreferences();
     topicID = widget.topicID;
-    _loadWords();
+    _loadWords(widget.type);
   }
   Future<void> _initSharedPreferences() async {
     await sharedPreferencesHelper.init();
@@ -51,18 +52,20 @@ class _QuizScreenState extends State<QuizScreen> {
       // print("email $email");
     });
   }
-  Future<void> _loadWords() async {
+  Future<void> _loadWords(String type) async {
     List<Word> words = await Word().getWordsByTopicID(widget.topicID);
     _flashcards = words.map((word) {
+      String question = (type == "EV") ? word.engWord : word.vietWord;
+      String answer = (type == "EV") ? word.vietWord : word.engWord;
       return Flashcard(
-        question: word.engWord,
-        answer: word.vietWord,
+        question: question,
+        answer: answer,
       );
     }).toList();
     setState(() {
       _isLoading = false;
     });
-    loadQuizz(); //
+    loadQuizz();
   }
 
   void loadQuizz() {
@@ -254,7 +257,7 @@ class _QuizScreenState extends State<QuizScreen> {
               child: const Text("View Achievement"),
               onPressed: () {
                 // Move to achievement page
-                Get.to(AchievementType(type: "Quizz", userID: "userID", topicID: topicID));
+                Get.to(AchievementType(type: "Quizz", topicID: topicID));
                 Navigator.of(context, rootNavigator: true).pop('dialog');
               },
             ),

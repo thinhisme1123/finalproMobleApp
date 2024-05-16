@@ -11,7 +11,8 @@ import 'package:flutter_tts/flutter_tts.dart';
 
 class FlashCardScreen extends StatefulWidget {
   final String topicID;
-  const FlashCardScreen({Key? key, required this.topicID}) : super(key: key);
+  final String type;
+  const FlashCardScreen({Key? key, required this.topicID, required this.type}) : super(key: key);
   @override
   State<StatefulWidget> createState() => _FlashCardScreenState();
 }
@@ -29,7 +30,7 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
     _pageViewController = PageController(initialPage: _currentIndex);
     _flutterTts = FlutterTts();
     _flutterTts = FlutterTts();
-    _loadWords();
+    _loadWords(widget.type);
   }
 
   Future _speakText(String text) async {
@@ -46,17 +47,20 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
     await _flutterTts.speak(text);
   }
 
-  Future<void> _loadWords() async {
+  Future<void> _loadWords(String type) async {
     List<Word> words = await Word().getWordsByTopicID(widget.topicID);
     _flashcards = words.map((word) {
+      String question = (type == "EV") ? word.engWord : word.vietWord;
+      String answer = (type == "EV") ? word.vietWord : word.engWord;
       return Flashcard(
-        question: word.engWord,
-        answer: word.vietWord,
+        question: question,
+        answer: answer,
       );
     }).toList();
     setState(() {
       _isLoading = false;
     });
+    // loadQuizz();
   }
 
   @override

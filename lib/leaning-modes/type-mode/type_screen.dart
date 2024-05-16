@@ -9,8 +9,9 @@ import '../../Helper/SharedPreferencesHelper.dart';
 import '../../model/Word.dart';
 
 class TypeScreen extends StatefulWidget {
+  final String type;
   final String topicID;
-  const TypeScreen({Key? key, required this.topicID}) : super(key: key);
+  const TypeScreen({Key? key, required this.topicID, required this.type}) : super(key: key);
 
   @override
   _TypeScreenState createState() => _TypeScreenState();
@@ -34,17 +35,20 @@ class _TypeScreenState extends State<TypeScreen> {
     return '${now.day}:${now.month}:${now.year}';
   }
 
-  Future<void> _loadWords() async {
+  Future<void> _loadWords(String type) async {
     List<Word> words = await Word().getWordsByTopicID(widget.topicID);
     _typeList = words.map((word) {
+      String question = (type == "EV") ? word.engWord : word.vietWord;
+      String answer = (type == "EV") ? word.vietWord : word.engWord;
       return TypeMode(
-        engWord: word.engWord,
-        vietWord: word.vietWord,
+        engWord: answer,
+        vietWord: question,
       );
     }).toList();
     setState(() {
       _isLoading = false;
     });
+    // loadQuizz();
   }
 
   @override
@@ -53,7 +57,7 @@ class _TypeScreenState extends State<TypeScreen> {
     super.initState();
     _initSharedPreferences();
     topicID = widget.topicID;
-    _loadWords();
+    _loadWords(widget.type);
   }
   Future<void> _initSharedPreferences() async {
     await sharedPreferencesHelper.init();
@@ -189,7 +193,7 @@ class _TypeScreenState extends State<TypeScreen> {
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
-                Get.to(AchievementTopicScreen());
+                Get.to(AchievementType(type: "Type", topicID: topicID));
               },
               child: Text(
                 'View Achievement',

@@ -243,6 +243,7 @@ class _SearchPageState extends State<SearchPage> {
                         onTap: () {
                           // storeHistory(userID, getDate(), getTime(), filteredItem.topicID);
                           Get.to(HomeScreenModes(
+                            type: "",
                               title: filteredItem.title,
                               date: filteredItem.date,
                               topicID: filteredItem.topicID,

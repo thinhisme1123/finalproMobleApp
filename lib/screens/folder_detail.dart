@@ -53,13 +53,29 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
     try {
       await Folder().deleteTopicFromFolder(widget.folder.folderId, topicId);
       setState(() {
-        topics.removeWhere((topic) => topic.topicID == topicId);
+        int index = topics.indexWhere((topic) => topic.topicID == topicId);
+        if (index != -1) {
+          topics.removeAt(index);
+          _names.removeAt(index);
+          avatars.removeAt(index);
+        }
       });
       print('Topic $topicId deleted');
+      Fluttertoast.showToast(
+        msg: "Delete successfully",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green,
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
     } catch (e) {
       print('Error deleting topic: $e');
     }
   }
+
+
 
   Future<void> _initSharedPreferences() async {
     await sharedPreferencesHelper.init();
@@ -98,8 +114,16 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
         ],
       ),
       body: _isLoadingFolder
-          ? Center(child: CircularProgressIndicator())
-          : Column(
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('Loading your topic, please wait...')
+          ],
+        ),
+      ): Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
@@ -167,23 +191,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                                     children: [
                                       SlidableAction(
                                         onPressed: (context) async {
-                                          if (topic.userID == userID) {
-                                            _deleteTopic(topic.topicID);
-                                            print('Topic ${topic.title} deleted');
-                                            Fluttertoast.showToast(
-                                                msg: "Delete successfully",
-                                                toastLength: Toast.LENGTH_SHORT,
-                                                gravity: ToastGravity.CENTER,
-                                                timeInSecForIosWeb: 1,
-                                                backgroundColor: Colors.green,
-                                                textColor: Colors.white,
-                                                fontSize: 16.0);
-                                          }
-                                          // Folder().deleteTopicFromFolder(widget.folder.folderId, topic.topicID);
-                                          // setState(() {
-                                          //   topics.removeAt(index); // Xoá mục khỏi danh sách
-                                          // });
-                                          // fetchTopics(userID); // Tả
+                                          _deleteTopic(topic.topicID);
                                         },
                                         backgroundColor: Colors.red,
                                         foregroundColor: Colors.white,
@@ -270,6 +278,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                                           print(index);
                                           print(index);
                                           Get.to(HomeScreenModes(
+                                              type: "",
                                               title: topic.title,
                                               date: topic.date,
                                               topicID: topic.topicID,

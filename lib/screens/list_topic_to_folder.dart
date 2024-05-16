@@ -120,8 +120,16 @@ class _ListTopicState extends State<ListTopic> {
         body: TabBarView(
           children: [
             _isLoadingCreatedTopic
-                ? Center(child: CircularProgressIndicator())
-                :Container(
+                ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Loading your topic, please wait...')
+                ],
+              ),
+            ): Container(
               color: Color(0xfff6f7fb), // Background color for the container
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -176,7 +184,7 @@ class _ListTopicState extends State<ListTopic> {
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           child: ListTile(
-                            leading: Icon(Icons.newspaper),
+                            leading: Icon(Icons.topic),
                             title: Text(topic.title),
                             subtitle: Text(name1[index]),
                             onTap: () {},
@@ -191,8 +199,16 @@ class _ListTopicState extends State<ListTopic> {
               ),
             ),
             _isLearntTopic
-                ? Center(child: CircularProgressIndicator())
-                :Container(
+                ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Loading your topic, please wait...')
+                ],
+              ),
+            ):Container(
               color: Color(0xfff6f7fb), // Background color for the container
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -252,7 +268,8 @@ class _ListTopicState extends State<ListTopic> {
                                   leading: Icon(Icons.topic),
                                   title: Text(topic.title),
                                   subtitle: Text(name2[index]),
-                                  onTap: () {}
+                                  trailing: Text('${topic.numberFlashcard.toString()} words',style: TextStyle(color: Colors.black, fontSize: 15)),
+                                    onTap: () {}
                                 ),
                               ),
                             ),

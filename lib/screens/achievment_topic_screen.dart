@@ -9,13 +9,11 @@ import '../model/User.dart';
 
 class AchievementType extends StatefulWidget {
   final String type;
-  final String userID;
   final String topicID;
 
   const AchievementType(
       {Key? key,
       required this.type,
-      required this.userID,
       required this.topicID})
       : super(key: key);
 
@@ -50,8 +48,7 @@ class AchievementTopicScreen extends State<AchievementType> {
       String title = await Topic().getTitleByID(widget.topicID) ?? "";
       print("@");
       if (type == "Quizz") {
-        List<Quizz_Achievement> loadedAchievements = await Quizz_Achievement()
-            .loadByTopicID(widget.topicID);
+        List<Quizz_Achievement> loadedAchievements = await Quizz_Achievement().loadByTopicID(widget.topicID);
         Qachievements = loadedAchievements;
         String buffer1 = await User().getEmailByID(Qachievements[0].shortest['UserID']) ?? "";
         String buffer2 = await User().getEmailByID(Qachievements[0].mostTime['UserID']) ?? "";
@@ -69,11 +66,17 @@ class AchievementTopicScreen extends State<AchievementType> {
       }else {
         List<Type_Achievement> loadedTypeAchievement = await Type_Achievement().loadByTopicID(widget.topicID);
         Tachievements = loadedTypeAchievement;
+        String buffer1 = await User().getEmailByID(Tachievements[0].shortest['UserID']) ?? "";
+        String buffer2 = await User().getEmailByID(Tachievements[0].mostTime['UserID']) ?? "";
+        String buffer3 = await User().getEmailByID(Tachievements[0].mostCorrect['UserID']) ?? "";
         setState(() {
           topicTitle = title;
           shortest = Tachievements[0].shortest;
           mostcorrect = Tachievements[0].mostCorrect;
           mosttime = Tachievements[0].mostTime;
+          shortestEmail = (buffer1 == "") ? "No one has achieved this yet" : buffer1;
+          mostimeEmail = (buffer2 == "") ? "No one has achieved this yet" : buffer2;
+          mostcorrectEmail = (buffer3 == "") ? "No one has achieved this yet": buffer3;
           loading = false;
         });
       }
@@ -114,8 +117,16 @@ class AchievementTopicScreen extends State<AchievementType> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: loading
-                ? CircularProgressIndicator()
-                : ListView.builder(
+                ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Loading the ranking, please wait...')
+                ],
+              ),
+            ): ListView.builder(
               itemCount:
                   (type == "Quizz") ? Qachievements.length : Tachievements.length,
               itemBuilder: (context, index) {

@@ -135,7 +135,10 @@ class _LibraryScreenState extends State<LibraryScreen> {
     try {
       await Folder().deleteFolderByID(folderId);
       setState(() {
-        _folders.removeWhere((folder) => folder.folderId == folderId);
+        int index = _folders.indexWhere((folder) => folder.folderId == folderId);
+        if (index != -1) {
+          _folders.removeAt(index);
+        }
       });
       print('Folder $folderId deleted');
     } catch (e) {
@@ -147,7 +150,12 @@ class _LibraryScreenState extends State<LibraryScreen> {
     try {
       await Topic().deleteTopicByID(topicId);
       setState(() {
-        _topics.removeWhere((topic) => topic.topicID == topicId);
+        int index = _topics.indexWhere((topic) => topic.topicID == topicId);
+        if (index != -1) {
+          _topics.removeAt(index);
+          _names.removeAt(index);
+          avatars.removeAt(index);
+        }
       });
       print('Topic $topicId deleted');
     } catch (e) {
@@ -175,7 +183,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   labelColor: Colors.white,
                   tabs: [
                     Tab(text: 'Topics'),
-                    Tab(text: 'Folder'),
+                    Tab(text: 'Folders'),
                   ],
                 ),
               ),
@@ -366,14 +374,55 @@ class _LibraryScreenState extends State<LibraryScreen> {
                                                   ],
                                                 ),
                                                 onTap: () {
-                                                  print(index);
-                                                  Get.to(HomeScreenModes(
-                                                      title: topic.title,
-                                                      date: topic.date,
-                                                      topicID: topic.topicID,
-                                                      active: topic.active,
-                                                      userID: topic.userID,
-                                                      folderId: ""));
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: Text("Game Mode"),
+                                                        content: Text("Please select a game mode"),
+                                                        actions: <Widget>[
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.of(context).pop(); // Đóng hộp thoại
+                                                              print("EngLish - Vietnam");
+                                                              Get.to(HomeScreenModes(
+                                                                type: "EV",
+                                                                title: topic.title,
+                                                                date: topic.date,
+                                                                topicID: topic.topicID,
+                                                                active: topic.active,
+                                                                userID: topic.userID,
+                                                                folderId: "",
+                                                              ));
+                                                            },
+                                                            child: Text(
+                                                              "EngLish - VietNam",
+                                                              style: TextStyle(color: Colors.red),
+                                                            ),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.of(context).pop(); // Đóng hộp thoại
+                                                              print("Vietnam - English");
+                                                              Get.to(HomeScreenModes(
+                                                                type: "VE",
+                                                                title: topic.title,
+                                                                date: topic.date,
+                                                                topicID: topic.topicID,
+                                                                active: topic.active,
+                                                                userID: topic.userID,
+                                                                folderId: "",
+                                                              ));
+                                                            },
+                                                            child: Text(
+                                                              "Vietnam - English",
+                                                              style: TextStyle(color: Colors.blue),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
                                                 },
                                               ),
                                             ),

@@ -21,6 +21,7 @@ class HomeScreenModes extends StatefulWidget {
   final String? folderId;
   final bool active;
   final String topicID;
+  final String type;
 
   const HomeScreenModes(
       {Key? key,
@@ -29,7 +30,7 @@ class HomeScreenModes extends StatefulWidget {
       required this.topicID,
       required this.active,
       required this.userID,
-      required this.folderId})
+      required this.folderId, required this.type})
       : super(key: key);
   @override
   _HomeScreenModesState createState() => _HomeScreenModesState();
@@ -44,12 +45,14 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
   String userID = "";
   String email = "";
   bool isloading = true;
+  late String type;
+
   void initState() {
     super.initState();
     _widgetOptions = [
-      FlashCardScreen(topicID: widget.topicID),
-      QuizScreen(topicID: widget.topicID, userID: userID),
-      TypeScreen(topicID: widget.topicID),
+      FlashCardScreen(topicID: widget.topicID, type: widget.type),
+      QuizScreen(topicID: widget.topicID, userID: userID, type: widget.type),
+      TypeScreen(topicID: widget.topicID, type: widget.type),
     ];
     _initSharedPreferences().then((_) {
       storeHistory(userID, getDate(), getTime(), widget.topicID).then((_) {
@@ -138,36 +141,35 @@ class _HomeScreenModesState extends State<HomeScreenModes> {
         return AlertDialog(
           title: Text(
             // mode xử lí tiếng việt là câu hỏi tiếng anh là câu trả lời
-            'Choose the mode you want',
+            'Warning',
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 // Text(message),
-                Text('Which mode do you want to learn?'),
+                Text(message),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
               child: Text(
-                'Vietnamese - English',
+                "No",
                 style: TextStyle(color: Colors.red),
               ),
               onPressed: () {
                 //xử lí logic chuyển đổi từ ở đây
-                Navigator.of(context).pop(); // Dismiss the dialog
+                Navigator.of(context).pop();
               },
             ),
             TextButton(
               child: Text(
-                'English - VietNamese',
+                'Yes',
                 style: TextStyle(color: Colors.blue),
               ),
               onPressed: () {
                 //xử lí logic chuyển đổi từ ở đây
-
                 Navigator.of(context).pop(); // Dismiss the dialog
                 // Navigate to another screen
                 setState(() {
