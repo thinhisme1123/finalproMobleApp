@@ -15,6 +15,10 @@ import '../model/User.dart';
 import 'edit_topic_screen.dart';
 
 class LibraryScreen extends StatefulWidget {
+  final int currentIndex;
+
+  LibraryScreen({required this.currentIndex});
+
   @override
   _LibraryScreenState createState() => _LibraryScreenState();
 }
@@ -165,6 +169,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
   Widget build(BuildContext context) {
     return DefaultTabController(
             length: 2, // Specify the number of tabs
+            initialIndex: widget.currentIndex,
             child: Scaffold(
               appBar: AppBar(
                 backgroundColor: Color.fromRGBO(74, 89, 255, 1),

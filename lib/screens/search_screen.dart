@@ -126,6 +126,7 @@ class _SearchPageState extends State<SearchPage> {
         backgroundColor: Color.fromRGBO(74, 89, 255, 1),
         title: Text('Home'),
         centerTitle: true,
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [

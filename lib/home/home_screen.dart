@@ -14,6 +14,10 @@ import '../Helper/SharedPreferencesHelper.dart';
 import '../model/User.dart';
 
 class HomeScreen extends StatefulWidget {
+  final int indexLibrary;
+
+  HomeScreen({required this.indexLibrary});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -25,6 +29,8 @@ class _HomeScreenState extends State<HomeScreen>{
   final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
   String userID ="";
   String email = "";
+
+  List<Widget> _widgetOptions = [];
 
   
 
@@ -38,6 +44,18 @@ class _HomeScreenState extends State<HomeScreen>{
   //     print("email $email");
   //   });
   // }
+  @override
+  void initState() {
+    // TODO: implement initState
+    _initSharedPreferences();
+    _widgetOptions = <Widget>[
+      SearchPage(),
+      LibraryScreen(currentIndex: widget.indexLibrary),
+      BottomSheetScreen(),
+      ProfileScreen(),
+    ];
+    super.initState();
+  }
 
   void _initSharedPreferences() async {
     await sharedPreferencesHelper.init();
@@ -53,12 +71,12 @@ class _HomeScreenState extends State<HomeScreen>{
       print("email $email");
     });
   }
-  static List<Widget> _widgetOptions = <Widget>[
-    SearchPage(),
-    LibraryScreen(),
-    BottomSheetScreen(), 
-    ProfileScreen(), 
-  ];
+  // static List<Widget> _widgetOptions = <Widget>[
+  //   SearchPage(),
+  //   LibraryScreen(currentIndex: widget.indexLibrary,),
+  //   BottomSheetScreen(), 
+  //   ProfileScreen(), 
+  // ];
   
   // void _onItemTapped(int index) {
   //   setState(() {

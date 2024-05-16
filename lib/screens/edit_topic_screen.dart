@@ -120,7 +120,7 @@ class _EditTopicScreenState extends State<EditTopicScreen> {
           }
         }
         // Sau khi lưu thành công, điều hướng đến màn hình chính
-        Get.off(HomeScreen());
+        Get.off(HomeScreen(indexLibrary: 0,));
       } catch (e) {
         // Xử lý lỗi nếu không thể cập nhật chủ đề hoặc từ
         print("Error updating topic or words: $e");

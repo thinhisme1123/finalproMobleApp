@@ -12,13 +12,15 @@ import 'question_model.dart';
 class QuizScreen extends StatefulWidget {
   final String topicID;
   final String userID;
-  const QuizScreen({Key? key, required this.topicID, required this.userID}) : super(key: key);
+  const QuizScreen({Key? key, required this.topicID, required this.userID})
+      : super(key: key);
   @override
   State<QuizScreen> createState() => _QuizScreenState();
 }
 
 class _QuizScreenState extends State<QuizScreen> {
-  final SharedPreferencesHelper sharedPreferencesHelper = SharedPreferencesHelper();
+  final SharedPreferencesHelper sharedPreferencesHelper =
+      SharedPreferencesHelper();
 
   //define the datas
   // List<Question> questionList = getQuestions();
@@ -31,13 +33,13 @@ class _QuizScreenState extends State<QuizScreen> {
   late String topicID;
   bool _timerRunning = true;
 
-
   void initState() {
     super.initState();
     _initSharedPreferences();
     topicID = widget.topicID;
     _loadWords();
   }
+
   Future<void> _initSharedPreferences() async {
     await sharedPreferencesHelper.init();
     String newUserID = await sharedPreferencesHelper.getUserID() ?? '';
@@ -51,6 +53,7 @@ class _QuizScreenState extends State<QuizScreen> {
       // print("email $email");
     });
   }
+
   Future<void> _loadWords() async {
     List<Word> words = await Word().getWordsByTopicID(widget.topicID);
     _flashcards = words.map((word) {
@@ -220,6 +223,10 @@ class _QuizScreenState extends State<QuizScreen> {
             Quizz_Achievement().updateMostCorrect(userID, topicID, score);
             Quizz_Achievement().updateShortest(userID, topicID, time);
             showDialog(context: context, builder: (_) => _showScoreDialog());
+            setState(() {
+              _timerRunning = false;
+            });
+            showDialog(barrierDismissible: false, context: context, builder: (_) => _showScoreDialog());
           } else {
             //next question
             setState(() {
@@ -240,7 +247,7 @@ class _QuizScreenState extends State<QuizScreen> {
       isPassed = true;
     }
     String title = isPassed ? "Passed " : "Failed";
-    
+
     return AlertDialog(
       title: Text(
         title +
@@ -254,7 +261,8 @@ class _QuizScreenState extends State<QuizScreen> {
               child: const Text("View Achievement"),
               onPressed: () {
                 // Move to achievement page
-                Get.to(AchievementType(type: "Quizz", userID: "userID", topicID: topicID));
+                Get.to(AchievementType(
+                    type: "Quizz", userID: "userID", topicID: topicID));
                 Navigator.of(context, rootNavigator: true).pop('dialog');
               },
             ),
@@ -266,6 +274,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   currentQuestionIndex = 0;
                   score = 0;
                   selectedAnswer = null;
+                  _timerRunning = true;
                 });
                 Navigator.of(context, rootNavigator: true).pop('dialog');
               },

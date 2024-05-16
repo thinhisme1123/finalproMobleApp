@@ -24,7 +24,7 @@ class _FolderDetailAfterCreateState extends State<FolderDetailAfterCreate> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Get.off(() => HomeScreen());
+            Get.off(() => HomeScreen(indexLibrary: 1,));
             // Navigator.push(
             //   context,
             //   MaterialPageRoute(

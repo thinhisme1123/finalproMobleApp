@@ -1,4 +1,5 @@
 import 'package:finalproject/model/Topic.dart';
+import 'package:finalproject/home/home_screen.dart';
 import 'package:finalproject/model/Type_Achievement.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -107,6 +108,10 @@ class AchievementTopicScreen extends State<AchievementType> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Ranking of this topic'),
+          leading: IconButton(onPressed: () {
+            print('back');
+            Get.offAll(HomeScreen(indexLibrary: 0,));
+          }, icon: Icon(Icons.arrow_back)),
         ),
         backgroundColor: Color.fromRGBO(246, 247, 251, 1),
         body: Container(
