@@ -12,7 +12,6 @@ import 'package:flutter_tts/flutter_tts.dart';
 class FlashCardScreen extends StatefulWidget {
   final String topicID;
   const FlashCardScreen({Key? key, required this.topicID}) : super(key: key);
-  // const FlashCardScreen({Key? key, required this.topicID}) : super(key: key);
   @override
   State<StatefulWidget> createState() => _FlashCardScreenState();
 }
@@ -23,7 +22,6 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
   int _currentIndex = 0;
   bool _isLoading = true;
   late FlutterTts _flutterTts;
-  // late FlutterTts _flutterTts;
 
   @override
   void initState() {
@@ -47,20 +45,6 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
     await _flutterTts.setPitch(1.0);
     await _flutterTts.speak(text);
   }
-
-  // Future _speakText(String text) async {
-  //   final containsVietnamese = RegExp(
-  //       r'[àáạảãâầẩẫậăằắẳẵặèéẻẽẹêềếểễệìíỉĩịòóọỏõôồốổỗộơờớởỡợùúụủũưừứửữựỳýỷỹỵ]');
-  //   final isVietnamese = containsVietnamese.hasMatch(text);
-  //
-  //   if (isVietnamese) {
-  //     await _flutterTts.setLanguage('vi-VN');
-  //   } else {
-  //     await _flutterTts.setLanguage('en-US');
-  //   }
-  //   await _flutterTts.setPitch(1.0);
-  //   await _flutterTts.speak(text);
-  // }
 
   Future<void> _loadWords() async {
     List<Word> words = await Word().getWordsByTopicID(widget.topicID);
@@ -90,7 +74,11 @@ class _FlashCardScreenState extends State<FlashCardScreen> {
         appBar: AppBar(
           backgroundColor: const Color(0xFF51C5F5),
           actions: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.speaker))
+            IconButton(onPressed: () {
+              setState(() {
+                isFavorite = !isFavorite;
+              });
+            }, icon: Icon(Icons.star, size: 35,color: isFavorite ? Colors.yellow : Colors.grey,))
           ], // Background color of the AppBar
         ),
         backgroundColor: const Color(0xFF51C5F5),
