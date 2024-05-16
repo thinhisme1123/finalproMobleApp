@@ -216,10 +216,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     Get.to(AchievementScreen(userAchievements: fakeAchievements));
                   }),
-              ProfileMenuWidget(
-                  title: "User Management",
-                  icon: LineAwesomeIcons.user_check,
-                  onPress: () {}),
               const Divider(),
               const SizedBox(height: 10),
               ProfileMenuWidget(
