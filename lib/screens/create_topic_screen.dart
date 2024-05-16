@@ -93,7 +93,9 @@ class _CreateTopicState extends State<CreateTopic> {
               backgroundColor: Colors.green,
               textColor: Colors.white,
               fontSize: 16.0
-          );          Get.off(HomeScreen());
+          );          
+          
+          Get.off(HomeScreen(indexLibrary: 0,));
         }
       } catch (e) {
         print("Error creating topic: $e");

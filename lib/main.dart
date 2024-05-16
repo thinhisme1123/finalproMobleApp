@@ -87,7 +87,7 @@ class _MyAppState extends State<MyApp> {
                   // GetPage(name: '/quizz', page: () => QuizScreen()),
                   GetPage(name: '/welcome', page: () => const WelcomeScreen()),
                   GetPage(name: '/profile', page: () => const ProfileScreen()),
-                  GetPage(name: '/home-screen', page: () => HomeScreen()),
+                  GetPage(name: '/home-screen', page: () => HomeScreen(indexLibrary: 0,)),
                   // GetPage(name: '/home-mode-screen', page: () => HomeScreenModes()),
                   GetPage(name: '/create-topic', page: () => CreateTopic()),
                   GetPage(name: '/create-folder', page: () => CreateFolderScreen()),
