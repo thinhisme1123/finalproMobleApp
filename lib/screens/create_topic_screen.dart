@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:csv/csv.dart';
@@ -122,8 +123,11 @@ class _CreateTopicState extends State<CreateTopic> {
     }
   }
 
-  Future<void> _importFromCSV(String filePath) async {
-    String csvData = await File(filePath).readAsString();
+  Future<void> _importFromCSV(List<int> fileBytes) async {
+    // Decode file bytes to UTF-8 string
+    String csvData = utf8.decode(fileBytes);
+
+    // Parse CSV data
     List<List<dynamic>> rows = const CsvToListConverter().convert(csvData);
 
     setState(() {
@@ -135,18 +139,16 @@ class _CreateTopicState extends State<CreateTopic> {
       // Skip the header row
       for (int i = 1; i < rows.length; i++) {
         List<dynamic> row = rows[i];
-        String englishWord = row[0]; // English word
-        String vietnameseWord = row[1]; // Vietnamese word
+        String englishWord = row[0].toString(); // English word
+        String vietnameseWord = row[1].toString(); // Vietnamese word
 
         // Add the vocabulary to your list
-        _vocabularyList
-            .add({"english": englishWord, "vietnamese": vietnameseWord});
+        _vocabularyList.add({"english": englishWord, "vietnamese": vietnameseWord});
         _englishControllers.add(TextEditingController(text: englishWord));
         _vietnameseControllers.add(TextEditingController(text: vietnameseWord));
       }
     });
   }
-
   @override
   void dispose() {
     _titleController.dispose();
@@ -158,15 +160,14 @@ class _CreateTopicState extends State<CreateTopic> {
     }
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(74, 89, 255, 1),
         title: Text('Create Topic'),
-        actions: [
-          IconButton(
+          actions: [
+            IconButton(
               onPressed: () async {
                 FilePickerResult? result = await FilePicker.platform.pickFiles(
                   type: FileType.custom,
@@ -175,20 +176,26 @@ class _CreateTopicState extends State<CreateTopic> {
 
                 if (result != null) {
                   PlatformFile file = result.files.single;
-                  if (file.path != null) {
-                    String filePath = file.path!;
-                    _importFromCSV(filePath);
+                  if (file.bytes != null) {
+                    List<int> fileBytes = file.bytes!;
+                    _importFromCSV(fileBytes);
                   } else {
-                    print('No file path received');
+                    print('No file data received');
                   }
                 } else {
                   print('No file selected');
                 }
               },
-              icon: Icon(Icons.upload_file)),
-          TextButton(onPressed: _handleSave, child: Text('Save', style: TextStyle(color: Colors.black, fontSize: 20),))
-        ],
-      ),
+              icon: Icon(Icons.upload_file),
+            ),
+            TextButton(
+              onPressed: _handleSave,
+              child: Text(
+                'Save',
+                style: TextStyle(color: Colors.black, fontSize: 20),
+              ),
+            )
+          ]      ),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(20.0),
         child: Form(
