@@ -4,6 +4,7 @@ import 'package:finalproject/screens/folder_detail_afterCreate.dart';
 import 'package:finalproject/screens/form_add_vocab.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 import '../Helper/SharedPreferencesHelper.dart';
@@ -56,6 +57,15 @@ class _CreateFolderScreenState extends State<CreateFolderScreen> {
         if (folderId != null) {
           Folder? folder = await Folder().getFolderByID(folderId);
           if (folder != null) {
+            Fluttertoast.showToast(
+                msg: "Folder added successfully!",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.green,
+                textColor: Colors.white,
+                fontSize: 16.0
+            );
             Get.off(FolderDetailScreen(folder: folder));
           } else {
             print("Error: Folder not found with ID $folderId");
