@@ -277,15 +277,55 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
                                         onTap: () {
                                           print(index);
                                           print(index);
-                                          Get.to(HomeScreenModes(
-                                              type: "",
-                                              title: topic.title,
-                                              date: topic.date,
-                                              topicID: topic.topicID,
-                                              active: topic.active,
-                                              userID: topic.userID,
-                                              folderId: ""));
-                                        },
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text("Game Mode"),
+                                                content: Text("Please select a game mode"),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop(); // Đóng hộp thoại
+                                                      print("EngLish - Vietnam");
+                                                      Get.to(HomeScreenModes(
+                                                        type: "EV",
+                                                        title: topic.title,
+                                                        date: topic.date,
+                                                        topicID: topic.topicID,
+                                                        active: topic.active,
+                                                        userID: topic.userID,
+                                                        folderId: "",
+                                                      ));
+                                                    },
+                                                    child: Text(
+                                                      "EngLish - VietNam",
+                                                      style: TextStyle(color: Colors.red),
+                                                    ),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop(); // Đóng hộp thoại
+                                                      print("Vietnam - English");
+                                                      Get.to(HomeScreenModes(
+                                                        type: "VE",
+                                                        title: topic.title,
+                                                        date: topic.date,
+                                                        topicID: topic.topicID,
+                                                        active: topic.active,
+                                                        userID: topic.userID,
+                                                        folderId: "",
+                                                      ));
+                                                    },
+                                                    child: Text(
+                                                      "Vietnam - English",
+                                                      style: TextStyle(color: Colors.blue),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );                                        },
                                       ),
                                     ),
                                   ),

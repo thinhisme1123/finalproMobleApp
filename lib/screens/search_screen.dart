@@ -242,16 +242,55 @@ class _SearchPageState extends State<SearchPage> {
                           ],
                         ),
                         onTap: () {
-                          // storeHistory(userID, getDate(), getTime(), filteredItem.topicID);
-                          Get.to(HomeScreenModes(
-                            type: "",
-                              title: filteredItem.title,
-                              date: filteredItem.date,
-                              topicID: filteredItem.topicID,
-                              active: filteredItem.active,
-                              userID: filteredItem.userID,
-                              folderId: ""));
-                        },
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Game Mode"),
+                                content: Text("Please select a game mode"),
+                                actions: <Widget>[
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(); // Đóng hộp thoại
+                                      print("EngLish - Vietnam");
+                                      Get.to(HomeScreenModes(
+                                        type: "EV",
+                                        title: filteredItem.title,
+                                        date: filteredItem.date,
+                                        topicID: filteredItem.topicID,
+                                        active: filteredItem.active,
+                                        userID: filteredItem.userID,
+                                        folderId: "",
+                                      ));
+                                    },
+                                    child: Text(
+                                      "EngLish - VietNam",
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop(); // Đóng hộp thoại
+                                      print("Vietnam - English");
+                                      Get.to(HomeScreenModes(
+                                        type: "VE",
+                                        title: filteredItem.title,
+                                        date: filteredItem.date,
+                                        topicID: filteredItem.topicID,
+                                        active: filteredItem.active,
+                                        userID: filteredItem.userID,
+                                        folderId: "",
+                                      ));
+                                    },
+                                    child: Text(
+                                      "Vietnam - English",
+                                      style: TextStyle(color: Colors.blue),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );                        },
                       ),
                     ),
                   ),

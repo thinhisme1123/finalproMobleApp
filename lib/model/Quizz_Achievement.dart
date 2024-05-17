@@ -40,7 +40,7 @@ class Quizz_Achievement {
     try {
       // Tạo truy vấn Firestore để lấy dữ liệu Quizz_Achievement dựa trên topicID
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection("Quizz_Achievement")
+          .collection("Type_Achievement")
           .where("TopicID", isEqualTo: topicID)
           .get();
 
@@ -163,7 +163,7 @@ class Quizz_Achievement {
 
         // Handle the case where currentShortestResult is 0 (no previous record)
         if (currentShortestResult == 0) {
-          currentShortestResult = 99999999999999999;
+          currentShortestResult = 9999999999999;
         }
 
         if (result < currentShortestResult) {
@@ -181,6 +181,62 @@ class Quizz_Achievement {
     } catch (e) {
       print('Error updating shortest quizz achievement: $e');
       throw e;
+    }
+  }
+  Future<List<Map<String, dynamic>>> loadByUserID(String userID) async {
+    try {
+      // Tạo truy vấn Firestore để lấy dữ liệu Quizz_Achievement dựa trên userID
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("Quizz_Achievement")
+          .where("MostCorrect.UserID", isEqualTo: userID)
+          .get();
+
+      List<Map<String, dynamic>> quizzAchievements = [];
+
+      // Lặp qua từng tài liệu trong kết quả truy vấn cho MostCorrect
+      querySnapshot.docs.forEach((doc) {
+        quizzAchievements.add({
+          'topicID': doc["TopicID"],
+          'type': 'MostCorrect',
+          'achievement': doc["MostCorrect"],
+        });
+      });
+
+      // Truy vấn cho MostTime
+      querySnapshot = await FirebaseFirestore.instance
+          .collection("Quizz_Achievement")
+          .where("MostTime.UserID", isEqualTo: userID)
+          .get();
+
+      // Lặp qua từng tài liệu trong kết quả truy vấn cho MostTime
+      querySnapshot.docs.forEach((doc) {
+        quizzAchievements.add({
+          'topicID': doc["TopicID"],
+          'type': 'MostTime',
+          'achievement': doc["MostTime"],
+        });
+      });
+
+      // Truy vấn cho Shortest
+      querySnapshot = await FirebaseFirestore.instance
+          .collection("Quizz_Achievement")
+          .where("Shortest.UserID", isEqualTo: userID)
+          .get();
+
+      // Lặp qua từng tài liệu trong kết quả truy vấn cho Shortest
+      querySnapshot.docs.forEach((doc) {
+        quizzAchievements.add({
+          'topicID': doc["TopicID"],
+          'type': 'Shortest',
+          'achievement': doc["Shortest"],
+        });
+      });
+
+      return quizzAchievements;
+    } catch (e) {
+      // Xử lý lỗi nếu có
+      print("Error loading Quizz_Achievement by userID: $e");
+      return [];
     }
   }
 }

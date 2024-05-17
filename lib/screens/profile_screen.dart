@@ -123,23 +123,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
-  List<Achievement> getFakeAchievements() {
-    return [
-      Achievement(
-        nameTopic: 'Day 1',
-        description:
-        'Bạn đã đạt top 1 topic người trả lời nhiều câu hỏi đúng nhất',
-      ),
-      Achievement(
-        nameTopic: 'Day 3',
-        description: 'Bạn học topic này nhanh và chính xác nhất',
-      ),
-      Achievement(
-        nameTopic: 'Day 2',
-        description: 'Bạn học topic này nhiều lần nhất',
-      ),
-    ];
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -230,10 +213,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   title: "Achievement",
                   icon: LineAwesomeIcons.award,
                   onPress: () {
-                    List<Achievement> fakeAchievements = getFakeAchievements();
-
                     Get.to(
-                        AchievementScreen(userAchievements: fakeAchievements));
+                        AchievementScreen());
                   }),
               const Divider(),
               const SizedBox(height: 10),

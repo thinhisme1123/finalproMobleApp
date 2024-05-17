@@ -40,16 +40,13 @@ class Type_Achievement {
     try {
       // Tạo truy vấn Firestore để lấy dữ liệu typeAchievements dựa trên topicID
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection("Quizz_Achievement")
+          .collection("Type_Achievement")
           .where("TopicID", isEqualTo: topicID)
           .get();
 
-      // Tạo danh sách để lưu trữ các đối tượng typeAchievements
       List<Type_Achievement> typeAchievements = [];
 
-      // Lặp qua từng tài liệu trong kết quả truy vấn
       querySnapshot.docs.forEach((doc) {
-        // Tạo một đối tượng typeAchievements từ dữ liệu tài liệu
         Type_Achievement quizzAchievement = Type_Achievement.n(
           doc["TopicID"],
           doc["MostCorrect"],
@@ -57,14 +54,11 @@ class Type_Achievement {
           doc["Shortest"],
         );
 
-        // Thêm đối tượng typeAchievements vào danh sách
         typeAchievements.add(quizzAchievement);
       });
 
-      // Trả về danh sách các đối tượng typeAchievements
       return typeAchievements;
     } catch (e) {
-      // Xử lý lỗi nếu có
       print("Error loading Type_Achievement by topicID: $e");
       return [];
     }
@@ -92,6 +86,8 @@ class Type_Achievement {
             'MostCorrect': {
               'UserID': userID,
               'Result': correctAnswers,
+              "Time": getTime(),
+              "Date": getDate(),
             },
           });
         }
@@ -159,7 +155,7 @@ class Type_Achievement {
 
         // Handle the case where currentShortestResult is 0 (no previous record)
         if (currentShortestResult == 0) {
-          currentShortestResult = 99999999999999999;
+          currentShortestResult = 999999999999;
         }
 
         if (result < currentShortestResult) {
@@ -177,6 +173,58 @@ class Type_Achievement {
     } catch (e) {
       print('Error updating shortest type achievement: $e');
       throw e;
+    }
+  }
+  Future<List<Map<String, dynamic>>> loadByUserID(String userID) async {
+    try {
+      List<Map<String, dynamic>> userAchievements = [];
+
+      // Query for achievements where the user has the most correct answers
+      QuerySnapshot mostCorrectSnapshot = await FirebaseFirestore.instance
+          .collection("Type_Achievement")
+          .where("MostCorrect.UserID", isEqualTo: userID)
+          .get();
+
+      for (var doc in mostCorrectSnapshot.docs) {
+        userAchievements.add({
+          'type': 'MostCorrect',
+          'topicID': doc["TopicID"],
+          'achievement': doc["MostCorrect"]
+        });
+      }
+
+      // Query for achievements where the user has the most time
+      QuerySnapshot mostTimeSnapshot = await FirebaseFirestore.instance
+          .collection("Type_Achievement")
+          .where("MostTime.UserID", isEqualTo: userID)
+          .get();
+
+      for (var doc in mostTimeSnapshot.docs) {
+        userAchievements.add({
+          'type': 'MostTime',
+          'topicID': doc["TopicID"],
+          'achievement': doc["MostTime"]
+        });
+      }
+
+      // Query for achievements where the user has the shortest time
+      QuerySnapshot shortestSnapshot = await FirebaseFirestore.instance
+          .collection("Type_Achievement")
+          .where("Shortest.UserID", isEqualTo: userID)
+          .get();
+
+      for (var doc in shortestSnapshot.docs) {
+        userAchievements.add({
+          'type': 'Shortest',
+          'topicID': doc["TopicID"],
+          'achievement': doc["Shortest"]
+        });
+      }
+
+      return userAchievements;
+    } catch (e) {
+      print("Error loading Type_Achievement by userID: $e");
+      return [];
     }
   }
 }
