@@ -370,7 +370,7 @@ class _SignInScreenState extends State<SignInScreen> {
       sharedPreferencesHelper.saveUserID(userId);
       sharedPreferencesHelper.saveEmail(_email.text);
       sharedPreferencesHelper.saveLoginState(true);
-      Get.off(HomeScreen());
+      Get.off(HomeScreen(indexLibrary: 0,));
       print("User Logged In");
     } else {
       print("error");

@@ -39,6 +39,7 @@ class _QuizScreenState extends State<QuizScreen> {
     topicID = widget.topicID;
     _loadWords(widget.type);
   }
+
   Future<void> _initSharedPreferences() async {
     await sharedPreferencesHelper.init();
     String newUserID = await sharedPreferencesHelper.getUserID() ?? '';
@@ -223,6 +224,10 @@ class _QuizScreenState extends State<QuizScreen> {
             Quizz_Achievement().updateMostCorrect(userID, topicID, score);
             Quizz_Achievement().updateShortest(userID, topicID, time);
             showDialog(context: context, builder: (_) => _showScoreDialog());
+            setState(() {
+              _timerRunning = false;
+            });
+            showDialog(barrierDismissible: false, context: context, builder: (_) => _showScoreDialog());
           } else {
             //next question
             setState(() {
@@ -243,7 +248,7 @@ class _QuizScreenState extends State<QuizScreen> {
       isPassed = true;
     }
     String title = isPassed ? "Passed " : "Failed";
-    
+
     return AlertDialog(
       title: Text(
         title +
@@ -269,6 +274,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   currentQuestionIndex = 0;
                   score = 0;
                   selectedAnswer = null;
+                  _timerRunning = true;
                 });
                 Navigator.of(context, rootNavigator: true).pop('dialog');
               },

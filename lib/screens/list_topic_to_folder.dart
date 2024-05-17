@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:finalproject/home/home_modes_screen.dart';
+import 'package:finalproject/home/home_screen.dart';
 import 'package:finalproject/screens/edit_folder_screen.dart';
 import 'package:finalproject/screens/folder_detail.dart';
 import 'package:flutter/material.dart';
@@ -107,6 +108,10 @@ class _ListTopicState extends State<ListTopic> {
       length: 2, // Specify the number of tabs
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(onPressed: () {
+
+            Get.off(HomeScreen(indexLibrary: 0));
+          }, icon: Icon(Icons.arrow_back)),
           automaticallyImplyLeading: true,
           title: Text('Add Topic'),
           centerTitle: true,

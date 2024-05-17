@@ -92,7 +92,7 @@ class _FolderDetailScreenState extends State<FolderDetailScreen> {
       // print("email $email");
     });
   }
-
+  @override
   void initState() {
     super.initState();
     _initSharedPreferences().then((_) {
