@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import 'package:finalproject/model/User.dart';
 import 'package:finalproject/screens/achiement_screen.dart';
@@ -268,7 +269,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       barrierDismissible: true,
     );
   }
-
   void _handleChangeAva() {
     Get.dialog(AlertDialog(
       title: const Text("Choose your avatar"),
@@ -276,57 +276,127 @@ class _ProfileScreenState extends State<ProfileScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           TextButton(
-              onPressed: () async {
-                Navigator.of(context, rootNavigator: true).pop('dialog');
+            onPressed: () async {
+              Navigator.of(context, rootNavigator: true).pop('dialog');
+              if (kIsWeb) {
+                // Handle web image picking
                 ImagePicker imagePicker = ImagePicker();
-                XFile? file =
-                await imagePicker.pickImage(source: ImageSource.camera);
+                XFile? file = await imagePicker.pickImage(source: ImageSource.camera);
                 if (file == null) return;
-                String fileName =
-                DateTime.now().millisecondsSinceEpoch.toString();
-                Reference referenceImg = FirebaseStorage.instance.ref();
-                Reference dirImg = referenceImg.child("images");
-                Reference imgUpload = dirImg.child(fileName);
-
-                try {
-                  await imgUpload.putFile(File(file!.path));
-                  avatarUrl = await imgUpload.getDownloadURL();
-                  await User().changeUserData(userID, avatarUrl);
-                  setState(() {
-                    avatarUser = avatarUrl;
-                  });
-                } catch (e) {
-                  e.printError();
-                }
-              },
-              child: const Text("Take a photo")),
+                await _uploadImage(file);
+              } else {
+                // Handle mobile image picking
+                ImagePicker imagePicker = ImagePicker();
+                XFile? file = await imagePicker.pickImage(source: ImageSource.camera);
+                if (file == null) return;
+                await _uploadImage(File(file.path));
+              }
+            },
+            child: const Text("Take a photo"),
+          ),
           TextButton(
-              onPressed: () async {
-                Navigator.of(context, rootNavigator: true).pop('dialog');
+            onPressed: () async {
+              Navigator.of(context, rootNavigator: true).pop('dialog');
+              if (kIsWeb) {
+                // Handle web image picking
                 ImagePicker imagePicker = ImagePicker();
-                XFile? file =
-                await imagePicker.pickImage(source: ImageSource.gallery);
+                XFile? file = await imagePicker.pickImage(source: ImageSource.gallery);
                 if (file == null) return;
-                String fileName =
-                DateTime.now().millisecondsSinceEpoch.toString();
-                Reference referenceImg = FirebaseStorage.instance.ref();
-                Reference dirImg = referenceImg.child("images");
-                Reference imgUpload = dirImg.child(fileName);
-
-                try {
-                  await imgUpload.putFile(File(file!.path));
-                  avatarUrl = await imgUpload.getDownloadURL();
-                  await User().changeUserData(userID, avatarUrl);
-                  setState(() {
-                    avatarUser = avatarUrl;
-                  });
-                } catch (e) {
-                  e.printError();
-                }
-              },
-              child: const Text("From your gallery")),
+                await _uploadImage(file);
+              } else {
+                // Handle mobile image picking
+                ImagePicker imagePicker = ImagePicker();
+                XFile? file = await imagePicker.pickImage(source: ImageSource.gallery);
+                if (file == null) return;
+                await _uploadImage(File(file.path));
+              }
+            },
+            child: const Text("From your gallery"),
+          ),
         ],
       ),
     ));
   }
+
+  Future<void> _uploadImage(dynamic file) async {
+    String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+    Reference referenceImg = FirebaseStorage.instance.ref();
+    Reference dirImg = referenceImg.child("images");
+    Reference imgUpload = dirImg.child(fileName);
+
+    try {
+      if (file is XFile) {
+        await imgUpload.putData(await file.readAsBytes());
+      } else if (file is File) {
+        await imgUpload.putFile(file);
+      }
+      avatarUrl = await imgUpload.getDownloadURL();
+      await User().changeUserData(userID, avatarUrl);
+      setState(() {
+        avatarUser = avatarUrl;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+  // void _handleChangeAva() {
+  //   Get.dialog(AlertDialog(
+  //     title: const Text("Choose your avatar"),
+  //     content: Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       children: [
+  //         TextButton(
+  //             onPressed: () async {
+  //               Navigator.of(context, rootNavigator: true).pop('dialog');
+  //               ImagePicker imagePicker = ImagePicker();
+  //               XFile? file =
+  //               await imagePicker.pickImage(source: ImageSource.camera);
+  //               if (file == null) return;
+  //               String fileName =
+  //               DateTime.now().millisecondsSinceEpoch.toString();
+  //               Reference referenceImg = FirebaseStorage.instance.ref();
+  //               Reference dirImg = referenceImg.child("images");
+  //               Reference imgUpload = dirImg.child(fileName);
+  //
+  //               try {
+  //                 await imgUpload.putFile(File(file!.path));
+  //                 avatarUrl = await imgUpload.getDownloadURL();
+  //                 await User().changeUserData(userID, avatarUrl);
+  //                 setState(() {
+  //                   avatarUser = avatarUrl;
+  //                 });
+  //               } catch (e) {
+  //                 e.printError();
+  //               }
+  //             },
+  //             child: const Text("Take a photo")),
+  //         TextButton(
+  //             onPressed: () async {
+  //               Navigator.of(context, rootNavigator: true).pop('dialog');
+  //               ImagePicker imagePicker = ImagePicker();
+  //               XFile? file =
+  //               await imagePicker.pickImage(source: ImageSource.gallery);
+  //               if (file == null) return;
+  //               String fileName =
+  //               DateTime.now().millisecondsSinceEpoch.toString();
+  //               Reference referenceImg = FirebaseStorage.instance.ref();
+  //               Reference dirImg = referenceImg.child("images");
+  //               Reference imgUpload = dirImg.child(fileName);
+  //
+  //               try {
+  //                 await imgUpload.putFile(File(file!.path));
+  //                 avatarUrl = await imgUpload.getDownloadURL();
+  //                 await User().changeUserData(userID, avatarUrl);
+  //                 setState(() {
+  //                   avatarUser = avatarUrl;
+  //                 });
+  //               } catch (e) {
+  //                 e.printError();
+  //               }
+  //             },
+  //             child: const Text("From your gallery")),
+  //       ],
+  //     ),
+  //   ));
+  // }
 }
